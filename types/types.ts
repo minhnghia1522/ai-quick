@@ -3,7 +3,7 @@ export type OpenAIModel = 'gpt-4o' | 'gpt-4o-mini' | 'o1-mini';
 export interface TranslateBody {
   inputLanguage: string;
   outputLanguage: string;
-  inputCode: string;
+  inputData: string;
   model: OpenAIModel;
   apiKey: string;
 }

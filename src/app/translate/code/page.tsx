@@ -6,6 +6,7 @@ import { ModelSelect } from '@/components/ModelSelect';
 import { TextBlock } from '@/components/TextBlock';
 import { OpenAIModel, TranslateBody } from '@/types/types';
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 export default function Home() {
   const [inputLanguage, setInputLanguage] =
@@ -22,22 +23,22 @@ export default function Home() {
     const maxCodeLength = 12000;
 
     if (!apiKey) {
-      alert('Please enter an API key.');
+      toast.error('Please enter an API key.');
       return;
     }
 
     if (inputLanguage === outputLanguage) {
-      alert('Please select different languages.');
+      toast.error('Please select different languages.');
       return;
     }
 
     if (!inputCode) {
-      alert('Please enter some code.');
+      toast.error('Please enter some code.');
       return;
     }
 
     if (inputCode.length > maxCodeLength) {
-      alert(
+      toast.error(
         `Please enter code less than ${maxCodeLength} characters. You are currently at ${inputCode.length} characters.`
       );
       return;
@@ -51,7 +52,7 @@ export default function Home() {
     const body: TranslateBody = {
       inputLanguage,
       outputLanguage,
-      inputCode,
+      inputData: inputCode,
       model,
       apiKey
     };
@@ -67,7 +68,7 @@ export default function Home() {
 
     if (!response.ok) {
       setLoading(false);
-      alert('Something went wrong.');
+      toast.error('Something went wrong.');
       return;
     }
 
@@ -75,7 +76,7 @@ export default function Home() {
 
     if (!data) {
       setLoading(false);
-      alert('Something went wrong.');
+      toast.error('Something went wrong.');
       return;
     }
 

@@ -5,80 +5,37 @@ import {
   ReconnectInterval
 } from 'eventsource-parser';
 
-const createPromptTranslateCode = (
+const createPromptTranslateLanguage = (
   inputLanguage: string,
   outputLanguage: string,
-  inputCode: string
+  inputText: string
 ) => {
-  if (inputLanguage === 'Natural Language') {
-    return endent`
-    You are an expert programmer in all programming languages. Translate the natural language to "${outputLanguage}" code. Do not include \`\`\`.
+  return endent`
+      You are an expert IT translator. 
+      Your task is to translate the text from the  "${inputLanguage}" language to the "${outputLanguage}" language.
+      Please ensure that the translation is accurate, paying careful attention to preserving punctuation, formatting, and the context of the original text.
 
-    Example translating from natural language to JavaScript:
-
-    Natural language:
-    Print the numbers 0 to 9.
-
-    JavaScript code:
-    for (let i = 0; i < 10; i++) {
-      console.log(i);
-    }
-
-    Natural language:
-    ${inputCode}
-
-    ${outputLanguage} code (no \`\`\`):
-    `;
-  } else if (outputLanguage === 'Natural Language') {
-    return endent`
-      You are an expert programmer in all programming languages. Translate the "${inputLanguage}" code to natural language in plain English that the average adult could understand. Respond as bullet points starting with -.
-  
-      Example translating from JavaScript to natural language:
-  
-      JavaScript code:
-      for (let i = 0; i < 10; i++) {
-        console.log(i);
-      }
-  
-      Natural language:
-      Print the numbers 0 to 9.
+      For example, when translating from Japanese to Vietnamese:
+        - Japanese text:
+          「電車」をおります
+        - Expected Vietnamese translation:
+          Xuống 「電車」(tàu)
       
-      ${inputLanguage} code:
-      ${inputCode}
+      "${inputLanguage}" language:
+       ${inputText}   
 
-      Natural language:
+      "${outputLanguage}" language (no \`\`\`):
      `;
-  } else {
-    return endent`
-      You are an expert programmer in all programming languages. Translate the "${inputLanguage}" code to "${outputLanguage}" code. Do not include \`\`\`.
-  
-      Example translating from JavaScript to Python:
-  
-      JavaScript code:
-      for (let i = 0; i < 10; i++) {
-        console.log(i);
-      }
-  
-      Python code:
-      for i in range(10):
-        print(i)
-      
-      ${inputLanguage} code:
-      ${inputCode}
-
-      ${outputLanguage} code (no \`\`\`):
-     `;
-  }
 };
 
-export const OpenAIStream = async (
-  inputLanguage: string,
+export const OpenAIStreamTranslateLanguage = async (
   outputLanguage: string,
+  inputLanguage: string,
   inputData: string,
   model: string,
   key: string
 ) => {
-  const prompt = createPromptTranslateCode(
+  const prompt = createPromptTranslateLanguage(
     inputLanguage,
     outputLanguage,
     inputData
@@ -137,11 +94,12 @@ export const OpenAIStream = async (
 
       const parser = createParser(onParse);
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       for await (const chunk of res.body as any) {
         parser.feed(decoder.decode(chunk));
       }
     }
   });
 
-  return stream;
+  return new Response(stream);
 };
