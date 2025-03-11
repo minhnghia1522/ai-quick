@@ -1,5 +1,6 @@
+import { createPromptTranslateCode } from '@/prompt/codeTranslatePrompt';
+import { OpenAIStream } from '@/service/openAI';
 import { TranslateBody } from '@/types/types';
-import { OpenAIStream } from '@/utils';
 
 export const config = {
   runtime: 'edge'
@@ -10,13 +11,17 @@ export async function POST(req: Request): Promise<Response> {
     const { inputLanguage, outputLanguage, inputData, model, apiKey } =
       (await req.json()) as TranslateBody;
 
-    const stream = await OpenAIStream(
+    const prompt = createPromptTranslateCode(
       inputLanguage,
       outputLanguage,
-      inputData,
-      model,
-      apiKey
+      inputData
     );
+
+    const stream = await OpenAIStream({
+      key: apiKey,
+      model,
+      prompt
+    });
 
     return new Response(stream);
   } catch (error) {

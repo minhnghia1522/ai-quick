@@ -11,3 +11,10 @@ export interface TranslateBody {
 export interface TranslateResponse {
   code: string;
 }
+
+export const LANGUAGES = {
+  ja: 'Japanese',
+  vn: 'Vietnamese',
+  en: 'English',
+  natural: 'Natural'
+};

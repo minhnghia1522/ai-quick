@@ -4,18 +4,12 @@ import { ModelSelect } from '@/components/ModelSelect';
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { OpenAIModel, TranslateBody } from '@/types/types';
+import { LANGUAGES, OpenAIModel, TranslateBody } from '@/types/types';
 import { ArrowRightLeft, Languages } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { OpenAIStreamTranslateLanguage } from './action/service';
 import { toast } from 'sonner';
-
-const LANGUAGES = {
-  ja: 'Japanese',
-  vn: 'Vietnamese',
-  en: 'English',
-  natural: 'Natural'
-};
+import { createPromptTranslateLanguage } from '@/prompt/languageTranslatePrompt';
+import { OpenAIStream } from '@/service/openAI';
 
 const Page = () => {
   const [apiKey, setApiKey] = useState<string>('');
@@ -84,13 +78,18 @@ const Page = () => {
       apiKey
     };
 
-    const response = await OpenAIStreamTranslateLanguage(
-      outputLanguage,
+    const prompt = createPromptTranslateLanguage(
       inputLanguage,
-      sourceText,
-      model,
-      apiKey
+      outputLanguage,
+      sourceText
     );
+
+    const stream = await OpenAIStream({
+      key: apiKey,
+      model,
+      prompt
+    });
+    const response = new Response(stream);
 
     if (!response.ok) {
       // setLoading(false);
