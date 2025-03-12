@@ -1,8 +1,6 @@
 'use client';
-import { APIKeyInput } from '@/components/APIKeyInput';
 import { CodeBlock } from '@/components/CodeBlock';
 import { LanguageSelect } from '@/components/LanguageSelect';
-import { ModelSelect } from '@/components/ModelSelect';
 import { TextBlock } from '@/components/TextBlock';
 import { OpenAIModel, TranslateBody } from '@/types/types';
 import { useEffect, useState } from 'react';
@@ -109,12 +107,6 @@ export default function Home() {
     document.body.removeChild(el);
   };
 
-  const handleApiKeyChange = (value: string) => {
-    setApiKey(value);
-
-    localStorage.setItem('apiKey', value);
-  };
-
   useEffect(() => {
     if (hasTranslated) {
       handleTranslate();
@@ -124,9 +116,13 @@ export default function Home() {
 
   useEffect(() => {
     const apiKey = localStorage.getItem('apiKey');
+    const model = localStorage.getItem('model');
 
     if (apiKey) {
       setApiKey(apiKey);
+    }
+    if (model) {
+      setModel(model as OpenAIModel);
     }
   }, []);
 
@@ -137,13 +133,7 @@ export default function Home() {
           <div className="text-4xl font-bold">AI Code Translator</div>
         </div>
 
-        <div className="mt-6 text-center text-sm">
-          <APIKeyInput apiKey={apiKey} onChange={handleApiKeyChange} />
-        </div>
-
         <div className="mt-2 flex items-center space-x-2">
-          <ModelSelect model={model} onChange={(value) => setModel(value)} />
-
           <button
             className="w-[140px] cursor-pointer rounded-md bg-violet-500 px-4 py-2 font-bold hover:bg-violet-600 active:bg-violet-700"
             onClick={() => handleTranslate()}

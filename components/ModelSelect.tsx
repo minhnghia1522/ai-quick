@@ -1,25 +1,41 @@
+'use client';
 import { OpenAIModel } from '@/types/types';
-import { FC } from 'react';
+import { useEffect, useState } from 'react';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem
+} from './ui/select';
 
-interface Props {
-  model: OpenAIModel;
-  onChange: (model: OpenAIModel) => void;
-}
+const ModelSelect = () => {
+  const [model, setModel] = useState<OpenAIModel>('gpt-4o');
+  useEffect(() => {
+    const modelLocalStorage = localStorage.getItem('model');
 
-export const ModelSelect: FC<Props> = ({ model, onChange }) => {
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    onChange(e.target.value as OpenAIModel);
+    if (modelLocalStorage) {
+      setModel(modelLocalStorage as OpenAIModel);
+    }
+  }, []);
+
+  const handleValueChange = (value: string) => {
+    setModel(value as OpenAIModel);
+    localStorage.setItem('model', value);
   };
 
   return (
-    <select
-      className="h-[40px] w-[140px] rounded-md bg-[#1F2937] px-4 py-2 text-neutral-200"
-      value={model}
-      onChange={handleChange}
-    >
-      <option value="gpt-4o">gpt-4o</option>
-      <option value="gpt-4o-mini">gpt-4o-mini</option>
-      <option value="o1-mini">o1-mini</option>
-    </select>
+    <Select onValueChange={handleValueChange} value={model}>
+      <SelectTrigger className="w-[200px] h-[40px] bg-white font-medium text-black">
+        <SelectValue placeholder="Select Model" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="gpt-4o">gpt-4o</SelectItem>
+        <SelectItem value="gpt-4o-mini">gpt-4o-mini</SelectItem>
+        <SelectItem value="o1-mini">o1-mini</SelectItem>
+      </SelectContent>
+    </Select>
   );
 };
+
+export default ModelSelect;

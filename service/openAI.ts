@@ -4,16 +4,11 @@ import {
   ReconnectInterval
 } from 'eventsource-parser';
 
-export const OpenAIStream = async ({
-  key,
-  model,
-  prompt
-}: {
-  key: string;
-  model: string;
-  prompt: string;
-}) => {
+export const OpenAIStream = async ({ prompt }: { prompt: string }) => {
   const system = { role: 'system', content: prompt };
+
+  const key = localStorage.getItem('apiKey');
+  const model = localStorage.getItem('model');
 
   const res = await fetch(`https://api.openai.com/v1/chat/completions`, {
     headers: {
