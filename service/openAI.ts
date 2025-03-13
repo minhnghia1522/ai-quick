@@ -1,10 +1,12 @@
-import {
-  createParser,
-  ParsedEvent,
-  ReconnectInterval
-} from 'eventsource-parser';
+import { createParser, ParsedEvent, ReconnectInterval } from 'eventsource-parser';
 
-export const OpenAIStream = async ({ prompt }: { prompt: string }) => {
+export const OpenAIStream = async ({
+  prompt,
+  controller
+}: {
+  prompt: string;
+  controller: AbortController | undefined;
+}) => {
   const system = { role: 'system', content: prompt };
 
   const key = localStorage.getItem('apiKey');
@@ -15,6 +17,7 @@ export const OpenAIStream = async ({ prompt }: { prompt: string }) => {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${key || process.env.OPENAI_API_KEY}`
     },
+    signal: controller?.signal,
     method: 'POST',
     body: JSON.stringify({
       model,
@@ -30,11 +33,7 @@ export const OpenAIStream = async ({ prompt }: { prompt: string }) => {
   if (res.status !== 200) {
     const statusText = res.statusText;
     const result = await res.body?.getReader().read();
-    throw new Error(
-      `OpenAI API returned an error: ${
-        decoder.decode(result?.value) || statusText
-      }`
-    );
+    throw new Error(`OpenAI API returned an error: ${decoder.decode(result?.value) || statusText}`);
   }
 
   const stream = new ReadableStream({

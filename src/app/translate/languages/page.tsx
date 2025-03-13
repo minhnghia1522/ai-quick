@@ -13,16 +13,8 @@ const maxTextLength = 5000;
 const Page = () => {
   const [sourceText, setSourceText] = useState('');
   const [translatedText, setTranslatedText] = useState('');
-  const [inputLanguage, setInputLanguage] = useState(LANGUAGES.natural);
+  const [inputLanguage, setInputLanguage] = useState(LANGUAGES.ja);
   const [outputLanguage, setOutputLanguage] = useState(LANGUAGES.vn);
-
-  // const swapLanguages = () => {
-  //   setInputLanguage(outputLanguage);
-  //   setSourceText(translatedText);
-
-  //   setTranslatedText(sourceText);
-  //   setOutputLanguage(inputLanguage);
-  // };
 
   const handleTranslate = useCallback(async () => {
     setTranslatedText('');
@@ -46,19 +38,18 @@ const Page = () => {
       );
       return;
     }
-    const prompt = createPromptTranslateLanguage(
-      inputLanguage,
-      outputLanguage,
-      sourceText
-    );
+
+    const controller = new AbortController();
+
+    const prompt = createPromptTranslateLanguage(inputLanguage, outputLanguage, sourceText);
 
     const stream = await OpenAIStream({
-      prompt
+      prompt,
+      controller
     });
     const response = new Response(stream);
 
     if (!response.ok) {
-      // setLoading(false);
       toast.error('Something went wrong.');
       return;
     }
@@ -66,7 +57,6 @@ const Page = () => {
     const data = response.body;
 
     if (!data) {
-      // setLoading(false);
       toast.error('Something went wrong.');
       return;
     }
@@ -95,29 +85,19 @@ const Page = () => {
   }, [sourceText, inputLanguage, outputLanguage, handleTranslate]);
 
   return (
-    <div className="flex h-full w-full min-h-screen flex-col px-4 pb-20 text-black sm:px-10">
-      <div className="p-10 flex flex-col items-center justify-center sm:mt-20">
-        <Label className="text-4xl">
-          Smart AI Translator Powered by ChatGPT
-        </Label>
-        <div className="p-3">
-          <Button variant="outline" size="default">
+    <div className='flex h-full w-full min-h-screen flex-col px-4 pb-20 text-black sm:px-10'>
+      <div className='p-10 flex flex-col items-center justify-center sm:mt-20'>
+        <Label className='text-4xl'>Smart AI Translator Powered by ChatGPT</Label>
+        <div className='p-3'>
+          <Button variant='outline' size='default'>
             <Languages />
             Văn bản
           </Button>
         </div>
       </div>
-      <div className="flex justify-center w-full max-w-full gap-3">
-        <div className="gap-1">
-          <div className="flex">
-            <Button
-              variant={inputLanguage === LANGUAGES.natural ? 'default' : 'link'}
-              onClick={() => {
-                setInputLanguage(LANGUAGES.natural);
-              }}
-            >
-              Phát hiện ngôn ngữ
-            </Button>
+      <div className='flex justify-center w-full max-w-full gap-3'>
+        <div className='gap-1'>
+          <div className='flex'>
             <Button
               variant={inputLanguage === LANGUAGES.ja ? 'default' : 'link'}
               onClick={() => {
@@ -145,28 +125,35 @@ const Page = () => {
             >
               Việt
             </Button>
+            <Button
+              variant={inputLanguage === LANGUAGES.natural ? 'default' : 'link'}
+              onClick={() => {
+                setInputLanguage(LANGUAGES.natural);
+              }}
+            >
+              Phát hiện ngôn ngữ
+            </Button>
           </div>
-          <div className="pt-0.5 relative w-xl max-w-xl">
+          <div className='pt-0.5 relative w-xl max-w-xl'>
             <Textarea
-              className="h-50 resize-none"
-              placeholder="Type or paste text here to translate"
+              className='h-50 resize-none'
+              placeholder='Type or paste text here to translate'
               onChange={(e) => {
                 setSourceText(e.target.value);
               }}
             />
-            <span className="absolute bottom-2 right-3 text-gray-500 bg-white px-1">
-              {sourceText.length.toLocaleString()}/
-              {maxTextLength.toLocaleString()}
+            <span className='absolute bottom-2 right-3 text-gray-500 bg-white px-1'>
+              {sourceText.length.toLocaleString()}/{maxTextLength.toLocaleString()}
             </span>
           </div>
         </div>
-        <div className="w-[50px] max-w-[50px]">
-          <Button variant="ghost" size="icon" disabled>
+        <div className='w-[50px] max-w-[50px]'>
+          <Button variant='ghost' size='icon' disabled>
             <ArrowRightLeft />
           </Button>
         </div>
-        <div className="w-xl max-w-xl">
-          <div className="flex flex-1">
+        <div className='w-xl max-w-xl'>
+          <div className='flex flex-1'>
             <Button
               variant={outputLanguage === LANGUAGES.vn ? 'default' : 'link'}
               onClick={() => {
@@ -195,8 +182,8 @@ const Page = () => {
               Nhật
             </Button>
           </div>
-          <div className="flex-1 pt-0.5 ">
-            <div className="h-50 border-input  flex field-sizing-content min-h-16 w-full rounded-md border bg-gray-50 px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px]  md:text-sm">
+          <div className='flex-1 pt-0.5 '>
+            <div className='h-50 border-input  flex field-sizing-content min-h-16 w-full rounded-md border bg-gray-50 px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px]  md:text-sm'>
               {translatedText}
             </div>
           </div>
