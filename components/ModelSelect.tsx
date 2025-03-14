@@ -1,7 +1,8 @@
 'use client';
-import { OpenAIModel } from '@/types/types';
 import { useEffect, useState } from 'react';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from './ui/select';
+
+type OpenAIModel = 'gpt-4o' | 'gpt-4o-mini' | 'o1-mini';
 
 const ModelSelect = () => {
   const [model, setModel] = useState<OpenAIModel>('gpt-4o');

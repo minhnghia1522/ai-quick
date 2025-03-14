@@ -2,19 +2,23 @@
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { LANGUAGES } from '@/types/types';
-import { ArrowRightLeft, Languages } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
+import { ArrowRightLeft } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { createPromptTranslateLanguage } from '@/prompt/languageTranslatePrompt';
 import { OpenAIStream } from '@/service/openAI';
 import { Label } from '@/components/ui/label';
 
-const maxTextLength = 5000;
+const MAX_TEXT_LENGTH = 5000;
+
 const Page = () => {
   const [sourceText, setSourceText] = useState('');
   const [translatedText, setTranslatedText] = useState('');
   const [inputLanguage, setInputLanguage] = useState(LANGUAGES.ja);
   const [outputLanguage, setOutputLanguage] = useState(LANGUAGES.vn);
+
+  const textAreaSourceRef = useRef<HTMLTextAreaElement>(null);
+  const textAreaTranslatedRef = useRef<HTMLTextAreaElement>(null);
 
   const handleTranslate = useCallback(async () => {
     setTranslatedText('');
@@ -32,9 +36,9 @@ const Page = () => {
       return;
     }
 
-    if (sourceText.length > maxTextLength) {
+    if (sourceText.length > MAX_TEXT_LENGTH) {
       alert(
-        `Please enter data less than ${maxTextLength} characters. You are currently at ${sourceText.length} characters.`
+        `Please enter data less than ${MAX_TEXT_LENGTH} characters. You are currently at ${sourceText.length} characters.`
       );
       return;
     }
@@ -84,107 +88,107 @@ const Page = () => {
     };
   }, [sourceText, inputLanguage, outputLanguage, handleTranslate]);
 
+  const handleSourceTextInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const textAreaSourceCurrent = textAreaSourceRef.current;
+    if (textAreaSourceCurrent) {
+      textAreaSourceCurrent.style.height = 'auto'; // Reset height để tính toán lại
+
+      const height = textAreaSourceCurrent.scrollHeight;
+      textAreaSourceCurrent.style.height = `${height}px`; // Cập nhật chiều cao
+      if (textAreaTranslatedRef.current) {
+        textAreaTranslatedRef.current.style.height = `${height}px`;
+      }
+    }
+    setSourceText(e.target.value);
+  };
+
   return (
-    <div className='flex h-full w-full min-h-screen flex-col px-4 pb-20 text-black sm:px-10'>
-      <div className='p-10 flex flex-col items-center justify-center sm:mt-20'>
+    <div className='flex flex-col size-full min-w-0  bg-background text-black px-4 sm:px-10 gap-10'>
+      <div className='p-1 flex flex-col items-center justify-center sm:mt-10'>
         <Label className='text-4xl'>Smart AI Translator Powered by ChatGPT</Label>
-        <div className='p-3'>
-          <Button variant='outline' size='default'>
-            <Languages />
-            Văn bản
-          </Button>
-        </div>
       </div>
-      <div className='flex justify-center w-full max-w-full gap-3'>
-        <div className='gap-1'>
-          <div className='flex'>
+      <div className='flex flex-col md:flex-row justify-center w-full max-w-full gap-3 px-32'>
+        <div className='flex flex-col gap-1 w-full md:w-1/2'>
+          <div className='flex flex-wrap'>
             <Button
               variant={inputLanguage === LANGUAGES.ja ? 'default' : 'link'}
-              onClick={() => {
-                setInputLanguage(LANGUAGES.ja);
-              }}
+              onClick={() => setInputLanguage(LANGUAGES.ja)}
               disabled={outputLanguage === LANGUAGES.ja}
             >
               Nhật
             </Button>
             <Button
               variant={inputLanguage === LANGUAGES.en ? 'default' : 'link'}
-              onClick={() => {
-                setInputLanguage(LANGUAGES.en);
-              }}
+              onClick={() => setInputLanguage(LANGUAGES.en)}
               disabled={outputLanguage === LANGUAGES.en}
             >
               Anh
             </Button>
             <Button
               variant={inputLanguage === LANGUAGES.vn ? 'default' : 'link'}
-              onClick={() => {
-                setInputLanguage(LANGUAGES.vn);
-              }}
+              onClick={() => setInputLanguage(LANGUAGES.vn)}
               disabled={outputLanguage === LANGUAGES.vn}
             >
               Việt
             </Button>
             <Button
               variant={inputLanguage === LANGUAGES.natural ? 'default' : 'link'}
-              onClick={() => {
-                setInputLanguage(LANGUAGES.natural);
-              }}
+              onClick={() => setInputLanguage(LANGUAGES.natural)}
             >
               Phát hiện ngôn ngữ
             </Button>
           </div>
-          <div className='pt-0.5 relative w-xl max-w-xl'>
+          <div className='relative w-full flex rounded-md border border-input bg-background px-1 pt-1 pb-8'>
             <Textarea
-              className='h-50 resize-none'
+              ref={textAreaSourceRef}
+              className='w-full min-h-[128px] resize-none border-none outline-none bg-transparent 
+              focus:outline-none focus:ring-0 focus:ring-offset-0 focus:shadow-none 
+              focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0'
               placeholder='Type or paste text here to translate'
-              onChange={(e) => {
-                setSourceText(e.target.value);
-              }}
+              onChange={handleSourceTextInput}
             />
-            <span className='absolute bottom-2 right-3 text-gray-500 bg-white px-1'>
-              {sourceText.length.toLocaleString()}/{maxTextLength.toLocaleString()}
+            <span className='absolute bottom-0 right-3 text-gray-500 bg-white px-1'>
+              {sourceText.length.toLocaleString()}/{MAX_TEXT_LENGTH.toLocaleString()}
             </span>
           </div>
         </div>
-        <div className='w-[50px] max-w-[50px]'>
+        <div className='flex w-[10x]'>
           <Button variant='ghost' size='icon' disabled>
             <ArrowRightLeft />
           </Button>
         </div>
-        <div className='w-xl max-w-xl'>
-          <div className='flex flex-1'>
+        <div className='flex flex-col gap-1 w-full md:w-1/2'>
+          <div className='flex flex-wrap'>
             <Button
               variant={outputLanguage === LANGUAGES.vn ? 'default' : 'link'}
-              onClick={() => {
-                setOutputLanguage(LANGUAGES.vn);
-              }}
+              onClick={() => setOutputLanguage(LANGUAGES.vn)}
               disabled={inputLanguage === LANGUAGES.vn}
             >
               Việt
             </Button>
             <Button
               variant={outputLanguage === LANGUAGES.en ? 'default' : 'link'}
-              onClick={() => {
-                setOutputLanguage(LANGUAGES.en);
-              }}
+              onClick={() => setOutputLanguage(LANGUAGES.en)}
               disabled={inputLanguage === LANGUAGES.en}
             >
               Anh
             </Button>
             <Button
               variant={outputLanguage === LANGUAGES.ja ? 'default' : 'link'}
-              onClick={() => {
-                setOutputLanguage(LANGUAGES.ja);
-              }}
+              onClick={() => setOutputLanguage(LANGUAGES.ja)}
               disabled={inputLanguage === LANGUAGES.ja}
             >
               Nhật
             </Button>
           </div>
-          <div className='flex-1 pt-0.5 '>
-            <div className='h-50 border-input  flex field-sizing-content min-h-16 w-full rounded-md border bg-gray-50 px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px]  md:text-sm'>
-              {translatedText}
+          <div className=''>
+            <div className='w-full flex rounded-md border border-input bg-gray-50 px-1 pt-1 pb-8 '>
+              <Textarea
+                ref={textAreaTranslatedRef}
+                className='min-h-[128px] resize-none w-full border-none outline-none disabled:cursor-auto disabled:bg-gray-50 disabled:opacity-100'
+                value={translatedText}
+                disabled={true}
+              />
             </div>
           </div>
         </div>

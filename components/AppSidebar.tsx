@@ -1,3 +1,4 @@
+'use client';
 import { SearchCode, Languages } from 'lucide-react';
 import {
   Sidebar,
@@ -6,13 +7,14 @@ import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
-  SidebarMenuItem
+  SidebarMenuItem,
+  useSidebar
 } from '@/components/ui/sidebar';
 import Link from 'next/link';
-import ModelSelect from './ModelSelect';
-import ButtonSetting from './ButtonSetting';
+import SidebarSetting from './SidebarSetting';
 
 // Menu items.
 const items = [
@@ -29,8 +31,24 @@ const items = [
 ];
 
 const AppSidebar = () => {
+  const { setOpenMobile } = useSidebar();
   return (
     <Sidebar>
+      <SidebarHeader>
+        <SidebarMenu>
+          <div className='flex flex-row justify-between items-center'>
+            <Link
+              href='/'
+              onClick={() => {
+                setOpenMobile(false);
+              }}
+              className='flex flex-row gap-3 items-center'
+            >
+              <span className='text-xl font-bold px-2 hover:bg-muted rounded-md cursor-pointer'>OpenAI</span>
+            </Link>
+          </div>
+        </SidebarMenu>
+      </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>AI Translator</SidebarGroupLabel>
@@ -51,14 +69,7 @@ const AppSidebar = () => {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <span className="flex p-2 gap-2 items-center">
-              <ModelSelect />
-              <ButtonSetting />
-            </span>
-          </SidebarMenuItem>
-        </SidebarMenu>
+        <SidebarSetting />
       </SidebarFooter>
     </Sidebar>
   );
