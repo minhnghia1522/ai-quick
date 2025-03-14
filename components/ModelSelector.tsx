@@ -21,11 +21,11 @@ export function ModelSelector({ className }: {} & React.ComponentProps<typeof Bu
   const selectedModel = useMemo(() => openAIModels.find((chatModel) => chatModel.id === modelId), [modelId]);
 
   useEffect(() => {
-    const modelLocalStorage = localStorage.getItem('modelId');
+    const modelLocalStorage = localStorage.getItem('model');
     if (modelLocalStorage) {
       setModelId(modelLocalStorage);
     } else {
-      localStorage.setItem('modelId', DEFAULT_CHAT_MODEL);
+      localStorage.setItem('model', DEFAULT_CHAT_MODEL);
     }
   }, [setModelId]);
 
@@ -50,6 +50,7 @@ export function ModelSelector({ className }: {} & React.ComponentProps<typeof Bu
               key={id}
               onSelect={() => {
                 setModelId(id);
+                localStorage.setItem('model', id);
                 setOpen(false);
               }}
               data-active={id === modelId}
