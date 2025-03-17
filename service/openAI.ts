@@ -1,71 +1,43 @@
-import { createParser, ParsedEvent, ReconnectInterval } from 'eventsource-parser';
+import { createOpenAI } from '@ai-sdk/openai';
+import { generateText, streamText } from 'ai';
+import { DEFAULT_CHAT_MODEL } from '@/types/types';
 
-export const OpenAIStream = async ({
-  prompt,
-  controller
-}: {
-  prompt: string;
-  controller: AbortController | undefined;
-}) => {
-  const system = { role: 'system', content: prompt };
-
+export const OpenAIText = async ({ prompt }: { prompt: string }) => {
   const key = localStorage.getItem('apiKey');
-  const model = localStorage.getItem('model');
-
-  const res = await fetch(`https://api.openai.com/v1/chat/completions`, {
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${key || process.env.OPENAI_API_KEY}`
-    },
-    signal: controller?.signal,
-    method: 'POST',
-    body: JSON.stringify({
-      model,
-      messages: [system],
-      temperature: 0,
-      stream: true
-    })
+  const openai = createOpenAI({
+    compatibility: 'strict',
+    apiKey: key || ''
   });
 
-  const encoder = new TextEncoder();
-  const decoder = new TextDecoder();
+  const model = openai('o1-mini');
 
-  if (res.status !== 200) {
-    const statusText = res.statusText;
-    const result = await res.body?.getReader().read();
-    throw new Error(`OpenAI API returned an error: ${decoder.decode(result?.value) || statusText}`);
+  try{
+  const { text } = await generateText({
+    model,
+    prompt,
+  });
+
+  return text;
+  } catch (error) {
+    throw new Error(error as string);
   }
+};
 
-  const stream = new ReadableStream({
-    async start(controller) {
-      const onParse = (event: ParsedEvent | ReconnectInterval) => {
-        if (event.type === 'event') {
-          const data = event.data;
+export const OpenAIStream = async ({ prompt }: { prompt: string }) => {
+  const key = localStorage.getItem('apiKey')
+  const modelSelected = localStorage.getItem('model');
+  const openai = createOpenAI({
+    compatibility: 'strict',
+    apiKey: key || ''
+  });
 
-          if (data === '[DONE]') {
-            controller.close();
-            return;
-          }
+  const model = openai(modelSelected || DEFAULT_CHAT_MODEL);
 
-          try {
-            const json = JSON.parse(data);
-            const text = json.choices[0].delta.content;
-            const queue = encoder.encode(text);
-            controller.enqueue(queue);
-          } catch (e) {
-            controller.error(e);
-          }
-        }
-      };
-
-      const parser = createParser(onParse);
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      for await (const chunk of res.body as any) {
-        parser.feed(decoder.decode(chunk));
-      }
+  return streamText({
+    model,
+    prompt,
+    onError({ error }) {
+      throw new Error(error as string);
     }
   });
-
-  return stream;
 };

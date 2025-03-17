@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { LANGUAGES } from '@/types/types';
 import { ArrowRightLeft } from 'lucide-react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { createPromptTranslateLanguage } from '@/prompt/languageTranslatePrompt';
 import { OpenAIStream } from '@/service/openAI';
@@ -43,38 +43,18 @@ const Page = () => {
       return;
     }
 
-    const controller = new AbortController();
-
     const prompt = createPromptTranslateLanguage(inputLanguage, outputLanguage, sourceText);
 
-    const stream = await OpenAIStream({
-      prompt,
-      controller
-    });
-    const response = new Response(stream);
+    try {
+      const stream = await OpenAIStream({
+        prompt,
+      });
 
-    if (!response.ok) {
-      toast.error('Something went wrong.');
-      return;
-    }
-
-    const data = response.body;
-
-    if (!data) {
-      toast.error('Something went wrong.');
-      return;
-    }
-
-    const reader = data.getReader();
-    const decoder = new TextDecoder();
-    let done = false;
-
-    while (!done) {
-      const { value, done: doneReading } = await reader.read();
-      done = doneReading;
-      const chunkValue = decoder.decode(value);
-
-      setTranslatedText((prevCode) => prevCode + chunkValue);
+      for await (const textPart of stream.textStream) {
+        setTranslatedText((prevData) => prevData + textPart);
+      }
+    } catch (error) {
+      toast.error((error as Error).message);
     }
   }, [inputLanguage, outputLanguage, sourceText]);
 
@@ -91,10 +71,10 @@ const Page = () => {
   const handleSourceTextInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const textAreaSourceCurrent = textAreaSourceRef.current;
     if (textAreaSourceCurrent) {
-      textAreaSourceCurrent.style.height = 'auto'; // Reset height để tính toán lại
+      textAreaSourceCurrent.style.height = 'auto'; // Reset height
 
       const height = textAreaSourceCurrent.scrollHeight;
-      textAreaSourceCurrent.style.height = `${height}px`; // Cập nhật chiều cao
+      textAreaSourceCurrent.style.height = `${height}px`; // update height to element
       if (textAreaTranslatedRef.current) {
         textAreaTranslatedRef.current.style.height = `${height}px`;
       }
