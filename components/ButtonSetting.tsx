@@ -12,7 +12,7 @@ const ButtonSetting = () => {
   };
   return (
     <>
-      <Button variant="outline" onClick={openDialog}>
+      <Button variant='outline' onClick={openDialog} className='ml-auto'>
         <Settings />
       </Button>
       <APIKeyInputDialog ref={dialogRef} />

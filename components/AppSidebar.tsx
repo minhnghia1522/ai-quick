@@ -20,20 +20,21 @@ import { usePathname } from 'next/navigation';
 // Menu items.
 const items = [
   {
-    title: 'Code Translate',
-    url: '/translate/code',
-    icon: SearchCode
-  },
-  {
     title: 'Language Translate',
     url: '/translate/languages',
     icon: Languages
+  },
+  {
+    title: 'Code Translate',
+    url: '/translate/code',
+    icon: SearchCode
   }
 ];
 
 const AppSidebar = () => {
   const pathname = usePathname();
   const { setOpenMobile } = useSidebar();
+
   return (
     <Sidebar>
       <SidebarHeader>
@@ -46,7 +47,7 @@ const AppSidebar = () => {
               }}
               className='flex flex-row gap-3 items-center'
             >
-              <span className='text-xl font-bold px-2 hover:bg-muted rounded-md cursor-pointer'>OpenAI</span>
+              <span className='text-xl font-bold px-2 hover:bg-muted rounded-md cursor-pointer'>AI QUICK</span>
             </Link>
           </div>
         </SidebarMenu>
