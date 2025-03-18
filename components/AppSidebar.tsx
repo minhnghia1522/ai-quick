@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/sidebar';
 import Link from 'next/link';
 import SidebarSetting from './SidebarSetting';
+import { usePathname } from 'next/navigation';
 
 // Menu items.
 const items = [
@@ -31,6 +32,7 @@ const items = [
 ];
 
 const AppSidebar = () => {
+  const pathname = usePathname();
   const { setOpenMobile } = useSidebar();
   return (
     <Sidebar>
@@ -56,7 +58,7 @@ const AppSidebar = () => {
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton asChild isActive={item.url == pathname}>
                     <Link href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
