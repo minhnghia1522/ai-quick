@@ -1,7 +1,6 @@
 'use client';
-
+import { cn } from '@/lib/utils';
 import { useEffect, useMemo, useState } from 'react';
-
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -9,25 +8,23 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { cn } from '@/lib/utils';
-
 import { CheckCircleFillIcon, ChevronDownIcon } from './icons';
-import { DEFAULT_CHAT_MODEL, openAIModels } from '@/types/types';
+import { OpenAIModel, openAIModels, STORAGE_KEY_MODEL } from '@/types/types';
 
 export function ModelSelector({ className }: {} & React.ComponentProps<typeof Button>) {
   const [open, setOpen] = useState(false);
-  const [modelId, setModelId] = useState(DEFAULT_CHAT_MODEL);
+  const [model, setModel] = useState<OpenAIModel>(openAIModels[0]);
 
-  const selectedModel = useMemo(() => openAIModels.find((chatModel) => chatModel.id === modelId), [modelId]);
+  const selectedModel = useMemo(() => openAIModels.find((chatModel) => chatModel.id === model.id), [model]);
 
   useEffect(() => {
-    const modelLocalStorage = localStorage.getItem('model');
+    const modelLocalStorage = localStorage.getItem(STORAGE_KEY_MODEL);
     if (modelLocalStorage) {
-      setModelId(modelLocalStorage);
+      setModel(JSON.parse(modelLocalStorage));
     } else {
-      localStorage.setItem('model', DEFAULT_CHAT_MODEL);
+      localStorage.setItem(STORAGE_KEY_MODEL, JSON.stringify(openAIModels[0]));
     }
-  }, [setModelId]);
+  }, [setModel]);
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
@@ -42,24 +39,24 @@ export function ModelSelector({ className }: {} & React.ComponentProps<typeof Bu
       </DropdownMenuTrigger>
       <DropdownMenuContent align='start' className='min-w-[300px]'>
         {openAIModels.map((chatModel) => {
-          const { id } = chatModel;
+          const { id, name, description } = chatModel;
 
           return (
             <DropdownMenuItem
               data-testid={`model-selector-item-${id}`}
               key={id}
               onSelect={() => {
-                setModelId(id);
-                localStorage.setItem('model', id);
+                setModel(chatModel);
+                localStorage.setItem(STORAGE_KEY_MODEL, JSON.stringify(chatModel));
                 setOpen(false);
               }}
-              data-active={id === modelId}
+              data-active={id === model.id}
               asChild
             >
               <button type='button' className='gap-4 group/item flex flex-row justify-between items-center w-full'>
                 <div className='flex flex-col gap-1 items-start'>
-                  <div>{chatModel.name}</div>
-                  <div className='text-xs text-muted-foreground'>{chatModel.description}</div>
+                  <div>{name}</div>
+                  <div className='text-xs text-muted-foreground'>{description}</div>
                 </div>
 
                 <div className='text-foreground dark:text-foreground opacity-0 group-data-[active=true]/item:opacity-100'>

@@ -1,6 +1,6 @@
+import { OpenAIModel, STORAGE_KEY_MODEL } from '@/types/types';
 import { createOpenAI } from '@ai-sdk/openai';
 import { generateText, streamText } from 'ai';
-import { DEFAULT_CHAT_MODEL } from '@/types/types';
 
 export const OpenAIText = async ({ prompt }: { prompt: string }) => {
   const key = localStorage.getItem('apiKey');
@@ -11,31 +11,45 @@ export const OpenAIText = async ({ prompt }: { prompt: string }) => {
 
   const model = openai('o1-mini');
 
-  try{
-  const { text } = await generateText({
-    model,
-    prompt,
-  });
+  try {
+    const { text } = await generateText({
+      model,
+      prompt
+    });
 
-  return text;
+    return text;
   } catch (error) {
     throw new Error(error as string);
   }
 };
 
 export const OpenAIStream = async ({ prompt }: { prompt: string }) => {
-  const key = localStorage.getItem('apiKey')
-  const modelSelected = localStorage.getItem('model');
+  const key = localStorage.getItem('apiKey');
+  const modelSelected = localStorage.getItem(STORAGE_KEY_MODEL);
   const openai = createOpenAI({
     compatibility: 'strict',
     apiKey: key || ''
   });
 
-  const model = openai(modelSelected || DEFAULT_CHAT_MODEL);
+  let model = {
+    id: 1,
+    model: 'gpt-4o-mini',
+    name: 'gpt-4o-mini',
+    description: 'Affordable small model for fast, everyday tasks'
+  } as OpenAIModel;
+
+  if (modelSelected) {
+    model = JSON.parse(modelSelected);
+  }
 
   return streamText({
-    model,
+    model: openai(model.model),
     prompt,
+    providerOptions: {
+      openai: {
+        ...(model.reasoningEffort && { reasoningEffort: model.reasoningEffort })
+      }
+    },
     onError({ error }) {
       throw new Error(error as string);
     }

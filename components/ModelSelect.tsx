@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from './ui/select';
+import { STORAGE_KEY_MODEL } from '@/types/types';
 
 type OpenAIModel = 'gpt-4o' | 'gpt-4o-mini' | 'o1-mini';
 
@@ -8,18 +9,18 @@ const ModelSelect = () => {
   const [model, setModel] = useState<OpenAIModel>('gpt-4o');
 
   useEffect(() => {
-    const modelLocalStorage = localStorage.getItem('model');
+    const modelLocalStorage = localStorage.getItem(STORAGE_KEY_MODEL);
 
     if (modelLocalStorage) {
       setModel(modelLocalStorage as OpenAIModel);
     } else {
-      localStorage.setItem('model', 'gpt-4o');
+      localStorage.setItem(STORAGE_KEY_MODEL, 'gpt-4o');
     }
   }, []);
 
   const handleValueChange = (value: string) => {
     setModel(value as OpenAIModel);
-    localStorage.setItem('model', value);
+    localStorage.setItem(STORAGE_KEY_MODEL, value);
   };
 
   return (
