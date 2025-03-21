@@ -2,7 +2,7 @@
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { LANGUAGES } from '@/types/types';
-import { ArrowRightLeft } from 'lucide-react';
+import { ArrowRightLeft, Loader2 } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { createPromptTranslateLanguage } from '@/prompt/languageTranslatePrompt';
@@ -16,6 +16,7 @@ const Page = () => {
   const [translatedText, setTranslatedText] = useState('');
   const [inputLanguage, setInputLanguage] = useState(LANGUAGES.ja);
   const [outputLanguage, setOutputLanguage] = useState(LANGUAGES.vn);
+  const [isLoading, setIsLoading] = useState(false);
 
   const textAreaSourceRef = useRef<HTMLTextAreaElement>(null);
   const textAreaTranslatedRef = useRef<HTMLTextAreaElement>(null);
@@ -42,12 +43,12 @@ const Page = () => {
       );
       return;
     }
-
+    setIsLoading(true);
     const prompt = createPromptTranslateLanguage(inputLanguage, outputLanguage, sourceText);
 
     try {
       const stream = await OpenAIStream({
-        prompt,
+        prompt
       });
 
       for await (const textPart of stream.textStream) {
@@ -55,6 +56,8 @@ const Page = () => {
       }
     } catch (error) {
       toast.error((error as Error).message);
+    } finally {
+      setIsLoading(false);
     }
   }, [inputLanguage, outputLanguage, sourceText]);
 
@@ -134,7 +137,7 @@ const Page = () => {
         </div>
         <div className='flex w-[10x]'>
           <Button variant='ghost' size='icon' disabled>
-            <ArrowRightLeft />
+            {isLoading ? <Loader2 className='animate-spin' /> : <ArrowRightLeft />}
           </Button>
         </div>
         <div className='flex flex-col gap-1 w-full md:w-1/2'>
