@@ -24,7 +24,6 @@
     "@uiw/react-codemirror": "^4.23.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "endent": "^2.1.0",
     "eventsource-parser": "^1.0.0",
     "lucide-react": "^0.477.0",
     "next": "15.2.0",

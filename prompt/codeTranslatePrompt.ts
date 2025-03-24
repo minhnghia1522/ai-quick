@@ -1,12 +1,6 @@
-import endent from 'endent';
-
-export const createPromptTranslateCode = (
-  inputLanguage: string,
-  outputLanguage: string,
-  inputCode: string
-) => {
+export const createPromptTranslateCode = (inputLanguage: string, outputLanguage: string, inputCode: string) => {
   if (inputLanguage === 'Natural Language') {
-    return endent`
+    return `
     You are an expert programmer in all programming languages. Translate the natural language to "${outputLanguage}" code. Do not include \`\`\`.
 
     Example translating from natural language to JavaScript:
@@ -25,7 +19,7 @@ export const createPromptTranslateCode = (
     ${outputLanguage} code (no \`\`\`):
     `;
   } else if (outputLanguage === 'Natural Language') {
-    return endent`
+    return `
       You are an expert programmer in all programming languages. Translate the "${inputLanguage}" code to natural language in plain English that the average adult could understand. Respond as bullet points starting with -.
   
       Example translating from JavaScript to natural language:
@@ -44,7 +38,7 @@ export const createPromptTranslateCode = (
       Natural language:
      `;
   } else {
-    return endent`
+    return `
       You are an expert programmer in all programming languages. Translate the "${inputLanguage}" code to "${outputLanguage}" code. Do not include \`\`\`.
   
       Example translating from JavaScript to Python:

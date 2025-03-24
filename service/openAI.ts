@@ -23,7 +23,7 @@ export const OpenAIText = async ({ prompt }: { prompt: string }) => {
   }
 };
 
-export const OpenAIStream = async ({ prompt }: { prompt: string }) => {
+export const OpenAIStream = async ({ system, prompt }: { prompt: string; system?: string }) => {
   const key = localStorage.getItem('apiKey');
   const modelSelected = localStorage.getItem(STORAGE_KEY_MODEL);
   const openai = createOpenAI({
@@ -44,7 +44,8 @@ export const OpenAIStream = async ({ prompt }: { prompt: string }) => {
 
   return streamText({
     model: openai(model.model),
-    prompt,
+    system,
+    prompt: prompt,
     providerOptions: {
       openai: {
         ...(model.reasoningEffort && { reasoningEffort: model.reasoningEffort })

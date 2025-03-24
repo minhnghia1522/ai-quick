@@ -47,9 +47,7 @@ const Page = () => {
     const prompt = createPromptTranslateLanguage(inputLanguage, outputLanguage, sourceText);
 
     try {
-      const stream = await OpenAIStream({
-        prompt
-      });
+      const stream = await OpenAIStream(prompt);
 
       for await (const textPart of stream.textStream) {
         setTranslatedText((prevData) => prevData + textPart);
