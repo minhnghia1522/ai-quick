@@ -35,6 +35,12 @@ const AppSidebar = () => {
   const pathname = usePathname();
   const { setOpenMobile } = useSidebar();
 
+  const handleCloseSidebarOnMobile = () => {
+    if (window.innerWidth < 768) {
+      setOpenMobile(false);
+    }
+  };
+
   return (
     <Sidebar>
       <SidebarHeader>
@@ -43,7 +49,7 @@ const AppSidebar = () => {
             <Link
               href='/'
               onClick={() => {
-                setOpenMobile(false);
+                handleCloseSidebarOnMobile();
               }}
               className='flex flex-row gap-3 items-center'
             >
@@ -60,7 +66,7 @@ const AppSidebar = () => {
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild isActive={item.url == pathname}>
-                    <Link href={item.url}>
+                    <Link href={item.url} onClick={handleCloseSidebarOnMobile}>
                       <item.icon />
                       <span>{item.title}</span>
                     </Link>
