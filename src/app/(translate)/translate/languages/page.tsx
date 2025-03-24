@@ -105,7 +105,7 @@ const Page = () => {
     languageChangeTimestampsRef.current.push(now);
 
     if (languageChangeTimestampsRef.current.length >= 3) {
-      toast.error('Spam: You are switching too fast!');
+      toast.warning('Spam: You are switching too fast!');
       return;
     }
     callback();
