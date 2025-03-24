@@ -2,7 +2,7 @@
 import { CodeBlock } from '@/components/CodeBlock';
 import { LanguageSelect } from '@/components/LanguageSelect';
 import { TextBlock } from '@/components/TextBlock';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { createPromptTranslateCode } from '@/prompt/codeTranslatePrompt';
 import { OpenAIStream } from '@/service/openAI';
@@ -14,6 +14,8 @@ export default function Home() {
   const [outputCode, setOutputCode] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [hasTranslated, setHasTranslated] = useState<boolean>(false);
+
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const handleTranslate = async () => {
     const maxCodeLength = 12000;
@@ -40,14 +42,25 @@ export default function Home() {
       return;
     }
 
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      setOutputCode('');
+    }
     setLoading(true);
     setOutputCode('');
 
     const prompt = createPromptTranslateCode(inputLanguage, outputLanguage, inputCode);
+
+    const abortController = new AbortController();
+    abortControllerRef.current = abortController;
+
     try {
-      const stream = await OpenAIStream({
-        prompt
-      });
+      const stream = await OpenAIStream(
+        {
+          prompt
+        },
+        abortController.signal
+      );
       let code = '';
       for await (const textPart of stream.textStream) {
         setOutputCode((prevData) => prevData + textPart);
@@ -57,7 +70,12 @@ export default function Home() {
       setHasTranslated(true);
       copyToClipboard(code);
     } catch (error) {
-      toast.error((error as Error).message);
+      if (error instanceof Error) {
+        if (error.name.includes('AbortError')) return;
+        toast.error(error.message);
+      } else {
+        toast.error('An unexpected error occurred.');
+      }
     } finally {
       setLoading(false);
       setHasTranslated(true);
