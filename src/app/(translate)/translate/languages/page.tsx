@@ -20,6 +20,7 @@ const Page = () => {
 
   const textAreaSourceRef = useRef<HTMLTextAreaElement>(null);
   const textAreaTranslatedRef = useRef<HTMLTextAreaElement>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const handleTranslate = useCallback(async () => {
     setTranslatedText('');
@@ -43,20 +44,33 @@ const Page = () => {
       );
       return;
     }
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      setTranslatedText('');
+    }
+    const abortController = new AbortController();
+    abortControllerRef.current = abortController;
+
     setIsLoading(true);
     const prompt = createPromptTranslateLanguage(inputLanguage, outputLanguage, sourceText);
-
     try {
-      const stream = await OpenAIStream(prompt);
+      const stream = await OpenAIStream(prompt, abortController.signal);
 
       for await (const textPart of stream.textStream) {
         setTranslatedText((prevData) => prevData + textPart);
       }
     } catch (error) {
-      toast.error((error as Error).message);
+      if (error instanceof Error) {
+        if (error.name.includes('AbortError')) return;
+        toast.error(error.message);
+      } else {
+        toast.error('An unexpected error occurred.');
+      }
     } finally {
       setIsLoading(false);
     }
+
+    setIsLoading(false);
   }, [inputLanguage, outputLanguage, sourceText]);
 
   useEffect(() => {
@@ -88,7 +102,7 @@ const Page = () => {
       <div className='p-1 flex flex-col items-center justify-center sm:mt-10'>
         <Label className='text-4xl'>Smart AI Translator Powered by ChatGPT</Label>
       </div>
-      <div className='flex flex-col md:flex-row justify-center w-full max-w-full gap-3 px-32'>
+      <div className='flex flex-col md:flex-row justify-center w-full max-w-full gap-3 md:px-0 lg:px-14 xl:px-32'>
         <div className='flex flex-col gap-1 w-full md:w-1/2'>
           <div className='flex flex-wrap'>
             <Button

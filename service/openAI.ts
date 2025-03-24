@@ -23,7 +23,10 @@ export const OpenAIText = async ({ prompt }: { prompt: string }) => {
   }
 };
 
-export const OpenAIStream = async ({ system, prompt }: { prompt: string; system?: string }) => {
+export const OpenAIStream = async (
+  { system, prompt }: { prompt: string; system?: string },
+  abortController: AbortSignal
+) => {
   const key = localStorage.getItem('apiKey');
   const modelSelected = localStorage.getItem(STORAGE_KEY_MODEL);
   const openai = createOpenAI({
@@ -51,6 +54,7 @@ export const OpenAIStream = async ({ system, prompt }: { prompt: string; system?
         ...(model.reasoningEffort && { reasoningEffort: model.reasoningEffort })
       }
     },
+    abortSignal: abortController,
     onError({ error }) {
       throw new Error(error as string);
     }
