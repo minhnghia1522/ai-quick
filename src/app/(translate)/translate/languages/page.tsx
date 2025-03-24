@@ -21,10 +21,12 @@ const Page = () => {
   const textAreaSourceRef = useRef<HTMLTextAreaElement>(null);
   const textAreaTranslatedRef = useRef<HTMLTextAreaElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+  // Ref để lưu các timestamp khi nhấn button thay đổi ngôn ngữ (tính bằng milliseconds)
+  const languageChangeTimestampsRef = useRef<number[]>([]);
 
   const handleTranslate = useCallback(async () => {
     setTranslatedText('');
-    if (!sourceText || sourceText == '' || sourceText == null) {
+    if (!sourceText || sourceText === '' || sourceText == null) {
       return;
     }
 
@@ -87,12 +89,26 @@ const Page = () => {
       textAreaSourceCurrent.style.height = 'auto'; // Reset height
 
       const height = textAreaSourceCurrent.scrollHeight;
-      textAreaSourceCurrent.style.height = `${height}px`; // update height to element
+      textAreaSourceCurrent.style.height = `${height}px`; // Update height của phần tử
       if (textAreaTranslatedRef.current) {
         textAreaTranslatedRef.current.style.height = `${height}px`;
       }
     }
     setSourceText(e.target.value);
+  };
+
+  const handleLanguageChange = (callback: () => void) => {
+    const now = Date.now();
+    languageChangeTimestampsRef.current = languageChangeTimestampsRef.current.filter(
+      (timestamp) => now - timestamp <= 1000
+    );
+    languageChangeTimestampsRef.current.push(now);
+
+    if (languageChangeTimestampsRef.current.length >= 3) {
+      toast.error('Spam: You are switching too fast!');
+      return;
+    }
+    callback();
   };
 
   return (
@@ -105,28 +121,28 @@ const Page = () => {
           <div className='flex flex-wrap'>
             <Button
               variant={inputLanguage === LANGUAGES.ja ? 'default' : 'link'}
-              onClick={() => setInputLanguage(LANGUAGES.ja)}
+              onClick={() => handleLanguageChange(() => setInputLanguage(LANGUAGES.ja))}
               disabled={outputLanguage === LANGUAGES.ja}
             >
               Nhật
             </Button>
             <Button
               variant={inputLanguage === LANGUAGES.en ? 'default' : 'link'}
-              onClick={() => setInputLanguage(LANGUAGES.en)}
+              onClick={() => handleLanguageChange(() => setInputLanguage(LANGUAGES.en))}
               disabled={outputLanguage === LANGUAGES.en}
             >
               Anh
             </Button>
             <Button
               variant={inputLanguage === LANGUAGES.vn ? 'default' : 'link'}
-              onClick={() => setInputLanguage(LANGUAGES.vn)}
+              onClick={() => handleLanguageChange(() => setInputLanguage(LANGUAGES.vn))}
               disabled={outputLanguage === LANGUAGES.vn}
             >
               Việt
             </Button>
             <Button
               variant={inputLanguage === LANGUAGES.natural ? 'default' : 'link'}
-              onClick={() => setInputLanguage(LANGUAGES.natural)}
+              onClick={() => handleLanguageChange(() => setInputLanguage(LANGUAGES.natural))}
             >
               Phát hiện ngôn ngữ
             </Button>
@@ -154,21 +170,21 @@ const Page = () => {
           <div className='flex flex-wrap'>
             <Button
               variant={outputLanguage === LANGUAGES.vn ? 'default' : 'link'}
-              onClick={() => setOutputLanguage(LANGUAGES.vn)}
+              onClick={() => handleLanguageChange(() => setOutputLanguage(LANGUAGES.vn))}
               disabled={inputLanguage === LANGUAGES.vn}
             >
               Việt
             </Button>
             <Button
               variant={outputLanguage === LANGUAGES.en ? 'default' : 'link'}
-              onClick={() => setOutputLanguage(LANGUAGES.en)}
+              onClick={() => handleLanguageChange(() => setOutputLanguage(LANGUAGES.en))}
               disabled={inputLanguage === LANGUAGES.en}
             >
               Anh
             </Button>
             <Button
               variant={outputLanguage === LANGUAGES.ja ? 'default' : 'link'}
-              onClick={() => setOutputLanguage(LANGUAGES.ja)}
+              onClick={() => handleLanguageChange(() => setOutputLanguage(LANGUAGES.ja))}
               disabled={inputLanguage === LANGUAGES.ja}
             >
               Nhật
