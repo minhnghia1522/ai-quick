@@ -71,7 +71,7 @@ export default function Home() {
       copyToClipboard(code);
     } catch (error) {
       if (error instanceof Error) {
-        if (error.name.includes('AbortError')) return;
+        if (['AbortError', 'aborted'].some((term) => error.message.includes(term))) return;
         toast.error(error.message);
       } else {
         toast.error('An unexpected error occurred.');
