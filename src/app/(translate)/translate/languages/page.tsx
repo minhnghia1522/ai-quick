@@ -66,8 +66,6 @@ const Page = () => {
       } else {
         toast.error('An unexpected error occurred.');
       }
-    } finally {
-      setIsLoading(false);
     }
 
     setIsLoading(false);
