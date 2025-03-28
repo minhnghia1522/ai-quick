@@ -1,5 +1,5 @@
 'use client';
-import { SearchCode, Languages } from 'lucide-react';
+import { SearchCode, Languages, TextSelect } from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
@@ -18,7 +18,7 @@ import SidebarSetting from './SidebarSetting';
 import { usePathname } from 'next/navigation';
 
 // Menu items.
-const items = [
+const translateMenu = [
   {
     title: 'Language Translate',
     url: '/translate/languages',
@@ -28,6 +28,14 @@ const items = [
     title: 'Code Translate',
     url: '/translate/code',
     icon: SearchCode
+  }
+];
+
+const promptMenu = [
+  {
+    title: 'Prompt Test',
+    url: '/prompt/test',
+    icon: TextSelect
   }
 ];
 
@@ -63,7 +71,24 @@ const AppSidebar = () => {
           <SidebarGroupLabel>AI Translator</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
+              {translateMenu.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild isActive={item.url == pathname}>
+                    <Link href={item.url} onClick={handleCloseSidebarOnMobile}>
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel>Prompt</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {promptMenu.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild isActive={item.url == pathname}>
                     <Link href={item.url} onClick={handleCloseSidebarOnMobile}>
