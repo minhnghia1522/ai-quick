@@ -2,7 +2,7 @@
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { LANGUAGES } from '@/types/types';
-import { ArrowRightLeft, Loader2 } from 'lucide-react';
+import { ArrowRightLeft, Loader2, X } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { createPromptTranslateLanguage } from '@/prompt/languageTranslatePrompt';
@@ -111,6 +111,15 @@ const Page = () => {
     callback();
   };
 
+  const handleClearSourceText = () => {
+    setIsLoading(false);
+    abortControllerRef.current?.abort();
+    setSourceText('');
+    setTranslatedText('');
+    textAreaSourceRef.current!.style.height = 'auto';
+    textAreaTranslatedRef.current!.style.height = 'auto';
+  };
+
   return (
     <div className='flex flex-col size-full min-w-0  bg-background text-black px-4 sm:px-10 gap-10'>
       <div className='p-1 flex flex-col items-center justify-center sm:mt-10'>
@@ -150,15 +159,23 @@ const Page = () => {
           <div className='relative w-full flex rounded-md border border-input bg-background px-1 pt-1 pb-8'>
             <Textarea
               ref={textAreaSourceRef}
+              value={sourceText}
               className='w-full min-h-[128px] resize-none border-none outline-none bg-transparent 
               focus:outline-none focus:ring-0 focus:ring-offset-0 focus:shadow-none 
               focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0'
               placeholder='Type or paste text here to translate'
               onChange={handleSourceTextInput}
             />
-            <span className='absolute bottom-0 right-3 text-gray-500 bg-white px-1'>
-              {sourceText.length.toLocaleString()}/{MAX_TEXT_LENGTH.toLocaleString()}
+            <span>
+              {sourceText !== '' ? (
+                <Button variant='ghost' size='icon' onClick={handleClearSourceText}>
+                  <X />
+                </Button>
+              ) : undefined}
             </span>
+            <div className='absolute bottom-0 right-3 text-gray-500 bg-white px-1'>
+              {sourceText.length.toLocaleString()}/{MAX_TEXT_LENGTH.toLocaleString()}
+            </div>
           </div>
         </div>
         <div className='flex w-[10x]'>
