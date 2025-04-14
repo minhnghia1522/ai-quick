@@ -5,6 +5,8 @@ export interface OpenAIModel {
   name: string;
   description: string;
   reasoningEffort?: string;
+  priceInput: number;
+  priceOutput: number;
 }
 
 export const openAIModels: Array<OpenAIModel> = [
@@ -12,40 +14,52 @@ export const openAIModels: Array<OpenAIModel> = [
     id: 1,
     model: 'gpt-4o-mini',
     name: 'gpt-4o-mini',
-    description: 'Affordable small model for fast, everyday tasks'
+    description: 'Affordable small model for fast, everyday tasks',
+    priceInput: 0.015,
+    priceOutput: 0.6
   },
   {
     id: 2,
     model: 'gpt-4o',
     name: 'gpt-4o',
-    description: 'High-intelligence model for complex tasks'
+    description: 'High-intelligence model for complex tasks',
+    priceInput: 2.5,
+    priceOutput: 10.0
   },
   {
     id: 3,
     model: 'o1-mini',
     name: 'o1-mini',
-    description: 'Uses advanced reasoning'
+    description: 'Uses advanced reasoning',
+    priceInput: 0.15,
+    priceOutput: 0.6
   },
   {
     id: 4,
     model: 'o3-mini-2025-01-31',
     name: 'o3-mini (high)',
     description: 'Uses advanced reasoning',
-    reasoningEffort: 'high'
+    reasoningEffort: 'high',
+    priceInput: 1.1,
+    priceOutput: 4.4
   },
   {
     id: 5,
     model: 'o3-mini-2025-01-31',
     name: 'o3-mini (medium)',
     description: 'Uses advanced reasoning',
-    reasoningEffort: 'medium'
+    reasoningEffort: 'medium',
+    priceInput: 1.1,
+    priceOutput: 4.4
   },
   {
     id: 6,
     model: 'o3-mini-2025-01-31',
     name: 'o3-mini (low)',
     description: 'Uses advanced reasoning',
-    reasoningEffort: 'low'
+    reasoningEffort: 'low',
+    priceInput: 1.1,
+    priceOutput: 4.4
   }
 ];
 

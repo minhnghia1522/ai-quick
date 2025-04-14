@@ -6,6 +6,8 @@ import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { createPromptTranslateCode } from '@/prompt/codeTranslatePrompt';
 import { OpenAIStream } from '@/service/openAI';
+import { Button } from '@/components/ui/button';
+import { ArrowRight, Clipboard, LoaderCircle } from 'lucide-react';
 
 export default function Home() {
   const [inputLanguage, setInputLanguage] = useState<string>('Natural Language');
@@ -14,6 +16,7 @@ export default function Home() {
   const [outputCode, setOutputCode] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [hasTranslated, setHasTranslated] = useState<boolean>(false);
+  const [copied, setCopied] = useState<boolean>(false);
 
   const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -48,6 +51,7 @@ export default function Home() {
     }
     setLoading(true);
     setOutputCode('');
+    setCopied(false);
 
     const prompt = createPromptTranslateCode(inputLanguage, outputLanguage, inputCode);
 
@@ -89,6 +93,15 @@ export default function Home() {
     el.select();
     document.execCommand('copy');
     document.body.removeChild(el);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleCopyOutput = () => {
+    if (outputCode) {
+      copyToClipboard(outputCode);
+      toast.success('Copied to clipboard!');
+    }
   };
 
   useEffect(() => {
@@ -99,42 +112,66 @@ export default function Home() {
   }, [outputLanguage]);
 
   return (
-    <>
-      <div className='flex h-full min-h-screen flex-col items-center bg-[#fff] px-4 pb-20 text-black sm:px-10'>
-        <div className='mt-10 flex flex-col items-center justify-center sm:mt-20'>
-          <div className='text-4xl font-bold'>AI Code Translator</div>
-        </div>
+    <div className='flex h-full flex-col items-center bg-background px-4 text-foreground sm:px-10'>
+      <div className='flex flex-col items-center justify-center pt-4'>
+        <h1 className='text-center text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent'>
+          AI Code Translator
+        </h1>
+        <p className='mt-2 text-muted-foreground text-center max-w-md'>
+          Easily translate between programming languages and natural language with AI assistance
+        </p>
+      </div>
 
-        <div className='mt-2 flex items-center space-x-2'>
-          <button
-            className='w-[140px] cursor-pointer rounded-md bg-violet-500 px-4 py-2 font-bold hover:bg-violet-600 active:bg-violet-700'
-            onClick={() => handleTranslate()}
-            disabled={loading}
-          >
-            {loading ? 'Translating...' : 'Translate'}
-          </button>
-        </div>
+      <div className='mt-6 flex items-center gap-4'>
+        <Button
+          className='flex items-center gap-2 min-w-[140px]'
+          variant='default'
+          size='lg'
+          onClick={handleTranslate}
+          disabled={loading}
+        >
+          {loading ? (
+            <>
+              <LoaderCircle className='h-4 w-4 animate-spin' />
+              Translating...
+            </>
+          ) : (
+            <>
+              Translate
+              <ArrowRight className='h-4 w-4' />
+            </>
+          )}
+        </Button>
 
-        <div className='mt-2 text-center text-xs'>
-          {loading
-            ? 'Translating...'
-            : hasTranslated
-            ? 'Output copied to clipboard!'
-            : 'Enter some code and click "Translate"'}
-        </div>
+        {hasTranslated && outputCode && (
+          <Button variant='outline' size='lg' onClick={handleCopyOutput} className='flex items-center gap-2'>
+            <Clipboard className='h-4 w-4' />
+            {copied ? 'Copied!' : 'Copy Output'}
+          </Button>
+        )}
+      </div>
 
-        <div className='mt-6 flex w-full max-w-[1200px] flex-col justify-between sm:flex-row sm:space-x-4'>
-          <div className='mt-8 flex h-full flex-col justify-center space-y-2 sm:mt-0 sm:w-2/4'>
-            <div className='text-center text-xl font-bold'>Input</div>
-            <LanguageSelect
-              language={inputLanguage}
-              onChange={(value) => {
-                setInputLanguage(value);
-                setHasTranslated(false);
-                setInputCode('');
-                setOutputCode('');
-              }}
-            />
+      <div className='mt-2 text-center text-xs text-muted-foreground'>
+        {loading
+          ? 'Translating your code...'
+          : hasTranslated
+          ? 'Translation complete!'
+          : 'Enter some code and click "Translate"'}
+      </div>
+
+      <div className='mt-8 grid w-full max-w-[1200px] gap-6 lg:grid-cols-2'>
+        <div className='flex h-full flex-col space-y-3 rounded-lg border p-4 shadow-sm'>
+          <h2 className='text-center text-xl font-semibold'>Input</h2>
+          <LanguageSelect
+            language={inputLanguage}
+            onChange={(value) => {
+              setInputLanguage(value);
+              setHasTranslated(false);
+              setInputCode('');
+              setOutputCode('');
+            }}
+          />
+          <div className='flex-1 overflow-hidden rounded-md border'>
             {inputLanguage === 'Natural Language' ? (
               <TextBlock
                 text={inputCode}
@@ -155,19 +192,27 @@ export default function Home() {
               />
             )}
           </div>
-          <div className='mt-8 flex h-full flex-col justify-center space-y-2 sm:mt-0 sm:w-2/4'>
-            <div className='text-center text-xl font-bold'>Output</div>
-            <LanguageSelect
-              language={outputLanguage}
-              onChange={(value) => {
-                setOutputLanguage(value);
-                setOutputCode('');
-              }}
-            />
+        </div>
+
+        <div className='flex h-full flex-col space-y-3 rounded-lg border p-4 shadow-sm'>
+          <h2 className='text-center text-xl font-semibold'>Output</h2>
+          <LanguageSelect
+            language={outputLanguage}
+            onChange={(value) => {
+              setOutputLanguage(value);
+              setOutputCode('');
+            }}
+          />
+          <div className='relative flex-1 overflow-hidden rounded-md border'>
             {outputLanguage === 'Natural Language' ? <TextBlock text={outputCode} /> : <CodeBlock code={outputCode} />}
+            {loading && (
+              <div className='absolute inset-0 flex items-center justify-center bg-background/80'>
+                <LoaderCircle className='h-8 w-8 animate-spin text-primary' />
+              </div>
+            )}
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

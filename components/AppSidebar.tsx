@@ -1,5 +1,5 @@
 'use client';
-import { SearchCode, Languages } from 'lucide-react';
+import { Code, Languages } from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
@@ -27,7 +27,7 @@ const items = [
   {
     title: 'Code Translate',
     url: '/translate/code',
-    icon: SearchCode
+    icon: Code
   }
 ];
 
