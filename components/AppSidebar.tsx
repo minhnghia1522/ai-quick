@@ -1,5 +1,5 @@
 'use client';
-import { Code, Languages } from 'lucide-react';
+import { Code, Languages, FileText } from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
@@ -28,6 +28,11 @@ const items = [
     title: 'Code Translate',
     url: '/translate/code',
     icon: Code
+  },
+  {
+    title: 'Chat with PDF',
+    url: '/chat-with-pdf',
+    icon: FileText
   }
 ];
 
