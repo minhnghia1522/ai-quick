@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Upload, FileText, Trash2, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import { Progress } from '../../../components/ui/progress';
 import { PDFViewer } from '@/components/PDFViewer';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 type PDFFile = {
   id: string;
@@ -143,8 +144,8 @@ export default function ChatWithPDF() {
       {/* Left Panel - PDF Upload and Management */}
       <div className='w-1/2 border-r flex flex-col h-full'>
         {/* Upload Section */}
-        <div className='p-4 border-b'>
-          <div className='border border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center'>
+        <div className='p-2 border-b'>
+          <div className='border border-dashed border-gray-300 rounded-lg p-1 flex flex-col items-center'>
             <Input
               type='file'
               accept='.pdf'
@@ -166,37 +167,46 @@ export default function ChatWithPDF() {
         </div>
 
         {/* Files List - Horizontal */}
-        <div className='p-4 border-b'>
-          <h3 className='text-sm font-medium mb-2'>File đã tải lên</h3>
+        <div className='p-2 border-b'>
+          <h3 className='text-sm font-medium mb-1'>File đã tải lên</h3>
           {files.length === 0 ? (
-            <div className='text-center text-gray-500 text-xs mb-3'>Chưa có file nào được tải lên</div>
+            <div className='text-center text-gray-500 text-xs mb-2'>Chưa có file nào được tải lên</div>
           ) : (
-            <div className='flex overflow-x-auto gap-2 pb-2 mb-3'>
+            <div className='flex overflow-x-auto gap-2 pb-1 mb-2'>
               {files.map((file) => (
                 <Card
                   key={file.id}
-                  className={`p-2 cursor-pointer flex-shrink-0 w-40 ${
-                    selectedFileId === file.id ? 'ring-2 ring-blue-500' : ''
+                  className={`p-1.5 cursor-pointer flex-shrink-0 w-40 border ${
+                    selectedFileId === file.id ? 'border-blue-500 border-2' : 'border-gray-200'
                   }`}
                   onClick={() => setSelectedFileId(file.id)}
                 >
-                  <div className='flex flex-col'>
-                    <div className='flex items-center justify-between mb-1'>
-                      {getStatusIcon(file.status)}
-                      <Button
-                        variant='ghost'
-                        size='icon'
-                        className='h-6 w-6'
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleRemoveFile(file.id);
-                        }}
-                      >
-                        <Trash2 className='h-3 w-3 text-gray-500' />
-                      </Button>
+                  <div className='flex items-start gap-1'>
+                    <div className='mt-0.5'>{getStatusIcon(file.status)}</div>
+                    <div className='flex-1 min-w-0'>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div className='text-xs font-medium truncate'>{file.file.name}</div>
+                          </TooltipTrigger>
+                          <TooltipContent side='bottom' align='start'>
+                            <p className='text-xs'>{file.file.name}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                      <div className='text-[10px] text-gray-500'>{(file.file.size / 1024 / 1024).toFixed(2)} MB</div>
                     </div>
-                    <div className='text-xs font-medium truncate'>{file.file.name}</div>
-                    <div className='text-[10px] text-gray-500'>{(file.file.size / 1024 / 1024).toFixed(2)} MB</div>
+                    <Button
+                      variant='ghost'
+                      size='icon'
+                      className='h-5 w-5 -mt-0.5 -mr-0.5'
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleRemoveFile(file.id);
+                      }}
+                    >
+                      <Trash2 className='h-3 w-3 text-red-500' />
+                    </Button>
                   </div>
                 </Card>
               ))}
@@ -242,7 +252,7 @@ export default function ChatWithPDF() {
             <PDFViewer file={selectedFile.file} />
           ) : (
             <div className='h-full flex flex-col justify-center p-6 text-center'>
-              <FileText className='h-12 w-12 text-gray-300 mx-auto mb-4' />
+              <FileText className='h-10 w-12 text-gray-300 mx-auto mb-4' />
               <h3 className='text-lg font-medium mb-2'>Không có file nào được chọn</h3>
               <p className='text-sm text-gray-500 mb-4'>
                 Vui lòng tải lên hoặc chọn một file PDF từ danh sách bên trên để bắt đầu

@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { ChevronLeft, ChevronRight, Maximize, Minimize, Plus, Minus, Download, Printer } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Maximize, Minimize, Plus, Minus, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import dynamic from 'next/dynamic';
 
@@ -123,23 +123,6 @@ export function PDFViewer({ file }: PDFViewerProps) {
     link.click();
   };
 
-  const handlePrint = () => {
-    if (!fileUrl) return;
-
-    const iframe = document.createElement('iframe');
-    iframe.style.display = 'none';
-    iframe.src = fileUrl;
-    document.body.appendChild(iframe);
-
-    iframe.onload = function () {
-      iframe.contentWindow?.print();
-      // Xóa iframe sau khi in để tránh rò rỉ bộ nhớ
-      setTimeout(() => {
-        document.body.removeChild(iframe);
-      }, 100);
-    };
-  };
-
   // Drag to scroll logic
   useEffect(() => {
     // Chỉ thực hiện trên client-side
@@ -205,15 +188,8 @@ export function PDFViewer({ file }: PDFViewerProps) {
 
   return (
     <div className={`flex h-full ${isFullscreen ? 'fixed inset-0 bg-white z-50' : ''}`}>
-      {isFullscreen && (
-        <div className='absolute top-2 right-2 z-10'>
-          <Button variant='outline' size='sm' onClick={() => setIsFullscreen(false)}>
-            <Minimize className='h-4 w-4 mr-2' /> Thoát toàn màn hình
-          </Button>
-        </div>
-      )}
       {/* Sidebar thumbnail */}
-      <div className='w-20 bg-gray-100 border-r overflow-auto py-2'>
+      <div className='w-32 bg-gray-100 border-r overflow-auto py-2'>
         {numPages ? (
           Array.from({ length: numPages }).map((_, index) => (
             <div
@@ -225,7 +201,7 @@ export function PDFViewer({ file }: PDFViewerProps) {
                 <Document file={fileUrl} loading={null} error={null}>
                   <Page
                     pageNumber={index + 1}
-                    width={60}
+                    width={100}
                     renderTextLayer={false}
                     renderAnnotationLayer={false}
                     loading={null}
@@ -262,15 +238,19 @@ export function PDFViewer({ file }: PDFViewerProps) {
             <Button variant='ghost' size='icon' onClick={handleZoomIn} disabled={zoom >= 200}>
               <Plus className='h-4 w-4' />
             </Button>
-            <Button variant='ghost' size='icon' onClick={toggleFullscreen}>
-              {isFullscreen ? <Minimize className='h-4 w-4' /> : <Maximize className='h-4 w-4' />}
-            </Button>
+            {!isFullscreen && (
+              <Button variant='ghost' size='icon' onClick={toggleFullscreen}>
+                <Maximize className='h-4 w-4' />
+              </Button>
+            )}
             <Button variant='ghost' size='icon' onClick={handleDownload}>
               <Download className='h-4 w-4' />
             </Button>
-            <Button variant='ghost' size='icon' onClick={handlePrint}>
-              <Printer className='h-4 w-4' />
-            </Button>
+            {isFullscreen && (
+              <Button variant='outline' size='sm' onClick={() => setIsFullscreen(false)}>
+                <Minimize className='h-4 w-4 mr-1' /> Thoát
+              </Button>
+            )}
           </div>
         </div>
 
@@ -278,13 +258,7 @@ export function PDFViewer({ file }: PDFViewerProps) {
           ref={scrollRef}
           className='flex-1 bg-gray-200 overflow-auto flex justify-center cursor-grab active:cursor-grabbing'
         >
-          <div
-            className='my-4'
-            style={{
-              transform: `scale(${zoom / 100})`,
-              transformOrigin: 'top center'
-            }}
-          >
+          <div className='my-4'>
             <Document
               file={fileUrl}
               onLoadSuccess={onDocumentLoadSuccess}
@@ -303,6 +277,7 @@ export function PDFViewer({ file }: PDFViewerProps) {
             >
               <Page
                 pageNumber={currentPage}
+                width={zoom * 5} // Sử dụng width thay vì transform để tránh chữ bị mờ
                 renderTextLayer
                 renderAnnotationLayer
                 className='shadow-lg'
