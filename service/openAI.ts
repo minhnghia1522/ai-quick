@@ -9,7 +9,7 @@ export const OpenAIText = async ({ prompt }: { prompt: string }) => {
     apiKey: key || ''
   });
 
-  const model = openai('o1-mini');
+  const model = openai('gpt-4.1');
 
   try {
     const { text } = await generateText({
@@ -36,9 +36,11 @@ export const OpenAIStream = async (
 
   let model = {
     id: 1,
-    model: 'gpt-4o-mini',
-    name: 'gpt-4o-mini',
-    description: 'Affordable small model for fast, everyday tasks'
+    model: 'gpt-4.1',
+    name: 'gpt-4.1',
+    description: 'Flagship GPT model for complex tasks',
+    priceInput: 2.0,
+    priceOutput: 8.0
   } as OpenAIModel;
 
   if (modelSelected) {

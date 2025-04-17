@@ -11,6 +11,14 @@ export interface OpenAIModel {
 
 export const openAIModels: Array<OpenAIModel> = [
   {
+    id: 0,
+    model: 'gpt-4.1',
+    name: 'gpt-4.1',
+    description: 'Flagship GPT model for complex tasks',
+    priceInput: 2.0,
+    priceOutput: 8.0
+  },
+  {
     id: 1,
     model: 'gpt-4o-mini',
     name: 'gpt-4o-mini',

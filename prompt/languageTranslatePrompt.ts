@@ -1,7 +1,7 @@
 import { LANGUAGES } from '@/types/types';
 
 export const createPromptTranslateLanguage = (inputLanguage: string, outputLanguage: string, inputText: string) => {
-  if (inputLanguage.length < 20 || inputLanguage !== LANGUAGES.ja) {
+  if (inputText.length < 100 || inputLanguage !== LANGUAGES.ja) {
     return {
       system: `You are a highly experienced translator fluent in both ${inputLanguage} and ${outputLanguage}. Translate the following text accurately and naturally. Please translate ${inputLanguage} to ${outputLanguage}`,
       prompt: inputText

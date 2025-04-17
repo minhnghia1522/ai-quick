@@ -21,7 +21,7 @@ import { OpenAIModel, openAIModels, STORAGE_KEY_MODEL } from '@/types/types';
 
 export function ModelSelector({ className }: {} & React.ComponentProps<typeof Button>) {
   const [open, setOpen] = useState(false);
-  const [model, setModel] = useState<OpenAIModel>(openAIModels[5]);
+  const [model, setModel] = useState<OpenAIModel>(openAIModels[0]);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [pendingModel, setPendingModel] = useState<OpenAIModel | null>(null);
 
