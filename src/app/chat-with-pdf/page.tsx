@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import { useState, useRef } from 'react';
@@ -8,6 +9,10 @@ import { Upload, FileText, Trash2, CheckCircle, AlertCircle, Loader2 } from 'luc
 import { Progress } from '../../../components/ui/progress';
 import { PDFViewer } from '@/components/PDFViewer';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { extractTextFromPdf, getMetaData } from '@/actions/chunkPdfAction';
+import { getEmbedding } from '@/service/embeddingService';
+import { StoredEmbedding, ValueEmbedding } from '@/types/chunk';
+import { EmbeddingStore } from '@/src/utils/indexedDB';
 
 type PDFFile = {
   id: string;
@@ -65,8 +70,41 @@ export default function ChatWithPDF() {
     }
   };
 
-  const handleProcessFiles = () => {
+  const handleProcessFiles = async () => {
     setIsProcessing(true);
+    const embeddingData = await Promise.all(
+      files.map(async (file) => {
+        if (file.status === 'pending') {
+          try {
+            const chunkText = await extractTextFromPdf(file.file);
+            const embeddingdata = await getEmbedding({ values: chunkText });
+
+            const data2 = chunkText.map((chunk, index) => ({
+              combined_sentence: chunk,
+              combined_sentence_embedding: embeddingdata[index]
+            }));
+
+            return {
+              embeddingId: crypto.randomUUID(),
+              object: 'embedding',
+              metadata: getMetaData(file.file),
+              semantic_chunks: data2
+            } as StoredEmbedding;
+          } catch (error) {
+            console.error('Error processing file:', error);
+            return null;
+          }
+        }
+        return null;
+      })
+    ).then((results) => results.filter((result) => result !== null));
+
+    if (embeddingData.length > 0) {
+      await EmbeddingStore.saveEmbedding({
+        id: crypto.randomUUID(),
+        embeddingData
+      });
+    }
 
     // Giả lập xử lý file
     const updatedFiles = files.map((file) => {
@@ -216,7 +254,7 @@ export default function ChatWithPDF() {
           <Button
             className='w-full'
             onClick={handleProcessFiles}
-            disabled={isProcessing || files.length === 0 || files.every((f) => f.status === 'completed')}
+            // disabled={isProcessing || files.length === 0 || files.every((f) => f.status === 'completed')}
           >
             {isProcessing ? (
               <>
