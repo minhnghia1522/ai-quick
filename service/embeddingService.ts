@@ -15,6 +15,6 @@ export const getEmbedding = async ({ values }: { values: string[] }): Promise<nu
 
   const model = openai.textEmbeddingModel(OPENAI_EMBEDDING_MODELS['text-embedding-3-small']);
 
-  const result = await model.doEmbed({ values });
-  return result.embeddings;
+  const { embeddings } = await model.doEmbed({ values });
+  return embeddings;
 };

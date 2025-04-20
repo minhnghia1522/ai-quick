@@ -9,27 +9,20 @@ import { Upload, FileText, Trash2, CheckCircle, AlertCircle, Loader2 } from 'luc
 import { Progress } from '../../../components/ui/progress';
 import { PDFViewer } from '@/components/PDFViewer';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { ChatInterface } from '@/components/ChatInterface';
 import { extractTextFromPdf, getMetaData } from '@/actions/chunkPdfAction';
 import { getEmbedding } from '@/service/embeddingService';
 import { StoredEmbedding, ValueEmbedding } from '@/types/chunk';
 import { EmbeddingStore } from '@/src/utils/indexedDB';
-
-type PDFFile = {
-  id: string;
-  file: File;
-  status: 'pending' | 'processing' | 'completed' | 'error';
-  progress: number;
-};
+import { type PDFFile } from '@/types/pdf';
 
 export default function ChatWithPDF() {
   const [files, setFiles] = useState<PDFFile[]>([]);
-  const [messages, setMessages] = useState<{ role: 'user' | 'assistant'; content: string }[]>([]);
-  const [inputValue, setInputValue] = useState('');
   const [selectedFileId, setSelectedFileId] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const selectedFile = selectedFileId ? files.find((f) => f.id === selectedFileId) : null;
+  const selectedFile: PDFFile | null = selectedFileId ? files.find((f) => f.id === selectedFileId) ?? null : null;
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -77,9 +70,11 @@ export default function ChatWithPDF() {
         if (file.status === 'pending') {
           try {
             const chunkText = await extractTextFromPdf(file.file);
-            const embeddingdata = await getEmbedding({ values: chunkText });
+            // Lọc bỏ các trang trống
+            const nonEmptyChunks = chunkText.filter((chunk) => chunk.trim().length > 0);
+            const embeddingdata = await getEmbedding({ values: nonEmptyChunks });
 
-            const data2 = chunkText.map((chunk, index) => ({
+            const data2 = nonEmptyChunks.map((chunk, index) => ({
               combined_sentence: chunk,
               combined_sentence_embedding: embeddingdata[index]
             }));
@@ -143,25 +138,6 @@ export default function ChatWithPDF() {
     setTimeout(() => {
       setIsProcessing(false);
     }, 5000);
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (inputValue.trim()) {
-      setMessages([...messages, { role: 'user', content: inputValue }]);
-      // Giả lập phản hồi từ assistant
-      setTimeout(() => {
-        setMessages((prev) => [
-          ...prev,
-          {
-            role: 'assistant',
-            content:
-              'Đây là phản hồi mẫu. Trong triển khai thực tế, phản hồi này sẽ được tạo bởi backend dựa trên nội dung của tệp PDF.'
-          }
-        ]);
-      }, 1000);
-      setInputValue('');
-    }
   };
 
   const getStatusIcon = (status: PDFFile['status']) => {
@@ -301,54 +277,7 @@ export default function ChatWithPDF() {
       </div>
 
       {/* Right Panel - Chat Interface */}
-      <div className='w-1/2 flex flex-col'>
-        <div className='flex flex-col h-full'>
-          {/* Chat Interface */}
-          <div className='flex-1 flex flex-col'>
-            {/* Chat messages */}
-            <div className='flex-1 p-4 overflow-auto'>
-              {!selectedFile ? (
-                <div className='h-full flex flex-col justify-center p-6 text-center'>
-                  <FileText className='h-12 w-12 text-gray-300 mx-auto mb-4' />
-                  <h3 className='text-lg font-medium mb-2'>Không có file nào được chọn</h3>
-                  <p className='text-sm text-gray-500 mb-4'>
-                    Vui lòng tải lên hoặc chọn một file PDF từ danh sách bên trái để bắt đầu
-                  </p>
-                </div>
-              ) : (
-                <div className='space-y-4'>
-                  {messages.map((message, index) => (
-                    <div
-                      key={index}
-                      className={`p-4 rounded-lg ${
-                        message.role === 'user' ? 'bg-blue-100 ml-12' : 'bg-gray-100 mr-12'
-                      }`}
-                    >
-                      {message.content}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Input area */}
-            <div className='p-4 border-t bg-white'>
-              <form onSubmit={handleSubmit} className='flex gap-2'>
-                <Input
-                  placeholder='Nhập câu hỏi của bạn về nội dung PDF...'
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  className='flex-1'
-                  disabled={!selectedFile}
-                />
-                <Button type='submit' disabled={!inputValue.trim() || !selectedFile}>
-                  Gửi
-                </Button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
+      <ChatInterface selectedFile={selectedFile} />
     </div>
   );
 }
