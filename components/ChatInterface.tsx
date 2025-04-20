@@ -9,10 +9,11 @@ import { useCustomChat } from '@/hooks/useCustomChat';
 
 type ChatInterfaceProps = {
   selectedFile: PDFFile | null;
+  chatId: string;
 };
 
-export const ChatInterface = ({ selectedFile }: ChatInterfaceProps) => {
-  const { messages, input, handleInputChange, handleSubmit, isLoading, error } = useCustomChat();
+export const ChatInterface = ({ selectedFile, chatId }: ChatInterfaceProps) => {
+  const { messages, input, handleInputChange, handleSubmit, isLoading, error } = useCustomChat(chatId);
 
   return (
     <div className='w-1/2 flex flex-col'>

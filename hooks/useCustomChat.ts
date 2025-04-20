@@ -1,12 +1,63 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { type CoreMessage } from 'ai';
 import { chatPdfService } from '@/service/chatService';
+import { chatHistoryStore, type ChatMessage } from '@/src/utils/chatHistoryDB';
 
-export function useCustomChat() {
+export function useCustomChat(chatId: string) {
   const [messages, setMessages] = useState<CoreMessage[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+
+  // Load chat history when component mounts
+  useEffect(() => {
+    const loadChatHistory = async () => {
+      try {
+        const history = await chatHistoryStore.getChatHistory(chatId);
+        if (history) {
+          // Convert ChatMessage[] to CoreMessage[]
+          setMessages(history.messages as CoreMessage[]);
+        } else {
+          // Initialize new chat history if none exists
+          await chatHistoryStore.saveChatHistory({
+            id: chatId,
+            messages: [],
+            createdAt: new Date(),
+            updatedAt: new Date()
+          });
+        }
+      } catch (err) {
+        console.error('Error loading chat history:', err);
+      }
+    };
+
+    loadChatHistory();
+  }, [chatId]);
+
+  // Save messages to chat history whenever they change
+  useEffect(() => {
+    const saveChatHistory = async () => {
+      try {
+        // Filter out system messages and convert CoreMessage[] to ChatMessage[]
+        const chatMessages = messages.filter(
+          (msg): msg is ChatMessage => msg.role === 'user' || msg.role === 'assistant'
+        );
+
+        await chatHistoryStore.saveChatHistory({
+          id: chatId,
+          messages: chatMessages,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        });
+      } catch (err) {
+        console.error('Error saving chat history:', err);
+      }
+    };
+
+    if (messages.length > 0) {
+      saveChatHistory();
+    }
+  }, [messages, chatId]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput(e.target.value);
