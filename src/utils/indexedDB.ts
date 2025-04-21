@@ -262,37 +262,28 @@ export const EmbeddingStore = {
   async findSimilarEmbeddings(
     queryVector: number[],
     limit = 5,
-    threshold = 0.7
+    threshold = 0.1
   ): Promise<
     Array<{
-      embedding: ValueEmbedding;
       similarity: number;
       matchDetails: {
         storedEmbeddingIndex: number;
         chunkIndex: number;
         text: string;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        metadata?: Record<string, any>;
       };
     }>
   > {
     const allEmbeddings = await this.getAllEmbeddings();
 
     // Calculate cosine similarity between vectors
-    const cosineSimilarity = (a: number[], b: number[]): number => {
-      if (a.length !== b.length) throw new Error('Vectors must have the same length');
-
-      let dotProduct = 0;
-      let normA = 0;
-      let normB = 0;
-
-      for (let i = 0; i < a.length; i++) {
-        dotProduct += a[i] * b[i];
-        normA += a[i] * a[i];
-        normB += b[i] * b[i];
-      }
-
-      if (normA === 0 || normB === 0) return 0;
-      return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
-    };
+    function cosineSimilarity(vec1: number[], vec2: number[]): number {
+      const dot = vec1.reduce((sum, val, i) => sum + val * vec2[i], 0);
+      const norm1 = Math.sqrt(vec1.reduce((sum, val) => sum + val * val, 0));
+      const norm2 = Math.sqrt(vec2.reduce((sum, val) => sum + val * val, 0));
+      return dot / (norm1 * norm2);
+    }
 
     // Calculate similarities for each embedding
     const results = allEmbeddings
@@ -302,7 +293,9 @@ export const EmbeddingStore = {
         let bestMatchDetails = {
           storedEmbeddingIndex: 0,
           chunkIndex: 0,
-          text: ''
+          text: '',
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          metadata: undefined as Record<string, any> | undefined
         };
 
         // Iterate through each StoredEmbedding in the embeddingData array
@@ -317,14 +310,14 @@ export const EmbeddingStore = {
               bestMatchDetails = {
                 storedEmbeddingIndex: storedIndex,
                 chunkIndex: chunkIndex,
-                text: chunk.combined_sentence
+                text: chunk.combined_sentence,
+                metadata: storedEmbedding.metadata
               };
             }
           });
         });
 
         return {
-          embedding,
           similarity: highestSimilarity,
           matchDetails: bestMatchDetails
         };

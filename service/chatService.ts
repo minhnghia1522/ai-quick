@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { createOpenAI } from '@ai-sdk/openai';
 import { CoreMessage, streamText, tool } from 'ai';
 import { z } from 'zod';
@@ -5,15 +6,24 @@ import { getEmbedding } from './embeddingService';
 import { EmbeddingStore } from '@/src/utils/indexedDB';
 
 const findRelevantContent = async (userQuery: string) => {
-  const userQueryEmbedded = await getEmbedding({ values: [userQuery] });
-  if (!userQueryEmbedded || userQueryEmbedded.length === 0) {
-    throw new Error('Failed to get embedding for the user query');
-  }
-  const userQueryVector = userQueryEmbedded[0];
-  const result = await EmbeddingStore.findSimilarEmbeddings(userQueryVector);
-  console.log('result', result);
-  return result;
+  console.log('userQuery', userQuery);
+  // const userQueryEmbedded = await getEmbedding({ values: [userQuery] });
+  // if (!userQueryEmbedded || userQueryEmbedded.length === 0) {
+  //   throw new Error('Failed to get embedding for the user query');
+  // }
+
+  // const userQueryVector = userQueryEmbedded[0];
+  // const result = await EmbeddingStore.findSimilarEmbeddings(userQueryVector);
+  return `TOOL_CALL_RESULT: Nghiadz`;
 };
+
+const getInformation = tool({
+  description: `get information from your knowledge base to answer questions.`,
+  parameters: z.object({
+    question: z.string().describe('the users question')
+  }),
+  execute: async ({ question }) => findRelevantContent(question)
+});
 
 export const chatPdfService = (messages: CoreMessage[], abortController: AbortSignal) => {
   const key = localStorage.getItem('apiKey');
@@ -22,34 +32,46 @@ export const chatPdfService = (messages: CoreMessage[], abortController: AbortSi
     apiKey: key || ''
   });
 
-  const model = openai('gpt-4');
+  const model = openai('gpt-4o-mini');
 
-  return streamText({
+  const result = streamText({
     model,
-    system: `You are a helpful assistant. Check your knowledge base before answering any questions.
-    Only respond to questions using information from tool calls.
-    if no relevant information is found in the tool calls, respond, "Sorry, I don't know."`,
+    system: `
+    Check your knowledge base before answering any questions.
+    Only respond using information retrieved from tool calls.
+    If no relevant information is found, respond: "Sorry, I don't know."`,
     messages,
+    maxSteps: 5,
     tools: {
-      //   addResource: tool({
-      //     description: `add a resource to your knowledge base.
-      //       If the user provides a random piece of knowledge unprompted, use this tool without asking for confirmation.`,
-      //     parameters: z.object({
-      //       content: z.string().describe('the content or resource to add to the knowledge base')
-      //     }),
-      //     execute: async ({ content }) => createResource({ content })
-      //   })
-      getInformation: tool({
-        description: `get information from your knowledge base to answer questions.`,
-        parameters: z.object({
-          question: z.string().describe('the users question')
-        }),
-        execute: async ({ question }) => findRelevantContent(question)
-      })
+      getInformation: getInformation
     },
     abortSignal: abortController,
     onError({ error }) {
+      console.log('error', error);
       throw new Error(error as string);
     }
   });
+
+  result.toolCalls
+    .then((toolCallsValue) => {
+      // This log will show the actual array of tool results once the promise resolves.
+      console.log('Resolved toolCalls:', toolCallsValue);
+    })
+    .catch((error) => {
+      // It's also good practice to catch potential errors.
+      console.error('Error resolving toolCalls:', error);
+    });
+
+  // Log the resolved value of toolResults correctly
+  result.toolResults
+    .then((toolResultsValue) => {
+      // This log will show the actual array of tool results once the promise resolves.
+      console.log('Resolved toolResults:', toolResultsValue);
+    })
+    .catch((error) => {
+      // It's also good practice to catch potential errors.
+      console.error('Error resolving toolResults:', error);
+    });
+
+  return result;
 };
