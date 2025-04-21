@@ -7,6 +7,8 @@ import { Loader2 } from 'lucide-react';
 import { type PDFFile } from '@/types/pdf';
 import { useCustomChat } from '@/hooks/useCustomChat';
 
+import ReactMarkdown from 'react-markdown';
+
 type ChatInterfaceProps = {
   selectedFile: PDFFile | null;
   chatId: string;
@@ -56,7 +58,7 @@ export const ChatInterface = ({ selectedFile, chatId }: ChatInterfaceProps) => {
                         message.role === 'user' ? 'bg-blue-100 ml-12' : 'bg-gray-100 mr-12'
                       }`}
                     >
-                      {content}
+                      <ReactMarkdown>{content}</ReactMarkdown>
                     </div>
                   );
                 })}

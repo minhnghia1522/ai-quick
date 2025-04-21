@@ -64,7 +64,10 @@ export const chatPdfService = (messages: CoreMessage[], abortController: AbortSi
     system: `
     Check your knowledge base before answering any questions.
     Only respond using information retrieved from tool calls.
-    If no relevant information is found, respond: "Sorry, I don't know."`,
+    If no relevant information is found, respond: "Sorry, I don't know."
+    
+    Always return markdown format.
+    `,
     messages,
     maxSteps: 2, // Gọi streamText với maxSteps = 2 để đảm bảo LLM sẽ phản hồi sau khi tool chạy
     tools: { getInformation, get_current_time },
