@@ -18,6 +18,8 @@ import { EmbeddingStore } from '@/src/utils/indexedDB';
 import { type PDFFile } from '@/types/pdf';
 import { chatHistoryStore } from '@/src/utils/chatHistoryDB';
 
+import { useCustomChat } from '@/hooks/useCustomChat';
+
 export default function ChatWithPDF() {
   const params = useParams();
   const router = useRouter();
@@ -27,6 +29,9 @@ export default function ChatWithPDF() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const selectedFile: PDFFile | null = selectedFileId ? files.find((f) => f.id === selectedFileId) ?? null : null;
+
+  // Lấy trạng thái notFound từ useCustomChat
+  const { notFound } = useCustomChat(params.id as string);
 
   useEffect(() => {
     // Nếu không có id trong URL, tạo mới và redirect
@@ -165,6 +170,18 @@ export default function ChatWithPDF() {
     }
   };
 
+  if (notFound) {
+    return (
+      <div className='flex flex-col items-center justify-center h-[calc(100vh-56px)] w-full'>
+        <AlertCircle className='h-16 w-16 text-red-400 mb-6' />
+        <h2 className='text-2xl font-bold mb-2'>Cuộc trò chuyện không tồn tại</h2>
+        <p className='text-base text-gray-500 mb-4'>
+          Đường dẫn hoặc mã cuộc trò chuyện này không tồn tại trong hệ thống.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className='flex h-[calc(100vh-56px)]'>
       {/* Left Panel - PDF Upload and Management */}
@@ -191,7 +208,6 @@ export default function ChatWithPDF() {
             </label>
           </div>
         </div>
-
         {/* Files List - Horizontal */}
         <div className='p-2 border-b'>
           <h3 className='text-sm font-medium mb-1'>File đã tải lên</h3>
@@ -238,7 +254,6 @@ export default function ChatWithPDF() {
               ))}
             </div>
           )}
-
           <Button
             className='w-full'
             onClick={handleProcessFiles}
@@ -253,7 +268,6 @@ export default function ChatWithPDF() {
               'Xử lý PDF'
             )}
           </Button>
-
           {files.some((f) => f.status === 'processing') && (
             <div className='space-y-2 mt-3'>
               <div className='text-xs font-medium'>Tiến trình xử lý</div>
@@ -271,7 +285,6 @@ export default function ChatWithPDF() {
             </div>
           )}
         </div>
-
         {/* PDF Viewer */}
         <div className='flex-1 overflow-auto'>
           {selectedFile ? (

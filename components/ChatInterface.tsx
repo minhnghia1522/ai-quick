@@ -2,8 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { FileText } from 'lucide-react';
-import { Loader2 } from 'lucide-react';
+import { FileText, Loader2, AlertCircle } from 'lucide-react';
 import { type PDFFile } from '@/types/pdf';
 import { useCustomChat } from '@/hooks/useCustomChat';
 
@@ -15,7 +14,19 @@ type ChatInterfaceProps = {
 };
 
 export const ChatInterface = ({ selectedFile, chatId }: ChatInterfaceProps) => {
-  const { messages, input, handleInputChange, handleSubmit, isLoading, error } = useCustomChat(chatId);
+  const { messages, input, handleInputChange, handleSubmit, isLoading, error, notFound } = useCustomChat(chatId);
+
+  if (notFound) {
+    return (
+      <div className='w-1/2 flex flex-col items-center justify-center h-full'>
+        <AlertCircle className='h-12 w-12 text-red-400 mb-4' />
+        <h3 className='text-lg font-medium mb-2'>Cuộc trò chuyện không tồn tại</h3>
+        <p className='text-sm text-gray-500 mb-4'>
+          Đường dẫn hoặc mã cuộc trò chuyện này không tồn tại trong hệ thống.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className='w-1/2 flex flex-col'>

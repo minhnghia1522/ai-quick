@@ -8,6 +8,7 @@ export function useCustomChat(chatId: string) {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  const [notFound, setNotFound] = useState(false);
 
   // Load chat history when component mounts
   useEffect(() => {
@@ -17,17 +18,13 @@ export function useCustomChat(chatId: string) {
         if (history) {
           // Convert ChatMessage[] to CoreMessage[]
           setMessages(history.messages as CoreMessage[]);
+          setNotFound(false);
         } else {
-          // Initialize new chat history if none exists
-          await chatHistoryStore.saveChatHistory({
-            id: chatId,
-            messages: [],
-            createdAt: new Date(),
-            updatedAt: new Date()
-          });
+          setNotFound(true);
         }
       } catch (err) {
         console.error('Error loading chat history:', err);
+        setNotFound(true);
       }
     };
 
@@ -116,6 +113,7 @@ export function useCustomChat(chatId: string) {
     handleInputChange,
     handleSubmit,
     isLoading,
-    error
+    error,
+    notFound
   };
 }
