@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import 'core-js/features/promise/with-resolvers';
 import { getDocument } from 'pdfjs-dist';
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 
