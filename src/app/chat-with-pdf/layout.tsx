@@ -1,3 +1,8 @@
+export const metadata = {
+  title: 'Chat with PDF',
+  description: 'Trò chuyện với file PDF của bạn bằng AI.'
+};
+
 import { AppHeader } from '@/components/AppHeader';
 import AppSidebar from '@/components/AppSidebar';
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';

@@ -14,7 +14,7 @@ import { ChatInterface } from '@/components/ChatInterface';
 import { extractTextFromPdf, getMetaData } from '@/actions/chunkPdfAction';
 import { getEmbedding } from '@/service/embeddingService';
 import { StoredEmbedding, ValueEmbedding } from '@/types/chunk';
-import { EmbeddingStore } from '@/src/utils/indexedDB';
+import { EmbeddingStore } from '@/src/utils/embeddingDB';
 import { type PDFFile } from '@/types/pdf';
 import { chatHistoryStore } from '@/src/utils/chatHistoryDB';
 

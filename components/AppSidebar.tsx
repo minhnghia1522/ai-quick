@@ -1,5 +1,5 @@
 'use client';
-import { Code, Languages, FileText, Trash } from 'lucide-react';
+import { Code, Languages, FileText } from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
@@ -16,9 +16,7 @@ import {
 import Link from 'next/link';
 import SidebarSetting from './SidebarSetting';
 import { usePathname } from 'next/navigation';
-
-import { useEffect, useState } from 'react';
-import { chatHistoryStore, ChatHistory } from '@/src/utils/chatHistoryDB';
+import ChatSidebarGroup from './ChatSidebarGroup';
 
 // Menu items.
 const menuItems = [
@@ -53,29 +51,10 @@ const AppSidebar = () => {
   const pathname = usePathname();
   const { setOpenMobile } = useSidebar();
 
-  const [chatHistories, setChatHistories] = useState<ChatHistory[]>([]);
-
-  useEffect(() => {
-    let isMounted = true;
-    chatHistoryStore.getAllChatHistories().then((histories) => {
-      if (isMounted)
-        setChatHistories(histories.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()));
-    });
-    return () => {
-      isMounted = false;
-    };
-  }, [pathname]);
-
   const handleCloseSidebarOnMobile = () => {
     if (window.innerWidth < 768) {
       setOpenMobile(false);
     }
-  };
-
-  // Xử lý xóa lịch sử chat
-  const handleDeleteHistory = async (id: string) => {
-    await chatHistoryStore.deleteChatHistory(id);
-    setChatHistories((prev) => prev.filter((h) => h.id !== id));
   };
 
   return (
@@ -100,74 +79,9 @@ const AppSidebar = () => {
           // Nếu là group Chat thì render thêm lịch sử chat
           if (groupLabel === 'Chat') {
             return (
-              <SidebarGroup key={index}>
-                <SidebarGroupLabel>{groupLabel}</SidebarGroupLabel>
-                <SidebarGroupContent>
-                  <SidebarMenu>
-                    {items.map((item) => {
-                      if (item.title === 'Chat with PDF') {
-                        return (
-                          <SidebarMenuItem key={item.title}>
-                            <SidebarMenuButton asChild isActive={item.url == pathname}>
-                              <Link href={item.url} onClick={handleCloseSidebarOnMobile}>
-                                <item.icon />
-                                <span>{item.title}</span>
-                              </Link>
-                            </SidebarMenuButton>
-                            {/* Lịch sử chat là con của Chat with PDF */}
-                            {chatHistories.length > 0 && (
-                              <div className='ml-6'>
-                                {chatHistories.map((history) => (
-                                  <div key={history.id} className='flex items-center justify-between group pr-2'>
-                                    <SidebarMenuItem className='flex-1 min-w-0'>
-                                      <SidebarMenuButton asChild isActive={pathname === `/chat-with-pdf/${history.id}`}>
-                                        <Link
-                                          href={`/chat-with-pdf/${history.id}`}
-                                          onClick={handleCloseSidebarOnMobile}
-                                          className='flex-1 min-w-0 truncate'
-                                        >
-                                          <span>{history.messages[0]?.content?.slice(0, 20) || 'Chat history'}</span>
-                                        </Link>
-                                      </SidebarMenuButton>
-                                    </SidebarMenuItem>
-                                    {pathname !== `/chat-with-pdf/${history.id}` && (
-                                      <button
-                                        className='ml-2 text-muted-foreground hover:text-destructive opacity-70 hover:opacity-100 transition'
-                                        title='Xóa lịch sử'
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          e.preventDefault();
-                                          handleDeleteHistory(history.id);
-                                        }}
-                                      >
-                                        <Trash size={16} />
-                                      </button>
-                                    )}
-                                  </div>
-                                ))}
-                              </div>
-                            )}
-                          </SidebarMenuItem>
-                        );
-                      }
-                      // Các item khác giữ nguyên
-                      return (
-                        <SidebarMenuItem key={item.title}>
-                          <SidebarMenuButton asChild isActive={item.url == pathname}>
-                            <Link href={item.url} onClick={handleCloseSidebarOnMobile}>
-                              <item.icon />
-                              <span>{item.title}</span>
-                            </Link>
-                          </SidebarMenuButton>
-                        </SidebarMenuItem>
-                      );
-                    })}
-                  </SidebarMenu>
-                </SidebarGroupContent>
-              </SidebarGroup>
+              <ChatSidebarGroup key={index} pathname={pathname} onCloseSidebarMobile={handleCloseSidebarOnMobile} />
             );
           }
-          // Các group khác giữ nguyên
           return (
             <SidebarGroup key={index}>
               <SidebarGroupLabel>{groupLabel}</SidebarGroupLabel>

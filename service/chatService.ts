@@ -2,7 +2,7 @@ import { createOpenAI } from '@ai-sdk/openai';
 import { CoreMessage, streamText, tool } from 'ai';
 import { z } from 'zod';
 import { getEmbedding } from './embeddingService';
-import { EmbeddingStore } from '@/src/utils/indexedDB';
+import { EmbeddingStore } from '@/src/utils/embeddingDB';
 import { OpenAIModel, STORAGE_KEY_MODEL } from '@/types/types';
 
 const findRelevantContent = async (userQuery: string) => {
