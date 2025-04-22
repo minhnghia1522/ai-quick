@@ -280,9 +280,6 @@ export default function ChatWithPDF() {
             <div className='h-full flex flex-col justify-center p-6 text-center'>
               <FileText className='h-10 w-12 text-gray-300 mx-auto mb-4' />
               <h3 className='text-lg font-medium mb-2'>Không có file nào được chọn</h3>
-              <p className='text-sm text-gray-500 mb-4'>
-                Vui lòng tải lên hoặc chọn một file PDF từ danh sách bên trên để bắt đầu
-              </p>
             </div>
           )}
         </div>

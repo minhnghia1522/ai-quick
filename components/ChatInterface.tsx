@@ -74,9 +74,9 @@ export const ChatInterface = ({ selectedFile, chatId }: ChatInterfaceProps) => {
                 value={input}
                 onChange={handleInputChange}
                 className='flex-1'
-                disabled={!selectedFile}
+                // disabled={!selectedFile}
               />
-              <Button type='submit' disabled={!input.trim() || !selectedFile || isLoading}>
+              <Button type='submit' disabled={!input.trim() || isLoading}>
                 {isLoading ? (
                   <>
                     <Loader2 className='mr-2 h-4 w-4 animate-spin' />

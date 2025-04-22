@@ -18,21 +18,31 @@ import SidebarSetting from './SidebarSetting';
 import { usePathname } from 'next/navigation';
 
 // Menu items.
-const items = [
+const menuItems = [
   {
-    title: 'Language Translate',
-    url: '/translate/languages',
-    icon: Languages
+    groupLabel: 'AI Translator',
+    items: [
+      {
+        title: 'Language Translate',
+        url: '/translate/languages',
+        icon: Languages
+      },
+      {
+        title: 'Code Translate',
+        url: '/translate/code',
+        icon: Code
+      }
+    ]
   },
   {
-    title: 'Code Translate',
-    url: '/translate/code',
-    icon: Code
-  },
-  {
-    title: 'Chat with PDF',
-    url: '/chat-with-pdf',
-    icon: FileText
+    groupLabel: 'Chat',
+    items: [
+      {
+        title: 'Chat with PDF',
+        url: '/chat-with-pdf',
+        icon: FileText
+      }
+    ]
   }
 ];
 
@@ -64,23 +74,27 @@ const AppSidebar = () => {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>AI Translator</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild isActive={item.url == pathname}>
-                    <Link href={item.url} onClick={handleCloseSidebarOnMobile}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {menuItems.map(({ items, groupLabel }, index) => {
+          return (
+            <SidebarGroup key={index}>
+              <SidebarGroupLabel>{groupLabel}</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {items.map((item) => (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton asChild isActive={item.url == pathname}>
+                        <Link href={item.url} onClick={handleCloseSidebarOnMobile}>
+                          <item.icon />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          );
+        })}
       </SidebarContent>
       <SidebarFooter>
         <SidebarSetting />
