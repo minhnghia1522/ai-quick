@@ -47,7 +47,7 @@ export default function ChatWithPDF() {
     const loadFileStorge = async () => {
       try {
         const fileStorge = await FileStore.getFileByChatId(params.id as string);
-        if (fileStorge) {
+        if (fileStorge.length > 0) {
           const fileData: PDFFile[] = fileStorge.map((data) => ({
             id: data.id,
             file: new File([data.blob!], data.filename, {
@@ -58,16 +58,14 @@ export default function ChatWithPDF() {
             progress: 100
           }));
           setFiles(fileData);
-          if (fileData.length > 0 && !selectedFileId) {
-            setSelectedFileId(fileData[0].id);
-          }
+          setSelectedFileId(fileData[0].id);
         }
       } catch (error) {
         console.error('Error loading embedding:', error);
       }
     };
     loadFileStorge();
-  }, [params.id, selectedFileId]);
+  }, [params.id]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {

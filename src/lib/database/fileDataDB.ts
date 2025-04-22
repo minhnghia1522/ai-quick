@@ -70,7 +70,7 @@ export const FileStore = {
     chatId: string,
     queryVector: number[],
     limit = 5,
-    threshold = 0.1
+    threshold = 0.3
   ): Promise<
     Array<{
       similarity: number;
