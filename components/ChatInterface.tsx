@@ -22,7 +22,7 @@ export const ChatInterface = ({ selectedFile, chatId }: ChatInterfaceProps) => {
       <div className='flex flex-col h-full'>
         <div className='flex-1 flex flex-col'>
           {/* Chat messages */}
-          <div className='flex-1 p-4 overflow-auto'>
+          <div className='flex-1 min-h-0 p-2 overflow-auto'>
             {!selectedFile ? (
               <div className='h-full flex flex-col justify-center p-6 text-center'>
                 <FileText className='h-12 w-12 text-gray-300 mx-auto mb-4' />
@@ -67,7 +67,7 @@ export const ChatInterface = ({ selectedFile, chatId }: ChatInterfaceProps) => {
           </div>
 
           {/* Input area */}
-          <div className='p-4 border-t bg-white'>
+          <div className='p-2 border-t bg-white'>
             <form onSubmit={handleSubmit} className='flex gap-2'>
               <Input
                 placeholder='Nhập câu hỏi của bạn về nội dung PDF...'
