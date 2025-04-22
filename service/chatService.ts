@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { createOpenAI } from '@ai-sdk/openai';
 import { CoreMessage, streamText, tool } from 'ai';
 import { z } from 'zod';
 import { getEmbedding } from './embeddingService';
 import { EmbeddingStore } from '@/src/utils/indexedDB';
+import { OpenAIModel, STORAGE_KEY_MODEL } from '@/types/types';
 
 const findRelevantContent = async (userQuery: string) => {
   const userQueryEmbedded = await getEmbedding({ values: [userQuery] });
@@ -52,15 +51,25 @@ const get_current_time = tool({
 
 export const chatPdfService = (messages: CoreMessage[], abortController: AbortSignal) => {
   const key = localStorage.getItem('apiKey');
+  const modelSelected = localStorage.getItem(STORAGE_KEY_MODEL);
   const openai = createOpenAI({
     compatibility: 'strict',
     apiKey: key || ''
   });
 
-  const model = openai('gpt-4o-mini');
+  let model = {
+    id: 1,
+    model: 'gpt-4o-mini',
+    name: 'gpt-4o-mini',
+    description: 'Affordable small model for fast, everyday tasks'
+  } as OpenAIModel;
+
+  if (modelSelected) {
+    model = JSON.parse(modelSelected);
+  }
 
   const result = streamText({
-    model,
+    model: openai(model.model),
     system: `
     Check your knowledge base before answering any questions.
     Only respond using information retrieved from tool calls.
@@ -78,22 +87,6 @@ export const chatPdfService = (messages: CoreMessage[], abortController: AbortSi
       throw error; // Rethrow the original error object for better stack trace
     }
   });
-
-  // Add more detailed logging for the promises
-  result.toolCalls
-    .then((toolCallsValue) => {})
-    .catch((error: any) => {
-      // Correct syntax for typing the error parameter
-      console.error('[chatPdfService] Error resolving toolCalls promise:', error);
-    });
-
-  // Log the resolved value of toolResults correctly
-  result.toolResults
-    .then((toolResultsValue) => {})
-    .catch((error: any) => {
-      // Correct syntax for typing the error parameter
-      console.error('[chatPdfService] Error resolving toolResults promise:', error);
-    });
 
   return result;
 };
