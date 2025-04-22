@@ -2,42 +2,40 @@ import { createOpenAI } from '@ai-sdk/openai';
 import { CoreMessage, streamText, tool } from 'ai';
 import { z } from 'zod';
 import { getEmbedding } from './embeddingService';
-import { EmbeddingStore } from '@/src/utils/embeddingDB';
 import { OpenAIModel, STORAGE_KEY_MODEL } from '@/types/types';
+import { FileStore } from '@/src/lib/database/fileDataDB';
 
-const findRelevantContent = async (userQuery: string) => {
+const findRelevantContent = async (chatId: string, userQuery: string) => {
+  console.log('chatId', chatId);
   const userQueryEmbedded = await getEmbedding({ values: [userQuery] });
   if (!userQueryEmbedded || userQueryEmbedded.length === 0) {
     throw new Error('Failed to get embedding for the user query');
   }
 
   const userQueryVector = userQueryEmbedded[0];
-  const result = await EmbeddingStore.findSimilarEmbeddings(userQueryVector);
+  const result = await FileStore.findSimilarEmbeddings(chatId, userQueryVector);
 
-  const formatted = result
-    .map((item, idx) => {
-      const { similarity, matchDetails } = item;
-      const { storedEmbeddingIndex, chunkIndex, text, metadata } = matchDetails;
+  console.log('result', result);
 
-      // Stringify metadata nếu có
-      const metaText = metadata ? `\n   • metadata: ${JSON.stringify(metadata, null, 2)}` : '';
+  const data = result.map((result) => {
+    const { similarity, matchData } = result;
+    const formated = `similarity: ${similarity}
+      dataL: ${JSON.stringify(matchData)}
+  `;
+    return formated;
+  });
 
-      return `${idx + 1}. [chunk #${chunkIndex} | stored #${storedEmbeddingIndex}]
-   → "${text.trim()}"
-   (similarity: ${similarity.toFixed(4)})${metaText}`;
-    })
-    .join('\n\n');
-
-  return `Retrieved content based on your query "${userQuery}": ${formatted}`; // Make the result more descriptive
+  return `Retrieved content based on your query "${userQuery}": ${JSON.stringify(data)}`; // Make the result more descriptive
 };
 
-const getInformation = tool({
-  description: `get information from your knowledge base to answer questions.`,
-  parameters: z.object({
-    question: z.string().describe('the users question')
-  }),
-  execute: async ({ question }) => findRelevantContent(question)
-});
+const getInformation = (chatId: string) =>
+  tool({
+    description: `get information from your knowledge base to answer questions.`,
+    parameters: z.object({
+      question: z.string().describe('the users question')
+    }),
+    execute: async ({ question }) => findRelevantContent(chatId, question)
+  });
 
 const get_current_time = tool({
   description: `Return the current time in the UTC time zone.`,
@@ -49,7 +47,7 @@ const get_current_time = tool({
   }
 });
 
-export const chatPdfService = (messages: CoreMessage[], abortController: AbortSignal) => {
+export const chatPdfService = (messages: CoreMessage[], abortController: AbortSignal, chatId: string) => {
   const key = localStorage.getItem('apiKey');
   const modelSelected = localStorage.getItem(STORAGE_KEY_MODEL);
   const openai = createOpenAI({
@@ -79,7 +77,7 @@ export const chatPdfService = (messages: CoreMessage[], abortController: AbortSi
     `,
     messages,
     maxSteps: 2, // Gọi streamText với maxSteps = 2 để đảm bảo LLM sẽ phản hồi sau khi tool chạy
-    tools: { getInformation, get_current_time },
+    tools: { getInformation: getInformation(chatId), get_current_time },
     abortSignal: abortController,
     onError(error) {
       console.error('[streamText onError] An error occurred:', error);

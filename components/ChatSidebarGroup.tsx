@@ -10,8 +10,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem
 } from '@/components/ui/sidebar';
-import { chatHistoryStore, ChatHistory } from '@/src/utils/chatHistoryDB';
-import { EmbeddingStore } from '@/src/utils/embeddingDB';
+import { chatHistoryStore, ChatHistory } from '@/src/lib/database/chatHistoryDB';
+import { FileStore } from '@/src/lib/database/fileDataDB';
 
 interface ChatSidebarGroupProps {
   pathname: string;
@@ -34,7 +34,7 @@ const ChatSidebarGroup = ({ pathname, onCloseSidebarMobile }: ChatSidebarGroupPr
 
   const handleDeleteHistory = async (id: string) => {
     await chatHistoryStore.deleteChatHistory(id);
-    await EmbeddingStore.deleteEmbedding(id);
+    await FileStore.deleteFileByChatId(id);
     setChatHistories((prev) => prev.filter((h) => h.id !== id));
   };
 

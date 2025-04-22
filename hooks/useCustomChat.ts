@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { type CoreMessage } from 'ai';
 import { chatPdfService } from '@/service/chatService';
-import { chatHistoryStore, type ChatMessage } from '@/src/utils/chatHistoryDB';
+import { chatHistoryStore, type ChatMessage } from '@/src/lib/database/chatHistoryDB';
 
 export function useCustomChat(chatId: string) {
   const [messages, setMessages] = useState<CoreMessage[]>([]);
@@ -87,7 +87,7 @@ export function useCustomChat(chatId: string) {
       ]);
 
       // Xử lý stream text
-      const stream = chatPdfService([...messages, userMessage], controller.signal);
+      const stream = chatPdfService([...messages, userMessage], controller.signal, chatId);
 
       let content = '';
 

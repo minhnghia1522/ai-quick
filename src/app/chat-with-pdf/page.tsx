@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Image from 'next/image';
-import { chatHistoryStore, ChatHistory } from '@/src/utils/chatHistoryDB';
+import { chatHistoryStore, ChatHistory } from '@/src/lib/database/chatHistoryDB';
 import { Button } from '@/components/ui/button';
 
 export default function ChatWithPDFWelcome() {
