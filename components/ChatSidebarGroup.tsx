@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Trash } from 'lucide-react';
+import { FileText, Trash } from 'lucide-react';
 import Link from 'next/link';
 import {
   SidebarGroup,
@@ -47,6 +47,7 @@ const ChatSidebarGroup = ({ pathname, onCloseSidebarMobile }: ChatSidebarGroupPr
           <SidebarMenuItem key='Chat with PDF'>
             <SidebarMenuButton asChild isActive={'/chat-with-pdf' === pathname}>
               <Link href='/chat-with-pdf' onClick={onCloseSidebarMobile}>
+                <FileText />
                 <span>Chat with PDF</span>
               </Link>
             </SidebarMenuButton>

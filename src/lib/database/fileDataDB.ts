@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { DBSchema, IDBPDatabase, openDB } from 'idb';
 
 const DB_NAME = 'file-storage';
@@ -66,20 +67,9 @@ export const FileStore = {
     await db.delete(STORE_NAME, chatId);
   },
 
-  async findSimilarEmbeddings(
-    chatId: string,
-    queryVector: number[],
-    limit = 5,
-    threshold = 0.3
-  ): Promise<
-    Array<{
-      similarity: number;
-      matchData: FileData[];
-    }>
-  > {
+  async findSimilarEmbeddings(chatId: string, queryVector: number[], limit = 5, threshold = 0.3) {
     const allFile = await this.getFileByChatId(chatId);
 
-    // Calculate cosine similarity between vectors
     function cosineSimilarity(vec1: number[], vec2: number[]): number {
       const dot = vec1.reduce((sum, val, i) => sum + val * vec2[i], 0);
       const norm1 = Math.sqrt(vec1.reduce((sum, val) => sum + val * val, 0));
@@ -87,36 +77,22 @@ export const FileStore = {
       return dot / (norm1 * norm2);
     }
 
-    // Calculate similarities for each embedding
-    const results = allFile
-      .map((fileData) => {
-        // Find the highest similarity across all chunks in all stored embeddings
-        let highestSimilarity = 0;
-        let matchEmbedding: EmbeddingData = {
-          content: '',
-          chunkIndex: 0
-        };
-
-        // Iterate through each StoredEmbedding in the embeddingData array
-        fileData.embedding?.forEach((embeddingData) => {
-          if (embeddingData.embedding) {
-            const similarity = cosineSimilarity(queryVector, embeddingData.embedding);
-            if (similarity > highestSimilarity) {
-              highestSimilarity = similarity;
-              matchEmbedding = embeddingData;
-            }
+    return allFile.map((fileData) => {
+      const matchData = fileData.embedding?.map((embeddingData) => {
+        if (embeddingData.embedding) {
+          const similarity = cosineSimilarity(queryVector, embeddingData.embedding);
+          if (similarity >= threshold) {
+            return {
+              ...embeddingData,
+              embedding: undefined // Ẩn chi tiết embedding
+            };
           }
-        });
-
-        return {
-          similarity: highestSimilarity,
-          matchData: [{ ...fileData, blob: undefined, embedding: [{ ...matchEmbedding, embedding: undefined }] }]
-        };
-      })
-      .filter((result) => result.similarity >= threshold)
-      .sort((a, b) => b.similarity - a.similarity)
-      .slice(0, limit);
-
-    return results;
+        }
+      });
+      return {
+        ...fileData,
+        embedding: matchData || []
+      };
+    });
   }
 };
