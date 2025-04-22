@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { getEmbedding } from './embeddingService';
 import { OpenAIModel, STORAGE_KEY_MODEL } from '@/types/types';
 import { FileStore } from '@/src/lib/database/fileDataDB';
-import { chatSystemPrompt } from '@/prompt/chatSystemPrompt';
+import { systemRagPrompt } from '@/prompt/chatSystemPrompt';
 
 const findRelevantContent = async (chatId: string, userQuery: string) => {
   const userQueryEmbedded = await getEmbedding({ values: [userQuery] });
@@ -69,7 +69,7 @@ export const chatPdfService = (messages: CoreMessage[], abortController: AbortSi
 
   const result = streamText({
     model: openai(model.model),
-    system: chatSystemPrompt,
+    system: systemRagPrompt,
     messages,
     maxSteps: 2, // Gọi streamText với maxSteps = 2 để đảm bảo LLM sẽ phản hồi sau khi tool chạy
     tools: { getInformation: getInformation(chatId), get_current_time },

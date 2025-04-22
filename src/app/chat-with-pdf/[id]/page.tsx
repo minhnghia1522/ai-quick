@@ -107,82 +107,107 @@ export default function ChatWithPDF() {
     FileStore.deleteFileByFileId(params.id as string, fileId);
   };
 
+  interface PDFChunk {
+    content: string;
+    chunkIndex: number;
+    page?: number;
+    startLine?: number;
+    endLine?: number;
+    embedding?: number[];
+  }
+
   const handleProcessFiles = async () => {
     setIsProcessing(true);
-    const embedding = await Promise.all(
-      files.map(async (file) => {
-        if (file.status === 'pending') {
-          try {
-            const allChunks = await extractChunksFromPDF(file.file);
-            // Lọc bỏ các trang trống
-            const embeddingdata = await getEmbedding({ values: allChunks.map((chunk) => chunk.content) });
 
-            return allChunks.map((chunk, index) => {
-              return {
-                ...chunk,
-                embedding: embeddingdata[index]
-              };
+    // Lấy danh sách file đã embedding trong DB
+    const storedFiles = await FileStore.getFileByChatId(params.id as string);
+
+    // Lọc ra các file chưa từng embedding (theo tên, size, lastModified)
+    const pendingFiles = files.filter((file) => {
+      if (file.status !== 'pending') return false;
+      const existed = storedFiles.some(
+        (f) => f.filename === file.file.name && f.size === file.file.size && f.lastModified === file.file.lastModified
+      );
+      return !existed;
+    });
+
+    if (pendingFiles.length === 0) {
+      setIsProcessing(false);
+      return;
+    }
+
+    // Embedding chỉ cho file thực sự chưa từng xử lý
+    const embeddingResults = await Promise.all(
+      pendingFiles.map(async (file) => {
+        try {
+          const allChunks = await extractChunksFromPDF(file.file);
+          const chunksWithEmbedding: PDFChunk[] = [];
+          for (let i = 0; i < allChunks.length; i++) {
+            const chunk = allChunks[i];
+            // Embedding từng chunk một
+            const embeddingArr = await getEmbedding({ values: [chunk.content] });
+            chunksWithEmbedding.push({
+              ...chunk,
+              embedding: embeddingArr[0] as number[] | undefined
             });
-          } catch (error) {
-            console.error('Error processing file:', error);
-            return null;
+            // Cập nhật progress cho file này
+            setFiles((prevFiles) =>
+              prevFiles.map((f) =>
+                f.id === file.id
+                  ? {
+                      ...f,
+                      status: 'processing' as const,
+                      progress: Math.round(((i + 1) / allChunks.length) * 100)
+                    }
+                  : f
+              )
+            );
           }
+          // Sau khi xong toàn bộ chunk, cập nhật trạng thái file thành completed
+          setFiles((prevFiles) =>
+            prevFiles.map((f) =>
+              f.id === file.id
+                ? {
+                    ...f,
+                    status: 'completed' as const,
+                    progress: 100
+                  }
+                : f
+            )
+          );
+          return {
+            file,
+            chunks: chunksWithEmbedding
+          };
+        } catch (error) {
+          console.error('Error processing file:', error);
+          return null;
         }
-        return null;
       })
-    ).then((results) => results.filter((result) => result !== null));
+    );
 
-    if (embedding.length > 0) {
-      const fileValue = files.map((file, index) => ({
+    // Lọc ra các file embedding thành công
+    const processedFiles = embeddingResults.filter((result) => result !== null) as {
+      file: PDFFile;
+      chunks: PDFChunk[];
+    }[];
+
+    if (processedFiles.length > 0) {
+      // Chỉ lưu các file vừa embedding vào DB
+      const fileValue = processedFiles.map(({ file, chunks }) => ({
         id: file.id,
         filename: file.file.name,
         type: file.file.type,
         size: file.file.size,
         lastModified: file.file.lastModified,
         blob: new Blob([file.file], { type: file.file.type }),
-        embedding: embedding[index]
+        embedding: chunks
       }));
-      // Lưu từng file một vào IndexedDB
       await FileStore.saveFile(params.id as string, fileValue);
     }
 
-    // Giả lập xử lý file
-    const updatedFiles = files.map((file) => {
-      if (file.status === 'pending') {
-        return { ...file, status: 'processing' as const, progress: 0 };
-      }
-      return file;
-    });
-
-    setFiles(updatedFiles);
-
-    // Giả lập tiến trình xử lý
-    updatedFiles.forEach((file) => {
-      if (file.status === 'processing') {
-        const interval = setInterval(() => {
-          setFiles((prev) =>
-            prev.map((f) => {
-              if (f.id === file.id) {
-                const newProgress = Math.min(f.progress + 10, 100);
-                const newStatus = newProgress === 100 ? ('completed' as const) : ('processing' as const);
-
-                if (newProgress === 100) {
-                  clearInterval(interval);
-                }
-
-                return { ...f, progress: newProgress, status: newStatus };
-              }
-              return f;
-            })
-          );
-        }, 500);
-      }
-    });
-
-    // Kết thúc xử lý sau 5 giây
-    setTimeout(() => {
-      setIsProcessing(false);
-    }, 5000);
+    // Đảm bảo kết thúc process sau khi tất cả file đã xử lý xong
+    setIsProcessing(false);
   };
 
   const getStatusIcon = (status: PDFFile['status']) => {

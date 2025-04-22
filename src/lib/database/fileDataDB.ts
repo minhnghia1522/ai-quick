@@ -46,7 +46,11 @@ const getDB = async (): Promise<IDBPDatabase<FileDataBSchema>> => {
 export const FileStore = {
   async saveFile(chatId: string, file: FileData[]): Promise<void> {
     const db = await getDB();
-    await db.put(STORE_NAME, file, chatId);
+    // Lấy danh sách file cũ
+    const oldFiles = (await db.get(STORE_NAME, chatId)) ?? [];
+    // Merge: nếu file mới trùng id thì ghi đè, còn lại giữ nguyên
+    const mergedFiles = [...oldFiles.filter((old) => !file.some((f) => f.id === old.id)), ...file];
+    await db.put(STORE_NAME, mergedFiles, chatId);
   },
 
   async getFileByChatId(chatId: string): Promise<FileData[]> {

@@ -7,8 +7,9 @@ export async function extractChunksFromPDF(file: File) {
   const pdf = await getDocument({ data: await file.arrayBuffer() }).promise;
 
   const splitter = new RecursiveCharacterTextSplitter({
-    chunkSize: 1000,
-    chunkOverlap: 200
+    chunkSize: 512,
+    chunkOverlap: 64,
+    separators: ['\n\n', '\n', '.', '!', '?', ',', ' ']
   });
 
   const allChunks: {
