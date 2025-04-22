@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useRef } from 'react'; // Thêm useEffect và useRef
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { FileText, Loader2, AlertCircle } from 'lucide-react';
@@ -15,6 +16,12 @@ type ChatInterfaceProps = {
 
 export const ChatInterface = ({ selectedFile, chatId }: ChatInterfaceProps) => {
   const { messages, input, handleInputChange, handleSubmit, isLoading, error, notFound } = useCustomChat(chatId);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Tự động cuộn xuống dưới cùng khi có tin nhắn mới
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
   if (notFound) {
     return (
@@ -29,9 +36,9 @@ export const ChatInterface = ({ selectedFile, chatId }: ChatInterfaceProps) => {
   }
 
   return (
-    <div className='w-1/2 flex flex-col'>
-      <div className='flex flex-col h-full'>
-        <div className='flex-1 flex flex-col'>
+    <div className='w-1/2 flex flex-col h-full overflow-hidden'>
+      <div className='flex flex-col h-full min-h-0'>
+        <div className='flex-1 flex flex-col min-h-0'>
           {/* Chat messages */}
           <div className='flex-1 min-h-0 p-2 overflow-auto'>
             {!selectedFile ? (
@@ -75,6 +82,7 @@ export const ChatInterface = ({ selectedFile, chatId }: ChatInterfaceProps) => {
                 })}
               </div>
             )}
+            <div ref={messagesEndRef} /> {/* Thêm div trống với ref để cuộn */}
           </div>
 
           {/* Input area */}
