@@ -1,5 +1,5 @@
 'use client';
-import { Code, Languages } from 'lucide-react';
+import { Code, Languages, FileText } from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
@@ -16,18 +16,34 @@ import {
 import Link from 'next/link';
 import SidebarSetting from './SidebarSetting';
 import { usePathname } from 'next/navigation';
+import ChatSidebarGroup from './ChatSidebarGroup';
 
 // Menu items.
-const items = [
+const menuItems = [
   {
-    title: 'Language Translate',
-    url: '/translate/languages',
-    icon: Languages
+    groupLabel: 'AI Translator',
+    items: [
+      {
+        title: 'Language Translate',
+        url: '/translate/languages',
+        icon: Languages
+      },
+      {
+        title: 'Code Translate',
+        url: '/translate/code',
+        icon: Code
+      }
+    ]
   },
   {
-    title: 'Code Translate',
-    url: '/translate/code',
-    icon: Code
+    groupLabel: 'Chat',
+    items: [
+      {
+        title: 'Chat with PDF',
+        url: '/chat-with-pdf',
+        icon: FileText
+      }
+    ]
   }
 ];
 
@@ -59,23 +75,33 @@ const AppSidebar = () => {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>AI Translator</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild isActive={item.url == pathname}>
-                    <Link href={item.url} onClick={handleCloseSidebarOnMobile}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {menuItems.map(({ items, groupLabel }, index) => {
+          // Nếu là group Chat thì render thêm lịch sử chat
+          if (groupLabel === 'Chat') {
+            return (
+              <ChatSidebarGroup key={index} pathname={pathname} onCloseSidebarMobile={handleCloseSidebarOnMobile} />
+            );
+          }
+          return (
+            <SidebarGroup key={index}>
+              <SidebarGroupLabel>{groupLabel}</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {items.map((item) => (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton asChild isActive={item.url == pathname}>
+                        <Link href={item.url} onClick={handleCloseSidebarOnMobile}>
+                          <item.icon />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          );
+        })}
       </SidebarContent>
       <SidebarFooter>
         <SidebarSetting />
