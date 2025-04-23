@@ -8,6 +8,9 @@ const enum OPENAI_EMBEDDING_MODELS {
 
 export const getEmbedding = async ({ values }: { values: string[] }): Promise<number[][]> => {
   const key = localStorage.getItem('apiKey');
+  if (!key) {
+    throw new Error('API key is missing');
+  }
   const openai = createOpenAI({
     compatibility: 'strict',
     apiKey: key || ''
@@ -15,6 +18,12 @@ export const getEmbedding = async ({ values }: { values: string[] }): Promise<nu
 
   const model = openai.textEmbeddingModel(OPENAI_EMBEDDING_MODELS['text-embedding-3-small']);
 
-  const { embeddings } = await model.doEmbed({ values });
-  return embeddings;
+  try {
+    const { embeddings } = await model.doEmbed({
+      values
+    });
+    return embeddings;
+  } catch (error) {
+    throw new Error(error as string);
+  }
 };

@@ -17,6 +17,7 @@ import { useCustomChat } from '@/hooks/useCustomChat';
 import { FileStore } from '@/src/lib/database/fileDataDB';
 import { extractChunksFromPDF } from '@/src/utils/chunkDataPdf';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
+import { toast } from 'sonner';
 
 export default function ChatWithPDF() {
   const params = useParams();
@@ -182,7 +183,9 @@ export default function ChatWithPDF() {
             chunks: chunksWithEmbedding
           };
         } catch (error) {
-          console.error('Error processing file:', error);
+          if (error instanceof Error) {
+            toast.error(error.message);
+          }
           return null;
         }
       })
