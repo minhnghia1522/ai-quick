@@ -4,17 +4,16 @@ import { useEffect, useRef } from 'react'; // Thêm useEffect và useRef
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { FileText, Loader2, AlertCircle } from 'lucide-react';
-import { type PDFFile } from '@/types/pdf';
 import { useCustomChat } from '@/hooks/useCustomChat';
 
 import ReactMarkdown from 'react-markdown';
 
 type ChatInterfaceProps = {
-  selectedFile: PDFFile | null;
+  isFileEmbedding: boolean;
   chatId: string;
 };
 
-export const ChatInterface = ({ selectedFile, chatId }: ChatInterfaceProps) => {
+export const ChatInterface = ({ isFileEmbedding, chatId }: ChatInterfaceProps) => {
   const { messages, input, handleInputChange, handleSubmit, isLoading, error, notFound } = useCustomChat(chatId);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -41,13 +40,10 @@ export const ChatInterface = ({ selectedFile, chatId }: ChatInterfaceProps) => {
         <div className='flex-1 flex flex-col min-h-0'>
           {/* Chat messages */}
           <div className='flex-1 min-h-0 p-2 overflow-auto'>
-            {!selectedFile ? (
+            {!isFileEmbedding ? (
               <div className='h-full flex flex-col justify-center p-6 text-center'>
                 <FileText className='h-12 w-12 text-gray-300 mx-auto mb-4' />
-                <h3 className='text-lg font-medium mb-2'>Không có file nào được chọn</h3>
-                <p className='text-sm text-gray-500 mb-4'>
-                  Vui lòng tải lên hoặc chọn một file PDF từ danh sách bên trái để bắt đầu
-                </p>
+                <h3 className='text-lg font-medium mb-2'>Không có file nào đã được xử lý</h3>
               </div>
             ) : (
               <div className='space-y-4'>
@@ -93,9 +89,9 @@ export const ChatInterface = ({ selectedFile, chatId }: ChatInterfaceProps) => {
                 value={input}
                 onChange={handleInputChange}
                 className='flex-1'
-                // disabled={!selectedFile}
+                disabled={!isFileEmbedding}
               />
-              <Button type='submit' disabled={!input.trim() || isLoading}>
+              <Button type='submit' disabled={!input.trim() || !isFileEmbedding || isLoading}>
                 {isLoading ? (
                   <>
                     <Loader2 className='mr-2 h-4 w-4 animate-spin' />

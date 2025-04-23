@@ -29,6 +29,7 @@ export default function ChatWithPDF() {
   // State cho dialog xác nhận xóa
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [fileIdToDelete, setFileIdToDelete] = useState<string | null>(null);
+  const [isFileEmbedding, setIsFileEmbedding] = useState(false);
 
   const selectedFile: PDFFile | null = selectedFileId ? files.find((f) => f.id === selectedFileId) ?? null : null;
 
@@ -44,11 +45,11 @@ export default function ChatWithPDF() {
   }, [params.id, router]);
 
   useEffect(() => {
-    const loadFileStorge = async () => {
+    const loadFileStorage = async () => {
       try {
-        const fileStorge = await FileStore.getFileByChatId(params.id as string);
-        if (fileStorge.length > 0) {
-          const fileData: PDFFile[] = fileStorge.map((data) => ({
+        const fileStorage = await FileStore.getFileByChatId(params.id as string);
+        if (fileStorage.length > 0) {
+          const fileData: PDFFile[] = fileStorage.map((data) => ({
             id: data.id,
             file: new File([data.blob!], data.filename, {
               type: data.type,
@@ -59,12 +60,13 @@ export default function ChatWithPDF() {
           }));
           setFiles(fileData);
           setSelectedFileId(fileData[0].id);
+          setIsFileEmbedding(true);
         }
       } catch (error) {
         console.error('Error loading embedding:', error);
       }
     };
-    loadFileStorge();
+    loadFileStorage();
   }, [params.id]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -193,6 +195,7 @@ export default function ChatWithPDF() {
     }[];
 
     if (processedFiles.length > 0) {
+      setIsFileEmbedding(true);
       // Chỉ lưu các file vừa embedding vào DB
       const fileValue = processedFiles.map(({ file, chunks }) => ({
         id: file.id,
@@ -316,7 +319,7 @@ export default function ChatWithPDF() {
             <Button
               className='w-full'
               onClick={handleProcessFiles}
-              // disabled={isProcessing || files.length === 0 || files.every((f) => f.status === 'completed')}
+              disabled={isProcessing || files.length === 0 || files.every((f) => f.status === 'completed')}
             >
               {isProcessing ? (
                 <>
@@ -358,7 +361,7 @@ export default function ChatWithPDF() {
         </div>
 
         {/* Right Panel - Chat Interface */}
-        <ChatInterface selectedFile={selectedFile} chatId={params.id as string} />
+        <ChatInterface isFileEmbedding={isFileEmbedding} chatId={params.id as string} />
       </div>
       {/* Dialog xác nhận xóa file */}
       <ConfirmDialog

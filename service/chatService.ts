@@ -23,9 +23,6 @@ const findRelevantContent = async (chatId: string, userQuery: string) => {
     });
     return `<file: ${fileData.filename}>\n` + content;
   });
-
-  console.log('data', data.join('\n\n'));
-
   return data.join('\n\n');
 };
 
