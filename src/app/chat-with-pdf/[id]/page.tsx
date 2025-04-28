@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { GlobalWorkerOptions } from 'pdfjs-dist';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -44,6 +45,10 @@ export default function ChatWithPDF() {
       router.push(`/chat-with-pdf/${newId}`);
     }
   }, [params.id, router]);
+
+  useEffect(() => {
+    GlobalWorkerOptions.workerSrc = '/pdf.worker.mjs.js';
+  }, []);
 
   useEffect(() => {
     const loadFileStorage = async () => {
@@ -183,6 +188,7 @@ export default function ChatWithPDF() {
             chunks: chunksWithEmbedding
           };
         } catch (error) {
+          console.error('Error embedding file:', error);
           if (error instanceof Error) {
             toast.error(error.message);
           }

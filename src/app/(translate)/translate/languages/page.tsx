@@ -1,13 +1,14 @@
 'use client';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { LANGUAGES } from '@/types/types';
+import { LANGUAGES } from '@/types/model';
 import { ArrowRightLeft, Loader2, X } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { createPromptTranslateLanguage } from '@/prompt/languageTranslatePrompt';
-import { OpenAIStream } from '@/service/openAI';
+import { modelCallWithStreaming } from '@/service/translateService';
 import { Label } from '@/components/ui/label';
+import { areAnyApiKeysAvailable } from '@/src/utils/getProvider';
 
 const MAX_TEXT_LENGTH = 5000;
 
@@ -30,18 +31,18 @@ const Page = () => {
       return;
     }
 
-    if (!localStorage.getItem('apiKey')) {
-      alert('Please enter an API key.');
+    if (!areAnyApiKeysAvailable()) {
+      toast.error('Please enter an API key.');
       return;
     }
 
     if (inputLanguage === outputLanguage) {
-      alert('Please select different languages.');
+      toast.error('Please select different languages.');
       return;
     }
 
     if (sourceText.length > MAX_TEXT_LENGTH) {
-      alert(
+      toast.error(
         `Please enter data less than ${MAX_TEXT_LENGTH} characters. You are currently at ${sourceText.length} characters.`
       );
       return;
@@ -56,7 +57,7 @@ const Page = () => {
     setIsLoading(true);
     const prompt = createPromptTranslateLanguage(inputLanguage, outputLanguage, sourceText);
     try {
-      const stream = await OpenAIStream(prompt, abortController.signal);
+      const stream = await modelCallWithStreaming(prompt, abortController.signal);
 
       for await (const textPart of stream.textStream) {
         setTranslatedText((prevData) => prevData + textPart);
