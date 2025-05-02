@@ -17,27 +17,44 @@ import {
   DialogTitle
 } from '@/components/ui/dialog';
 import { CheckCircleFillIcon, ChevronDownIcon } from './icons';
-import { OpenAIModel, openAIModels, STORAGE_KEY_MODEL } from '@/types/types';
+import {
+  geminiModels,
+  ModelAI,
+  openAIModels,
+  STORAGE_KEY_OPENAI_API_KEY,
+  STORAGE_KEY_GEMINI_API_KEY,
+  STORAGE_KEY_MODEL
+} from '@/types/model';
 
 export function ModelSelector({ className }: {} & React.ComponentProps<typeof Button>) {
   const [open, setOpen] = useState(false);
-  const [model, setModel] = useState<OpenAIModel>(openAIModels[0]);
+  const [model, setModel] = useState<ModelAI | undefined>(undefined);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
-  const [pendingModel, setPendingModel] = useState<OpenAIModel | null>(null);
+  const [pendingModel, setPendingModel] = useState<ModelAI | null>(null);
+  const [models, setModels] = useState<ModelAI[]>([]);
 
-  const selectedModel = useMemo(() => openAIModels.find((chatModel) => chatModel.id === model.id), [model]);
+  const selectedModel = useMemo(() => models.find((chatModel) => chatModel.id === model?.id), [models, model]);
 
   useEffect(() => {
+    const modelList = [];
+    if (localStorage.getItem(STORAGE_KEY_OPENAI_API_KEY)) {
+      modelList.push(...openAIModels);
+    }
+    if (localStorage.getItem(STORAGE_KEY_GEMINI_API_KEY)) {
+      modelList.push(...geminiModels);
+    }
+    setModels(modelList);
+
     const modelLocalStorage = localStorage.getItem(STORAGE_KEY_MODEL);
-    if (modelLocalStorage) {
+    if (modelLocalStorage !== null && modelLocalStorage !== 'undefined') {
       setModel(JSON.parse(modelLocalStorage));
-    } else {
-      localStorage.setItem(STORAGE_KEY_MODEL, JSON.stringify(openAIModels[0]));
+    } else if (modelList.length > 0) {
+      localStorage.setItem(STORAGE_KEY_MODEL, JSON.stringify(modelList[0]));
     }
   }, [setModel]);
 
-  const handleModelChange = (chatModel: OpenAIModel) => {
-    if (chatModel.model == model.model) {
+  const handleModelChange = (chatModel: ModelAI) => {
+    if (chatModel.model == model?.model) {
       setModel(chatModel);
       localStorage.setItem(STORAGE_KEY_MODEL, JSON.stringify(chatModel));
     } else {
@@ -74,15 +91,15 @@ export function ModelSelector({ className }: {} & React.ComponentProps<typeof Bu
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align='start' className='min-w-[300px]'>
-          {openAIModels.map((chatModel) => {
+          {models.map((chatModel) => {
             const { id, name, description } = chatModel;
 
             return (
               <DropdownMenuItem
                 data-testid={`model-selector-item-${id}`}
-                key={id}
+                key={name}
                 onSelect={() => handleModelChange(chatModel)}
-                data-active={id === model.id}
+                data-active={id === model?.id}
                 asChild
               >
                 <button type='button' className='gap-4 group/item flex flex-row justify-between items-center w-full'>
@@ -105,7 +122,7 @@ export function ModelSelector({ className }: {} & React.ComponentProps<typeof Bu
           <DialogHeader>
             <DialogTitle className='text-2xl'>Change AI Model</DialogTitle>
             <DialogDescription className='text-base'>
-              You are about to switch from {model.name} to {pendingModel?.name}. Please review the pricing and model
+              You are about to switch from {model?.name} to {pendingModel?.name}. Please review the pricing and model
               characteristics carefully.
             </DialogDescription>
           </DialogHeader>
@@ -116,15 +133,15 @@ export function ModelSelector({ className }: {} & React.ComponentProps<typeof Bu
                 <div className='space-y-2'>
                   <div className='flex justify-between text-sm sm:text-base'>
                     <span className='font-medium'>Model Name:</span>
-                    <span className='text-muted-foreground'>{model.name}</span>
+                    <span className='text-muted-foreground'>{model?.name}</span>
                   </div>
                   <div className='flex justify-between text-sm sm:text-base'>
                     <span className='font-medium'>Input Price:</span>
-                    <span className='text-muted-foreground'>${model.priceInput?.toFixed(2)} / 1M tokens</span>
+                    <span className='text-muted-foreground'>${model?.priceInput?.toFixed(2)} / 1M tokens</span>
                   </div>
                   <div className='flex justify-between text-sm sm:text-base'>
                     <span className='font-medium'>Output Price:</span>
-                    <span className='text-muted-foreground'>${model.priceOutput?.toFixed(2)} / 1M tokens</span>
+                    <span className='text-muted-foreground'>${model?.priceOutput?.toFixed(2)} / 1M tokens</span>
                   </div>
                 </div>
               </div>
@@ -139,7 +156,7 @@ export function ModelSelector({ className }: {} & React.ComponentProps<typeof Bu
                     <span className='font-medium'>Input Price:</span>
                     <span
                       className={`text-muted-foreground ${
-                        pendingModel?.priceInput && model.priceInput && pendingModel.priceInput > model.priceInput
+                        pendingModel?.priceInput && model?.priceInput && pendingModel.priceInput > model?.priceInput
                           ? 'font-bold text-red-500'
                           : ''
                       }`}
@@ -151,7 +168,7 @@ export function ModelSelector({ className }: {} & React.ComponentProps<typeof Bu
                     <span className='font-medium'>Output Price:</span>
                     <span
                       className={`text-muted-foreground ${
-                        pendingModel?.priceOutput && model.priceOutput && pendingModel.priceOutput > model.priceOutput
+                        pendingModel?.priceOutput && model?.priceOutput && pendingModel.priceOutput > model?.priceOutput
                           ? 'font-bold text-red-500'
                           : ''
                       }`}

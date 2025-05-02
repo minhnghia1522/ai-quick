@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ai-sdk/google": "^1.2.13",
     "@ai-sdk/openai": "^1.2.3",
     "@ai-sdk/react": "^1.2.9",
     "@codemirror/legacy-modes": "^6.4.3",

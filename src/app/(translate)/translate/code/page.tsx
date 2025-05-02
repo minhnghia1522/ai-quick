@@ -5,9 +5,10 @@ import { TextBlock } from '@/components/TextBlock';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { createPromptTranslateCode } from '@/prompt/codeTranslatePrompt';
-import { OpenAIStream } from '@/service/openAI';
+import { modelCallWithStreaming } from '@/service/translateService';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Clipboard, LoaderCircle } from 'lucide-react';
+import { areAnyApiKeysAvailable } from '@/src/utils/getProvider';
 
 export default function Home() {
   const [inputLanguage, setInputLanguage] = useState<string>('Natural Language');
@@ -23,7 +24,7 @@ export default function Home() {
   const handleTranslate = async () => {
     const maxCodeLength = 12000;
 
-    if (!localStorage.getItem('apiKey')) {
+    if (!areAnyApiKeysAvailable()) {
       toast.error('Please enter an API key.');
       return;
     }
@@ -59,7 +60,7 @@ export default function Home() {
     abortControllerRef.current = abortController;
 
     try {
-      const stream = await OpenAIStream(
+      const stream = await modelCallWithStreaming(
         {
           prompt
         },
