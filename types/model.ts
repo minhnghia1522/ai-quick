@@ -1,5 +1,7 @@
 export const STORAGE_KEY_MODEL: string = 'modelData';
-export interface OpenAIModel {
+export const STORAGE_KEY_OPENAI_API_KEY: string = 'apiKey';
+export const STORAGE_KEY_GEMINI_API_KEY: string = 'geminiApiKey';
+export interface ModelAI {
   id: number;
   model: string;
   name: string;
@@ -9,7 +11,7 @@ export interface OpenAIModel {
   priceOutput: number;
 }
 
-export const openAIModels: Array<OpenAIModel> = [
+export const openAIModels: Array<ModelAI> = [
   {
     id: 0,
     model: 'gpt-4.1',
@@ -71,11 +73,22 @@ export const openAIModels: Array<OpenAIModel> = [
   }
 ];
 
+export const geminiModels: Array<ModelAI> = [
+  {
+    id: 20,
+    model: 'gemini-2.0-flash-001',
+    name: 'Gemini 2.0 Flash',
+    description: 'Flagship Gemini model',
+    priceInput: 0.1,
+    priceOutput: 0.4
+  }
+];
+
 export interface TranslateBody {
   inputLanguage: string;
   outputLanguage: string;
   inputData: string;
-  model?: OpenAIModel;
+  model?: ModelAI;
   apiKey?: string;
 }
 

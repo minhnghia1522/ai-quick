@@ -4,6 +4,7 @@ import { ModelSelector } from './ModelSelector';
 import { useEffect, useRef } from 'react';
 import APIKeyInputDialog from './APIKeyInputDialog';
 import { AppDialogRefHandle } from './AppDialog';
+import { areAnyApiKeysAvailable } from '@/src/utils/getProvider';
 
 export function AppHeader() {
   const dialogRef = useRef<AppDialogRefHandle>(null);
@@ -12,7 +13,7 @@ export function AppHeader() {
   };
 
   useEffect(() => {
-    if (!localStorage.getItem('apiKey')) {
+    if (!areAnyApiKeysAvailable()) {
       openDialog();
     }
   });

@@ -1,4 +1,4 @@
-import { LANGUAGES } from '@/types/types';
+import { LANGUAGES } from '@/types/model';
 
 export const createPromptTranslateLanguage = (inputLanguage: string, outputLanguage: string, inputText: string) => {
   if (inputText.length < 100 || inputLanguage !== LANGUAGES.ja) {

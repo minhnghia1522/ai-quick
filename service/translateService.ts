@@ -1,19 +1,26 @@
-import { OpenAIModel, STORAGE_KEY_MODEL } from '@/types/types';
-import { createOpenAI } from '@ai-sdk/openai';
+import { ModelAI, STORAGE_KEY_MODEL } from '@/types/model';
 import { generateText, streamText } from 'ai';
+import { getProviderByModelName } from '@/src/utils/getProvider';
 
-export const OpenAIText = async ({ prompt }: { prompt: string }) => {
-  const key = localStorage.getItem('apiKey');
-  const openai = createOpenAI({
-    compatibility: 'strict',
-    apiKey: key || ''
-  });
+export const modelCallWithText = async ({ prompt }: { prompt: string }) => {
+  const modelSelected = localStorage.getItem(STORAGE_KEY_MODEL);
 
-  const model = openai('gpt-4.1');
+  let model = {
+    id: 1,
+    model: 'gpt-4.1',
+    name: 'gpt-4.1',
+    description: 'Flagship GPT model for complex tasks',
+    priceInput: 2.0,
+    priceOutput: 8.0
+  } as ModelAI;
+
+  if (modelSelected) {
+    model = JSON.parse(modelSelected);
+  }
 
   try {
     const { text } = await generateText({
-      model,
+      model: getProviderByModelName(model.model),
       prompt
     });
 
@@ -23,17 +30,11 @@ export const OpenAIText = async ({ prompt }: { prompt: string }) => {
   }
 };
 
-export const OpenAIStream = async (
+export const modelCallWithStreaming = async (
   { system, prompt }: { prompt: string; system?: string },
   abortController: AbortSignal
 ) => {
-  const key = localStorage.getItem('apiKey');
   const modelSelected = localStorage.getItem(STORAGE_KEY_MODEL);
-  const openai = createOpenAI({
-    compatibility: 'strict',
-    apiKey: key || ''
-  });
-
   let model = {
     id: 1,
     model: 'gpt-4.1',
@@ -41,14 +42,14 @@ export const OpenAIStream = async (
     description: 'Flagship GPT model for complex tasks',
     priceInput: 2.0,
     priceOutput: 8.0
-  } as OpenAIModel;
+  } as ModelAI;
 
   if (modelSelected) {
     model = JSON.parse(modelSelected);
   }
 
   return streamText({
-    model: openai(model.model),
+    model: getProviderByModelName(model.model),
     system,
     prompt: prompt,
     providerOptions: {

@@ -1,10 +1,10 @@
-import { createOpenAI } from '@ai-sdk/openai';
 import { CoreMessage, streamText, tool } from 'ai';
 import { z } from 'zod';
 import { getEmbedding } from './embeddingService';
-import { OpenAIModel, STORAGE_KEY_MODEL } from '@/types/types';
+import { ModelAI, STORAGE_KEY_MODEL } from '@/types/model';
 import { FileStore } from '@/src/lib/database/fileDataDB';
 import { systemRagPrompt } from '@/prompt/chatSystemPrompt';
+import { getProviderByModelName } from '@/src/utils/getProvider';
 
 const findRelevantContent = async (chatId: string, userQuery: string) => {
   const userQueryEmbedded = await getEmbedding({ values: [userQuery] });
@@ -46,35 +46,27 @@ const get_current_time = tool({
 });
 
 export const chatPdfService = (messages: CoreMessage[], abortController: AbortSignal, chatId: string) => {
-  const key = localStorage.getItem('apiKey');
   const modelSelected = localStorage.getItem(STORAGE_KEY_MODEL);
-  const openai = createOpenAI({
-    compatibility: 'strict',
-    apiKey: key || ''
-  });
-
   let model = {
     id: 1,
     model: 'gpt-4o-mini',
     name: 'gpt-4o-mini',
     description: 'Affordable small model for fast, everyday tasks'
-  } as OpenAIModel;
+  } as ModelAI;
 
   if (modelSelected) {
     model = JSON.parse(modelSelected);
   }
 
   const result = streamText({
-    model: openai(model.model),
+    model: getProviderByModelName(model.model),
     system: systemRagPrompt,
     messages,
     maxSteps: 2, // Gọi streamText với maxSteps = 2 để đảm bảo LLM sẽ phản hồi sau khi tool chạy
     tools: { getInformation: getInformation(chatId), get_current_time },
     abortSignal: abortController,
     onError(error) {
-      console.error('[streamText onError] An error occurred:', error);
-      // Rethrow or handle as needed, but log it first.
-      throw error; // Rethrow the original error object for better stack trace
+      throw error;
     }
   });
 
