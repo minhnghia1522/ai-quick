@@ -75,7 +75,7 @@ export const openAIModels: Array<ModelAI> = [
 
 export const geminiModels: Array<ModelAI> = [
   {
-    id: 0,
+    id: 20,
     model: 'gemini-2.0-flash-001',
     name: 'Gemini 2.0 Flash',
     description: 'Flagship Gemini model',
