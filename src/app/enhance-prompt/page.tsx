@@ -124,7 +124,7 @@ const Page = () => {
   return (
     <div className='flex flex-col size-full min-w-0 bg-background text-black px-4 sm:px-10 gap-10'>
       <div className='p-1 flex flex-col items-center justify-center sm:mt-10'>
-        <Label className='text-4xl'>Enhance Prompt (AI cải thiện prompt)</Label>
+        <Label className='text-4xl'>Cải thiện Prompt</Label>
       </div>
       <div className='flex flex-col md:flex-row justify-center w-full max-w-full gap-3 md:px-0 lg:px-14 xl:px-32'>
         <div className='flex flex-col gap-1 w-full md:w-1/2'>
