@@ -1,5 +1,5 @@
 'use client';
-import { Code, Languages, FileText } from 'lucide-react';
+import { Code, Languages, FileText, Sparkles } from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
@@ -32,6 +32,16 @@ const menuItems = [
         title: 'Code Translate',
         url: '/translate/code',
         icon: Code
+      }
+    ]
+  },
+  {
+    groupLabel: 'Other',
+    items: [
+      {
+        title: 'Cải thiện prompt',
+        url: '/enhance-prompt',
+        icon: Sparkles
       }
     ]
   },

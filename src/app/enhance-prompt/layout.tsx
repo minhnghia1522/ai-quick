@@ -3,8 +3,8 @@ import AppSidebar from '@/components/AppSidebar';
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 
 export const metadata = {
-  title: 'Chat with PDF',
-  description: 'Trò chuyện với file PDF của bạn bằng AI.'
+  title: 'Cải thiện prompt',
+  description: 'Tối ưu hóa và cải thiện prompt của bạn bằng AI.'
 };
 
 export default function Layout({
