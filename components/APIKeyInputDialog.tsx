@@ -31,12 +31,8 @@ const APIKeyInputDialog = forwardRef<AppDialogRefHandle>((_, ref) => {
   };
 
   const submitCallback = () => {
-    if (apiKey) {
-      localStorage.setItem('apiKey', apiKey);
-    }
-    if (geminiApiKey) {
-      localStorage.setItem('geminiApiKey', geminiApiKey);
-    }
+    localStorage.setItem('apiKey', apiKey);
+    localStorage.setItem('geminiApiKey', geminiApiKey);
     setOpen(false);
   };
 
