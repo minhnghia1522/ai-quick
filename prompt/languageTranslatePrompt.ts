@@ -32,3 +32,13 @@ export const createPromptTranslateLanguage = (inputLanguage: string, outputLangu
     prompt: inputText
   };
 };
+
+export const createPromptTranslateEnhancePrompt = (outputLanguage: string, inputText: string) => {
+  return {
+    system: `You are a highly experienced translator fluent in multiple languages.
+    Your **absolute** sole function is to translate the user-provided text into ${outputLanguage}.
+    If the input text is already in ${outputLanguage}, return it as is.
+    (respond exclusively with the translated or original text—do not include conversation, explanations, introductions, bullet points, placeholders, or any surrounding quotation marks):`,
+    prompt: inputText
+  };
+};

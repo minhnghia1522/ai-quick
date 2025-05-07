@@ -5,7 +5,7 @@ import { Copy, Loader2, X } from 'lucide-react';
 import React, { useCallback, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { createEnhancePrompt } from '@/prompt/enhancePrompt';
-import { createPromptTranslateLanguage } from '@/prompt/languageTranslatePrompt';
+import { createPromptTranslateEnhancePrompt } from '@/prompt/languageTranslatePrompt';
 import { LANGUAGES } from '@/types/model';
 import { modelCallWithStreaming } from '@/service/translateService';
 import { Label } from '@/components/ui/label';
@@ -94,7 +94,7 @@ const Page = () => {
     abortControllerRef.current = abortController;
 
     setIsLoading(true);
-    const { system, prompt } = createPromptTranslateLanguage(LANGUAGES.vn, LANGUAGES.en, enhancedText);
+    const { system, prompt } = createPromptTranslateEnhancePrompt(LANGUAGES.en, enhancedText);
     try {
       const stream = await modelCallWithStreaming({ prompt, system }, abortController.signal);
       for await (const textPart of stream.textStream) {
