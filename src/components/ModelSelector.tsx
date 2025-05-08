@@ -1,13 +1,13 @@
 'use client';
-import { cn } from '@/lib/utils';
+import { cn } from '@/src/lib/utils';
 import { useEffect, useMemo, useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/src/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
+} from '@/src/components/ui/dropdown-menu';
 import {
   Dialog,
   DialogContent,
@@ -15,7 +15,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle
-} from '@/components/ui/dialog';
+} from '@/src/components/ui/dialog';
 import { CheckCircleFillIcon, ChevronDownIcon } from './icons';
 import {
   geminiModels,
@@ -24,7 +24,7 @@ import {
   STORAGE_KEY_OPENAI_API_KEY,
   STORAGE_KEY_GEMINI_API_KEY,
   STORAGE_KEY_MODEL
-} from '@/types/model';
+} from '@/src/types/model';
 
 export function ModelSelector({ className }: {} & React.ComponentProps<typeof Button>) {
   const [open, setOpen] = useState(false);

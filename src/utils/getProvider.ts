@@ -1,4 +1,4 @@
-import { STORAGE_KEY_OPENAI_API_KEY, STORAGE_KEY_GEMINI_API_KEY } from '@/types/model';
+import { STORAGE_KEY_OPENAI_API_KEY, STORAGE_KEY_GEMINI_API_KEY } from '@/src/types/model';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { createOpenAI } from '@ai-sdk/openai';
 

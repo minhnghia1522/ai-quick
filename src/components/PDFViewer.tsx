@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { ChevronLeft, ChevronRight, Maximize, Minimize, Plus, Minus, Download } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/src/components/ui/button';
 import dynamic from 'next/dynamic';
 
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';

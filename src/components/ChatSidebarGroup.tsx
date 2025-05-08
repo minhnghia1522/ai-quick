@@ -9,7 +9,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem
-} from '@/components/ui/sidebar';
+} from '@/src/components/ui/sidebar';
 import { chatHistoryStore, ChatHistory } from '@/src/lib/database/chatHistoryDB';
 import { FileStore } from '@/src/lib/database/fileDataDB';
 

@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useRef } from 'react'; // Thêm useEffect và useRef
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Button } from '@/src/components/ui/button';
+import { Input } from '@/src/components/ui/input';
 import { FileText, Loader2, AlertCircle } from 'lucide-react';
-import { useCustomChat } from '@/hooks/useCustomChat';
+import { useCustomChat } from '@/src/hooks/useCustomChat';
 
 import ReactMarkdown from 'react-markdown';
 

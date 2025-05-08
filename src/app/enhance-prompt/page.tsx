@@ -1,14 +1,14 @@
 'use client';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/src/components/ui/button';
+import { Textarea } from '@/src/components/ui/textarea';
 import { Copy, Loader2, X } from 'lucide-react';
 import React, { useCallback, useRef, useState } from 'react';
 import { toast } from 'sonner';
-import { createEnhancePrompt } from '@/prompt/enhancePrompt';
-import { createPromptTranslateEnhancePrompt } from '@/prompt/languageTranslatePrompt';
-import { LANGUAGES } from '@/types/model';
-import { modelCallWithStreaming } from '@/service/translateService';
-import { Label } from '@/components/ui/label';
+import { createEnhancePrompt } from '@/src/prompt/enhancePrompt';
+import { createPromptTranslateEnhancePrompt } from '@/src/prompt/languageTranslatePrompt';
+import { LANGUAGES } from '@/src/types/model';
+import { modelCallWithStreaming } from '@/src/service/translateService';
+import { Label } from '@/src/components/ui/label';
 import { areAnyApiKeysAvailable } from '@/src/utils/getProvider';
 
 const MAX_TEXT_LENGTH = 10000;

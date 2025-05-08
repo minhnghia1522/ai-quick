@@ -1,9 +1,9 @@
 import { CoreMessage, streamText, tool } from 'ai';
 import { z } from 'zod';
 import { getEmbedding } from './embeddingService';
-import { ModelAI, STORAGE_KEY_MODEL } from '@/types/model';
+import { ModelAI, STORAGE_KEY_MODEL } from '@/src/types/model';
 import { FileStore } from '@/src/lib/database/fileDataDB';
-import { systemRagPrompt } from '@/prompt/chatSystemPrompt';
+import { systemRagPrompt } from '@/src/prompt/chatSystemPrompt';
 import { getProviderByModelName } from '@/src/utils/getProvider';
 
 const findRelevantContent = async (chatId: string, userQuery: string) => {

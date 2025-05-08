@@ -1,4 +1,4 @@
-import { ModelAI, STORAGE_KEY_MODEL } from '@/types/model';
+import { ModelAI, STORAGE_KEY_MODEL } from '@/src/types/model';
 import { generateText, streamText } from 'ai';
 import { getProviderByModelName } from '@/src/utils/getProvider';
 

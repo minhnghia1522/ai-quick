@@ -1,12 +1,12 @@
 'use client';
-import { CodeBlock } from '@/components/CodeBlock';
-import { LanguageSelect } from '@/components/LanguageSelect';
-import { TextBlock } from '@/components/TextBlock';
+import { CodeBlock } from '@/src/components/CodeBlock';
+import { LanguageSelect } from '@/src/components/LanguageSelect';
+import { TextBlock } from '@/src/components/TextBlock';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
-import { createPromptTranslateCode } from '@/prompt/codeTranslatePrompt';
-import { modelCallWithStreaming } from '@/service/translateService';
-import { Button } from '@/components/ui/button';
+import { createPromptTranslateCode } from '@/src/prompt/codeTranslatePrompt';
+import { modelCallWithStreaming } from '@/src/service/translateService';
+import { Button } from '@/src/components/ui/button';
 import { ArrowRight, Clipboard, LoaderCircle } from 'lucide-react';
 import { areAnyApiKeysAvailable } from '@/src/utils/getProvider';
 

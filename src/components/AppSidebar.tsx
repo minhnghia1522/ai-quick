@@ -12,7 +12,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar
-} from '@/components/ui/sidebar';
+} from '@/src/components/ui/sidebar';
 import Link from 'next/link';
 import SidebarSetting from './SidebarSetting';
 import { usePathname } from 'next/navigation';
@@ -73,7 +73,7 @@ const AppSidebar = () => {
         <SidebarMenu>
           <div className='flex flex-row justify-between items-center'>
             <Link
-              href='/'
+              href='/public'
               onClick={() => {
                 handleCloseSidebarOnMobile();
               }}

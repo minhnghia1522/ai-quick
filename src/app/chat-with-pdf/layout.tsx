@@ -1,6 +1,6 @@
-import { AppHeader } from '@/components/AppHeader';
-import AppSidebar from '@/components/AppSidebar';
-import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
+import { AppHeader } from '@/src/components/AppHeader';
+import AppSidebar from '@/src/components/AppSidebar';
+import { SidebarProvider, SidebarInset } from '@/src/components/ui/sidebar';
 
 export const metadata = {
   title: 'Chat with PDF',

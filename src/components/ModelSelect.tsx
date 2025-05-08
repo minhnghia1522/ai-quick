@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from './ui/select';
-import { STORAGE_KEY_MODEL } from '@/types/model';
+import { STORAGE_KEY_MODEL } from '@/src/types/model';
 
 type OpenAIModel = 'gpt-4o' | 'gpt-4o-mini' | 'o1-mini';
 

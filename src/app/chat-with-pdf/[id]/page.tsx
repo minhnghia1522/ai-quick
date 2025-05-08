@@ -3,21 +3,21 @@
 import { useState, useRef, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { GlobalWorkerOptions } from 'pdfjs-dist';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+import { Button } from '@/src/components/ui/button';
+import { Card } from '@/src/components/ui/card';
+import { Input } from '@/src/components/ui/input';
 import { Upload, FileText, Trash2, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
-import { Progress } from '@/components/ui/progress';
-import { PDFViewer } from '@/components/PDFViewer';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { ChatInterface } from '@/components/ChatInterface';
-import { getEmbedding } from '@/service/embeddingService';
-import { type PDFFile } from '@/types/pdf';
+import { Progress } from '@/src/components/ui/progress';
+import { PDFViewer } from '@/src/components/PDFViewer';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/src/components/ui/tooltip';
+import { ChatInterface } from '@/src/components/ChatInterface';
+import { getEmbedding } from '@/src/service/embeddingService';
+import { type PDFFile } from '@/src/types/pdf';
 
-import { useCustomChat } from '@/hooks/useCustomChat';
+import { useCustomChat } from '@/src/hooks/useCustomChat';
 import { FileStore } from '@/src/lib/database/fileDataDB';
 import { extractChunksFromPDF } from '@/src/utils/chunkDataPdf';
-import { ConfirmDialog } from '@/components/ConfirmDialog';
+import { ConfirmDialog } from '@/src/components/ConfirmDialog';
 import { toast } from 'sonner';
 
 export default function ChatWithPDF() {

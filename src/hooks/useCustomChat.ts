@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { type CoreMessage } from 'ai';
-import { chatPdfService } from '@/service/chatService';
+import { chatPdfService } from '@/src/service/chatService';
 import { chatHistoryStore, type ChatMessage } from '@/src/lib/database/chatHistoryDB';
 
 export function useCustomChat(chatId: string) {
