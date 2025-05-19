@@ -5,6 +5,7 @@ import { LANGUAGES } from '@/src/types/model';
 import { ArrowRightLeft, Loader2, X } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
+import { useTranslations } from 'next-intl';
 import { createPromptTranslateLanguage } from '@/src/prompt/languageTranslatePrompt';
 import { modelCallWithStreaming } from '@/src/service/translateService';
 import { Label } from '@/src/components/ui/label';
@@ -13,6 +14,7 @@ import { areAnyApiKeysAvailable } from '@/src/utils/getProvider';
 const MAX_TEXT_LENGTH = 5000;
 
 const Page = () => {
+  const t = useTranslations();
   const [sourceText, setSourceText] = useState('');
   const [translatedText, setTranslatedText] = useState('');
   const [inputLanguage, setInputLanguage] = useState(LANGUAGES.ja);
@@ -22,7 +24,6 @@ const Page = () => {
   const textAreaSourceRef = useRef<HTMLTextAreaElement>(null);
   const textAreaTranslatedRef = useRef<HTMLTextAreaElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
-  // Ref để lưu các timestamp khi nhấn button thay đổi ngôn ngữ (tính bằng milliseconds)
   const languageChangeTimestampsRef = useRef<number[]>([]);
 
   const handleTranslate = useCallback(async () => {
@@ -32,19 +33,17 @@ const Page = () => {
     }
 
     if (!areAnyApiKeysAvailable()) {
-      toast.error('Please enter an API key.');
+      toast.error(t('TranslatePage.apiKeyError'));
       return;
     }
 
     if (inputLanguage === outputLanguage) {
-      toast.error('Please select different languages.');
+      toast.error(t('TranslatePage.selectDifferentLanguagesError'));
       return;
     }
 
     if (sourceText.length > MAX_TEXT_LENGTH) {
-      toast.error(
-        `Please enter data less than ${MAX_TEXT_LENGTH} characters. You are currently at ${sourceText.length} characters.`
-      );
+      toast.error(t('TranslatePage.maxLengthError', { maxLength: MAX_TEXT_LENGTH, currentLength: sourceText.length }));
       return;
     }
     if (abortControllerRef.current) {
@@ -67,7 +66,7 @@ const Page = () => {
         if (['AbortError', 'aborted'].some((term) => error.message.includes(term))) return;
         toast.error(error.message);
       } else {
-        toast.error('An unexpected error occurred.');
+        toast.error(t('TranslatePage.unexpectedError'));
       }
     }
 
@@ -106,7 +105,7 @@ const Page = () => {
     languageChangeTimestampsRef.current.push(now);
 
     if (languageChangeTimestampsRef.current.length >= 3) {
-      toast.warning('You are switching too fast!');
+      toast.warning(t('TranslatePage.switchingTooFastWarning'));
       return;
     }
     callback();
@@ -124,7 +123,7 @@ const Page = () => {
   return (
     <div className='flex flex-col size-full min-w-0  bg-background text-black px-4 sm:px-10 gap-10'>
       <div className='p-1 flex flex-col items-center justify-center sm:mt-10'>
-        <Label className='text-4xl'>Smart AI Translator Powered by ChatGPT</Label>
+        <Label className='text-4xl'>{t('TranslatePage.title')}</Label>
       </div>
       <div className='flex flex-col md:flex-row justify-center w-full max-w-full gap-3 md:px-0 lg:px-14 xl:px-32'>
         <div className='flex flex-col gap-1 w-full md:w-1/2'>
@@ -134,37 +133,37 @@ const Page = () => {
               onClick={() => handleLanguageChange(() => setInputLanguage(LANGUAGES.ja))}
               disabled={outputLanguage === LANGUAGES.ja}
             >
-              Nhật
+              {t('TranslatePage.japanese')}
             </Button>
             <Button
               variant={inputLanguage === LANGUAGES.en ? 'default' : 'link'}
               onClick={() => handleLanguageChange(() => setInputLanguage(LANGUAGES.en))}
               disabled={outputLanguage === LANGUAGES.en}
             >
-              Anh
+              {t('TranslatePage.english')}
             </Button>
             <Button
               variant={inputLanguage === LANGUAGES.vn ? 'default' : 'link'}
               onClick={() => handleLanguageChange(() => setInputLanguage(LANGUAGES.vn))}
               disabled={outputLanguage === LANGUAGES.vn}
             >
-              Việt
+              {t('TranslatePage.vietnamese')}
             </Button>
             <Button
               variant={inputLanguage === LANGUAGES.natural ? 'default' : 'link'}
               onClick={() => handleLanguageChange(() => setInputLanguage(LANGUAGES.natural))}
             >
-              Phát hiện ngôn ngữ
+              {t('TranslatePage.detectLanguage')}
             </Button>
           </div>
           <div className='relative w-full flex rounded-md border border-input bg-background px-1 pt-1 pb-8'>
             <Textarea
               ref={textAreaSourceRef}
               value={sourceText}
-              className='w-full min-h-[128px] resize-none border-none outline-none bg-transparent 
-              focus:outline-none focus:ring-0 focus:ring-offset-0 focus:shadow-none 
+              className='w-full min-h-[128px] resize-none border-none outline-none bg-transparent
+              focus:outline-none focus:ring-0 focus:ring-offset-0 focus:shadow-none
               focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0'
-              placeholder='Type or paste text here to translate'
+              placeholder={t('TranslatePage.sourcePlaceholder')}
               onChange={handleSourceTextInput}
             />
             <span>
@@ -191,21 +190,21 @@ const Page = () => {
               onClick={() => handleLanguageChange(() => setOutputLanguage(LANGUAGES.vn))}
               disabled={inputLanguage === LANGUAGES.vn}
             >
-              Việt
+              {t('TranslatePage.vietnamese')}
             </Button>
             <Button
               variant={outputLanguage === LANGUAGES.en ? 'default' : 'link'}
               onClick={() => handleLanguageChange(() => setOutputLanguage(LANGUAGES.en))}
               disabled={inputLanguage === LANGUAGES.en}
             >
-              Anh
+              {t('TranslatePage.english')}
             </Button>
             <Button
               variant={outputLanguage === LANGUAGES.ja ? 'default' : 'link'}
               onClick={() => handleLanguageChange(() => setOutputLanguage(LANGUAGES.ja))}
               disabled={inputLanguage === LANGUAGES.ja}
             >
-              Nhật
+              {t('TranslatePage.japanese')}
             </Button>
           </div>
           <div className=''>

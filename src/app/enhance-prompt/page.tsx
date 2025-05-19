@@ -4,6 +4,7 @@ import { Textarea } from '@/src/components/ui/textarea';
 import { Copy, Loader2, X } from 'lucide-react';
 import React, { useCallback, useRef, useState } from 'react';
 import { toast } from 'sonner';
+import { useTranslations } from 'next-intl';
 import { createEnhancePrompt } from '@/src/prompt/enhancePrompt';
 import { createPromptTranslateEnhancePrompt } from '@/src/prompt/languageTranslatePrompt';
 import { LANGUAGES } from '@/src/types/model';
@@ -14,6 +15,7 @@ import { areAnyApiKeysAvailable } from '@/src/utils/getProvider';
 const MAX_TEXT_LENGTH = 10000;
 
 const Page = () => {
+  const t = useTranslations();
   const [sourceText, setSourceText] = useState('');
   const [enhancedText, setEnhancedText] = useState('');
   const [translatedText, setTranslatedText] = useState('');
@@ -29,11 +31,13 @@ const Page = () => {
       return;
     }
     if (!areAnyApiKeysAvailable()) {
-      toast.error('Vui lòng nhập API key.');
+      toast.error(t('EnhancePromptPage.apiKeyError'));
       return;
     }
     if (sourceText.length > MAX_TEXT_LENGTH) {
-      toast.error(`Vui lòng nhập dưới ${MAX_TEXT_LENGTH} ký tự. Hiện tại: ${sourceText.length} ký tự.`);
+      toast.error(
+        t('EnhancePromptPage.maxLengthError', { maxLength: MAX_TEXT_LENGTH, currentLength: sourceText.length })
+      );
       return;
     }
     if (abortControllerRef.current) {
@@ -55,11 +59,11 @@ const Page = () => {
         if (['AbortError', 'aborted'].some((term) => error.message.includes(term))) return;
         toast.error(error.message);
       } else {
-        toast.error('Đã xảy ra lỗi không xác định.');
+        toast.error(t('EnhancePromptPage.unexpectedError'));
       }
     }
     setIsLoading(false);
-  }, [sourceText]);
+  }, [sourceText, t]);
 
   const handleSourceTextInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const textAreaSourceCurrent = textAreaSourceRef.current;
@@ -79,11 +83,13 @@ const Page = () => {
       return;
     }
     if (!areAnyApiKeysAvailable()) {
-      toast.error('Vui lòng nhập API key.');
+      toast.error(t('EnhancePromptPage.apiKeyError'));
       return;
     }
     if (enhancedText.length > MAX_TEXT_LENGTH) {
-      toast.error(`Vui lòng nhập dưới ${MAX_TEXT_LENGTH} ký tự. Hiện tại: ${enhancedText.length} ký tự.`);
+      toast.error(
+        t('EnhancePromptPage.maxLengthError', { maxLength: MAX_TEXT_LENGTH, currentLength: enhancedText.length })
+      );
       return;
     }
     if (abortControllerRef.current) {
@@ -105,11 +111,11 @@ const Page = () => {
         if (['AbortError', 'aborted'].some((term) => error.message.includes(term))) return;
         toast.error(error.message);
       } else {
-        toast.error('Đã xảy ra lỗi không xác định.');
+        toast.error(t('EnhancePromptPage.unexpectedError'));
       }
     }
     setIsLoading(false);
-  }, [enhancedText]);
+  }, [enhancedText, t]);
 
   const handleClearSourceText = () => {
     setIsLoading(false);
@@ -124,7 +130,7 @@ const Page = () => {
   return (
     <div className='flex flex-col size-full min-w-0 bg-background text-black px-4 sm:px-10 gap-10'>
       <div className='p-1 flex flex-col items-center justify-center sm:mt-10'>
-        <Label className='text-4xl'>Cải thiện Prompt</Label>
+        <Label className='text-4xl'>{t('EnhancePromptPage.title')}</Label>
       </div>
       <div className='flex flex-col md:flex-row justify-center w-full max-w-full gap-3 md:px-0 lg:px-14 xl:px-32'>
         <div className='flex flex-col gap-1 w-full md:w-1/2'>
@@ -132,10 +138,10 @@ const Page = () => {
             <Textarea
               ref={textAreaSourceRef}
               value={sourceText}
-              className='w-full min-h-[128px] resize-none border-none outline-none bg-transparent 
-                focus:outline-none focus:ring-0 focus:ring-offset-0 focus:shadow-none 
+              className='w-full min-h-[128px] resize-none border-none outline-none bg-transparent
+                focus:outline-none focus:ring-0 focus:ring-offset-0 focus:shadow-none
                 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0'
-              placeholder='Nhập prompt cần cải thiện...'
+              placeholder={t('EnhancePromptPage.sourcePlaceholder')}
               onChange={handleSourceTextInput}
               disabled={isLoading}
             />
@@ -153,11 +159,17 @@ const Page = () => {
           <div className='flex justify-end mt-2'>
             <div className='flex gap-2'>
               <Button onClick={handleEnhance} disabled={isLoading || !sourceText.trim()} className='w-32'>
-                {isLoading ? <Loader2 className='animate-spin' /> : enhancedText ? 'Cải thiện lại' : 'Cải thiện'}
+                {isLoading ? (
+                  <Loader2 className='animate-spin' />
+                ) : enhancedText ? (
+                  t('EnhancePromptPage.enhanceAgainButton')
+                ) : (
+                  t('EnhancePromptPage.enhanceButton')
+                )}
               </Button>
               {enhancedText && (
                 <Button onClick={handleTranslateToEnglish} disabled={isLoading} className='w-42' variant='outline'>
-                  {isLoading ? <Loader2 className='animate-spin' /> : 'Dịch sang tiếng Anh'}
+                  {isLoading ? <Loader2 className='animate-spin' /> : t('EnhancePromptPage.translateToEnglishButton')}
                 </Button>
               )}
             </div>
@@ -170,7 +182,11 @@ const Page = () => {
                 ref={textAreaEnhancedRef}
                 className='min-h-[128px] resize-none w-full border-none outline-none disabled:cursor-auto disabled:bg-gray-50 disabled:opacity-100'
                 value={enhancedText}
-                placeholder={isLoading ? 'Đang cải thiện prompt...' : 'Prompt đã được cải thiện sẽ hiển thị ở đây...'}
+                placeholder={
+                  isLoading
+                    ? t('EnhancePromptPage.enhancedPlaceholderLoading')
+                    : t('EnhancePromptPage.enhancedPlaceholder')
+                }
                 disabled={true}
               />
               <span>
@@ -180,7 +196,7 @@ const Page = () => {
                     size='icon'
                     onClick={() => {
                       navigator.clipboard.writeText(enhancedText);
-                      toast.success('Đã sao chép');
+                      toast.success(t('EnhancePromptPage.copied'));
                     }}
                   >
                     <Copy />
@@ -193,7 +209,7 @@ const Page = () => {
                 <Textarea
                   className='min-h-[128px] resize-none w-full border-none outline-none disabled:cursor-auto disabled:bg-gray-50 disabled:opacity-100'
                   value={translatedText}
-                  placeholder='Bản dịch tiếng Anh sẽ hiển thị ở đây...'
+                  placeholder={t('EnhancePromptPage.translatedPlaceholder')}
                   disabled={true}
                 />
                 <span>
@@ -203,7 +219,7 @@ const Page = () => {
                       size='icon'
                       onClick={() => {
                         navigator.clipboard.writeText(translatedText);
-                        toast.success('Đã sao chép');
+                        toast.success(t('EnhancePromptPage.copied'));
                       }}
                     >
                       <Copy />

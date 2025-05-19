@@ -19,8 +19,10 @@ import { FileStore } from '@/src/lib/database/fileDataDB';
 import { extractChunksFromPDF } from '@/src/utils/chunkDataPdf';
 import { ConfirmDialog } from '@/src/components/ConfirmDialog';
 import { toast } from 'sonner';
+import { useTranslations } from 'next-intl';
 
 export default function ChatWithPDF() {
+  const t = useTranslations();
   const params = useParams();
   const router = useRouter();
   const [files, setFiles] = useState<PDFFile[]>([]);
@@ -88,7 +90,7 @@ export default function ChatWithPDF() {
             progress: 0
           });
         } else {
-          alert('Vui lòng chỉ chọn file PDF');
+          alert(t('ChatWithPdfIdPage.onlyPdfAlert'));
         }
       });
 
@@ -239,10 +241,8 @@ export default function ChatWithPDF() {
     return (
       <div className='flex flex-col items-center justify-center h-[calc(100vh-56px)] w-full'>
         <AlertCircle className='h-16 w-16 text-red-400 mb-6' />
-        <h2 className='text-2xl font-bold mb-2'>Cuộc trò chuyện không tồn tại</h2>
-        <p className='text-base text-gray-500 mb-4'>
-          Đường dẫn hoặc mã cuộc trò chuyện này không tồn tại trong hệ thống.
-        </p>
+        <h2 className='text-2xl font-bold mb-2'>{t('ChatWithPdfIdPage.chatNotFoundTitle')}</h2>
+        <p className='text-base text-gray-500 mb-4'>{t('ChatWithPdfIdPage.chatNotFoundDescription')}</p>
       </div>
     );
   }
@@ -266,19 +266,19 @@ export default function ChatWithPDF() {
               />
               <label htmlFor='pdf-upload' className='cursor-pointer flex flex-col items-center w-full'>
                 <Upload className='h-8 w-8 text-gray-400 mb-2' />
-                <div className='text-sm font-medium mb-1'>Tải lên PDF</div>
-                <p className='text-xs text-gray-500 mb-3'>Kéo thả hoặc click để chọn file</p>
+                <div className='text-sm font-medium mb-1'>{t('ChatWithPdfIdPage.uploadPdfLabel')}</div>
+                <p className='text-xs text-gray-500 mb-3'>{t('ChatWithPdfIdPage.uploadPdfHint')}</p>
                 <Button variant='outline' size='sm' className='w-full' onClick={() => fileInputRef.current?.click()}>
-                  Chọn tệp
+                  {t('ChatWithPdfIdPage.selectFileButton')}
                 </Button>
               </label>
             </div>
           </div>
           {/* Files List - Horizontal */}
           <div className='p-2 border-b'>
-            <h3 className='text-sm font-medium mb-1'>File đã tải lên</h3>
+            <h3 className='text-sm font-medium mb-1'>{t('ChatWithPdfIdPage.uploadedFilesTitle')}</h3>
             {files.length === 0 ? (
-              <div className='text-center text-gray-500 text-xs mb-2'>Chưa có file nào được tải lên</div>
+              <div className='text-center text-gray-500 text-xs mb-2'>{t('ChatWithPdfIdPage.noFilesUploaded')}</div>
             ) : (
               <div className='flex overflow-x-auto gap-2 pb-1 mb-2'>
                 {files.map((file) => (
@@ -333,15 +333,15 @@ export default function ChatWithPDF() {
               {isProcessing ? (
                 <>
                   <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-                  Đang xử lý...
+                  {t('ChatWithPdfIdPage.processingButton')}
                 </>
               ) : (
-                'Xử lý PDF'
+                t('ChatWithPdfIdPage.processPdfButton')
               )}
             </Button>
             {files.some((f) => f.status === 'processing') && (
               <div className='space-y-2 mt-3'>
-                <div className='text-xs font-medium'>Tiến trình xử lý</div>
+                <div className='text-xs font-medium'>{t('ChatWithPdfIdPage.processingProgressTitle')}</div>
                 {files
                   .filter((f) => f.status === 'processing')
                   .map((file) => (
@@ -363,7 +363,7 @@ export default function ChatWithPDF() {
             ) : (
               <div className='h-full flex flex-col justify-center p-6 text-center'>
                 <FileText className='h-10 w-12 text-gray-300 mx-auto mb-4' />
-                <h3 className='text-lg font-medium mb-2'>Không có file nào được chọn</h3>
+                <h3 className='text-lg font-medium mb-2'>{t('ChatWithPdfIdPage.noFileSelected')}</h3>
               </div>
             )}
           </div>
@@ -375,10 +375,10 @@ export default function ChatWithPDF() {
       {/* Dialog xác nhận xóa file */}
       <ConfirmDialog
         open={confirmDialogOpen}
-        title='Xác nhận xóa file'
-        description='Bạn có chắc chắn muốn xóa file này không?'
-        confirmText='Xóa'
-        cancelText='Hủy'
+        title={t('ChatWithPdfIdPage.confirmDeleteTitle')}
+        description={t('ChatWithPdfIdPage.confirmDeleteDescription')}
+        confirmText={t('ChatWithPdfIdPage.confirmDeleteButton')}
+        cancelText={t('ChatWithPdfIdPage.cancelDeleteButton')}
         onConfirm={() => {
           if (fileIdToDelete) {
             handleRemoveFile(fileIdToDelete);

@@ -4,6 +4,7 @@ import { LanguageSelect } from '@/src/components/LanguageSelect';
 import { TextBlock } from '@/src/components/TextBlock';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
+import { useTranslations } from 'next-intl';
 import { createPromptTranslateCode } from '@/src/prompt/codeTranslatePrompt';
 import { modelCallWithStreaming } from '@/src/service/translateService';
 import { Button } from '@/src/components/ui/button';
@@ -11,6 +12,7 @@ import { ArrowRight, Clipboard, LoaderCircle } from 'lucide-react';
 import { areAnyApiKeysAvailable } from '@/src/utils/getProvider';
 
 export default function Home() {
+  const t = useTranslations();
   const [inputLanguage, setInputLanguage] = useState<string>('Natural Language');
   const [outputLanguage, setOutputLanguage] = useState<string>('Python');
   const [inputCode, setInputCode] = useState<string>('');
@@ -25,24 +27,22 @@ export default function Home() {
     const maxCodeLength = 12000;
 
     if (!areAnyApiKeysAvailable()) {
-      toast.error('Please enter an API key.');
+      toast.error(t('CodeTranslatePage.apiKeyError'));
       return;
     }
 
     if (inputLanguage === outputLanguage) {
-      toast.error('Please select different languages.');
+      toast.error(t('CodeTranslatePage.selectDifferentLanguagesError'));
       return;
     }
 
     if (!inputCode) {
-      toast.error('Please enter some code.');
+      toast.error(t('CodeTranslatePage.enterCodeError'));
       return;
     }
 
     if (inputCode.length > maxCodeLength) {
-      toast.error(
-        `Please enter code less than ${maxCodeLength} characters. You are currently at ${inputCode.length} characters.`
-      );
+      toast.error(t('CodeTranslatePage.maxLengthError', { maxLength: maxCodeLength, currentLength: inputCode.length }));
       return;
     }
 
@@ -79,7 +79,7 @@ export default function Home() {
         if (['AbortError', 'aborted'].some((term) => error.message.includes(term))) return;
         toast.error(error.message);
       } else {
-        toast.error('An unexpected error occurred.');
+        toast.error(t('CodeTranslatePage.unexpectedError'));
       }
     } finally {
       setLoading(false);
@@ -101,7 +101,7 @@ export default function Home() {
   const handleCopyOutput = () => {
     if (outputCode) {
       copyToClipboard(outputCode);
-      toast.success('Copied to clipboard!');
+      toast.success(t('CodeTranslatePage.copiedToClipboard'));
     }
   };
 
@@ -116,11 +116,9 @@ export default function Home() {
     <div className='flex h-full flex-col items-center bg-background px-4 text-foreground sm:px-10'>
       <div className='flex flex-col items-center justify-center pt-4'>
         <h1 className='text-center text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent'>
-          AI Code Translator
+          {t('CodeTranslatePage.title')}
         </h1>
-        <p className='mt-2 text-muted-foreground text-center max-w-md'>
-          Easily translate between programming languages and natural language with AI assistance
-        </p>
+        <p className='mt-2 text-muted-foreground text-center max-w-md'>{t('CodeTranslatePage.description')}</p>
       </div>
 
       <div className='mt-6 flex items-center gap-4'>
@@ -134,11 +132,11 @@ export default function Home() {
           {loading ? (
             <>
               <LoaderCircle className='h-4 w-4 animate-spin' />
-              Translating...
+              {t('CodeTranslatePage.translatingButton')}
             </>
           ) : (
             <>
-              Translate
+              {t('CodeTranslatePage.translateButton')}
               <ArrowRight className='h-4 w-4' />
             </>
           )}
@@ -147,22 +145,22 @@ export default function Home() {
         {hasTranslated && outputCode && (
           <Button variant='outline' size='lg' onClick={handleCopyOutput} className='flex items-center gap-2'>
             <Clipboard className='h-4 w-4' />
-            {copied ? 'Copied!' : 'Copy Output'}
+            {copied ? t('CodeTranslatePage.copiedButton') : t('CodeTranslatePage.copyOutputButton')}
           </Button>
         )}
       </div>
 
       <div className='mt-2 text-center text-xs text-muted-foreground'>
         {loading
-          ? 'Translating your code...'
+          ? t('CodeTranslatePage.statusTranslating')
           : hasTranslated
-          ? 'Translation complete!'
-          : 'Enter some code and click "Translate"'}
+          ? t('CodeTranslatePage.statusComplete')
+          : t('CodeTranslatePage.statusInitial')}
       </div>
 
       <div className='mt-8 grid w-full max-w-[1200px] gap-6 lg:grid-cols-2'>
         <div className='flex h-full flex-col space-y-3 rounded-lg border p-4 shadow-sm'>
-          <h2 className='text-center text-xl font-semibold'>Input</h2>
+          <h2 className='text-center text-xl font-semibold'>{t('CodeTranslatePage.inputLabel')}</h2>
           <LanguageSelect
             language={inputLanguage}
             onChange={(value) => {
@@ -196,7 +194,7 @@ export default function Home() {
         </div>
 
         <div className='flex h-full flex-col space-y-3 rounded-lg border p-4 shadow-sm'>
-          <h2 className='text-center text-xl font-semibold'>Output</h2>
+          <h2 className='text-center text-xl font-semibold'>{t('CodeTranslatePage.outputLabel')}</h2>
           <LanguageSelect
             language={outputLanguage}
             onChange={(value) => {

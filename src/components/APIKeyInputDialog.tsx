@@ -1,10 +1,12 @@
 'use client';
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import AppDialog, { AppDialogRefHandle } from './AppDialog';
 
 const APIKeyInputDialog = forwardRef<AppDialogRefHandle>((_, ref) => {
+  const t = useTranslations();
   const [open, setOpen] = useState(false);
 
   const [apiKey, setApiKey] = useState<string>('');
@@ -48,7 +50,7 @@ const APIKeyInputDialog = forwardRef<AppDialogRefHandle>((_, ref) => {
   return (
     <AppDialog
       open={open}
-      title='Settings'
+      title={t('Dialog.settings')}
       onOpenChange={(openChange) => setOpen(openChange)}
       submitCallback={submitCallback}
       closeCallback={closeCallback}
@@ -56,30 +58,26 @@ const APIKeyInputDialog = forwardRef<AppDialogRefHandle>((_, ref) => {
         <div className='grid gap-8'>
           <div>
             <div className='mb-2'>
-              <Label>OpenAI API Key</Label>
-              <div className='text-xs text-gray-600'>
-                Your OpenAI API Key is stored locally and never sent to our servers
-              </div>
+              <Label>{t('Dialog.openaiApiKey')}</Label>
+              <div className='text-xs text-gray-600'>{t('Dialog.openaiApiKeyDesc')}</div>
             </div>
             <Input
               className='w-full'
               type='password'
-              placeholder='OpenAI API Key'
+              placeholder={t('Dialog.openaiApiKey')}
               value={apiKey}
               onChange={(e) => onChange(e.target.value)}
             />
           </div>
           <div>
             <div className='mb-2'>
-              <Label>Google Gemini API Key</Label>
-              <div className='text-xs text-gray-600'>
-                Gemini API key for using Google Gemini models. This key is optional.
-              </div>
+              <Label>{t('Dialog.geminiApiKey')}</Label>
+              <div className='text-xs text-gray-600'>{t('Dialog.geminiApiKeyDesc')}</div>
             </div>
             <Input
               className='w-full'
               type='password'
-              placeholder='Google Gemini API Key'
+              placeholder={t('Dialog.geminiApiKey')}
               value={geminiApiKey}
               onChange={(e) => onChangeGemini(e.target.value)}
             />

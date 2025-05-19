@@ -1,0 +1,226 @@
+{
+  "App": {
+    "title": "AI QUICK",
+    "description": "AI すべてを翻訳"
+  },
+  "Metadata": {
+    "languageTranslator": {
+      "title": "スマートAI翻訳 | 多言語翻訳",
+      "description": "日本語、英語、ベトナム語をサポートする強力なAI翻訳ツール。ChatGPT技術による即時で正確な翻訳。",
+      "keywords": ["AI翻訳", "言語翻訳", "日本語翻訳", "英語翻訳", "ベトナム語翻訳", "ChatGPT翻訳"],
+      "og": {
+        "title": "スマートAI翻訳",
+        "description": "AIによる多言語間の即時翻訳"
+      }
+    },
+    "codeTranslator": {
+      "title": "AIコード翻訳 | クロス言語コード変換",
+      "description": "強力なAIコード翻訳ツール。複数のプログラミング言語と自然言語の間でコードを簡単かつ正確に変換。",
+      "keywords": [
+        "AIコード翻訳",
+        "プログラミング言語変換",
+        "コード変換",
+        "AIプログラミングアシスタント",
+        "多言語コード翻訳",
+        "自然言語からコードへ",
+        "コードから自然言語へ"
+      ],
+      "og": {
+        "title": "AIコード翻訳",
+        "description": "プログラミング言語間のシームレスなコード変換"
+      }
+    },
+    "enhancePrompt": {
+      "title": "プロンプト強化 | AIプロンプト最適化",
+      "description": "AIを使ってプロンプトを最適化し、より良い結果を得るための強化。",
+      "keywords": [
+        "AIプロンプト強化",
+        "プロンプト最適化",
+        "より良いAIプロンプト",
+        "プロンプトエンジニアリング",
+        "AIアシスタント"
+      ],
+      "og": {
+        "title": "AIプロンプト強化ツール",
+        "description": "最適化されたプロンプトでAIからより良い結果を得る"
+      }
+    },
+    "chatWithPdf": {
+      "title": "PDFとチャット | AI搭載ドキュメント対話",
+      "description": "AIを使ってPDFドキュメントと対話。質問をして、ファイルから即座に回答を得ることができます。",
+      "keywords": [
+        "PDFチャット",
+        "ドキュメントAI",
+        "PDFアシスタント",
+        "ドキュメントQ&A",
+        "AIドキュメント分析",
+        "PDF対話"
+      ],
+      "og": {
+        "title": "PDFとチャット",
+        "description": "PDFドキュメントとのインテリジェントな会話"
+      }
+    }
+  },
+  "Sidebar": {
+    "brand": "AI QUICK",
+    "groupLabel": {
+      "aiTranslator": "AI翻訳",
+      "other": "その他",
+      "chat": "チャット"
+    },
+    "menu": {
+      "languageTranslate": "言語翻訳",
+      "codeTranslate": "コード翻訳",
+      "enhancePrompt": "プロンプト強化",
+      "chatWithPdf": "PDFとチャット"
+    }
+  },
+  "Dialog": {
+    "settings": "設定",
+    "openaiApiKey": "OpenAI APIキー",
+    "openaiApiKeyDesc": "あなたのOpenAI APIキーはローカルに保存され、サーバーに送信されることはありません",
+    "geminiApiKey": "Google Gemini APIキー",
+    "geminiApiKeyDesc": "Google Geminiモデルを使用するためのGemini APIキー（任意）",
+    "saveChanges": "変更を保存",
+    "close": "閉じる"
+  },
+  "Chat": {
+    "notFoundTitle": "チャットが見つかりません",
+    "notFoundDesc": "このチャットIDまたはパスはシステムに存在しません。",
+    "noFile": "処理されたファイルはありません",
+    "inputPlaceholder": "PDF内容について質問を入力してください...",
+    "sending": "処理中...",
+    "send": "送信",
+    "error": "エラーが発生しました: {{error}}"
+  },
+  "Confirm": {
+    "title": "確認",
+    "desc": "この操作を実行してもよろしいですか？",
+    "ok": "OK",
+    "cancel": "キャンセル"
+  },
+  "Model": {
+    "selectModel": "モデルを選択",
+    "changeModel": "AIモデルを変更",
+    "switchDesc": "{current} から {pending} へ切り替えようとしています。価格やモデルの特徴をよくご確認ください。",
+    "currentModel": "現在のモデル",
+    "newModel": "新しいモデル",
+    "modelName": "モデル名：",
+    "inputPrice": "入力価格：",
+    "outputPrice": "出力価格：",
+    "keepCurrent": "現在のモデルを維持",
+    "switchTo": "{pending} に切り替え"
+  },
+  "ModelSelector": {
+    "changeModelTitle": "AIモデルを変更",
+    "changeModelDesc": "{current} から {next} に切り替えようとしています。価格とモデルの特性をよく確認してください。",
+    "currentModel": "現在のモデル",
+    "newModel": "新しいモデル",
+    "modelName": "モデル名:",
+    "inputPrice": "入力価格:",
+    "outputPrice": "出力価格:",
+    "keepCurrentModel": "現在のモデルを維持",
+    "switchToModel": "{name} に切り替え"
+  },
+  "Pdf": {
+    "noFile": "PDFファイルが選択されていません",
+    "loadingFile": "PDFファイルを読み込み中...",
+    "loading": "読み込み中...",
+    "exit": "終了",
+    "loadError": "PDFの読み込みエラー",
+    "loadErrorDesc": "PDFファイルを読み込めませんでした。ファイルを確認してください。",
+    "loadingPdf": "PDFを読み込み中...",
+    "loadingPage": "ページを読み込み中...",
+    "pageError": "ページの読み込みエラー"
+  },
+  "SidebarToggle": {
+    "toggle": "サイドバーの切り替え",
+    "tooltip": "サイドバーの切り替え"
+  },
+  "ChatHistory": {
+    "history": "チャット履歴",
+    "delete": "履歴を削除"
+  },
+  "TranslatePage": {
+    "apiKeyError": "APIキーを入力してください。",
+    "selectDifferentLanguagesError": "異なる言語を選択してください。",
+    "maxLengthError": "{maxLength}文字以内で入力してください。現在{currentLength}文字です。",
+    "unexpectedError": "予期せぬエラーが発生しました。",
+    "switchingTooFastWarning": "言語の切り替えが速すぎます！",
+    "title": "ChatGPT搭載 スマートAI翻訳",
+    "japanese": "日本語",
+    "english": "英語",
+    "vietnamese": "ベトナム語",
+    "detectLanguage": "言語を検出",
+    "sourcePlaceholder": "翻訳するテキストを入力または貼り付け"
+  },
+  "CodeTranslatePage": {
+    "apiKeyError": "APIキーを入力してください。",
+    "selectDifferentLanguagesError": "異なる言語を選択してください。",
+    "enterCodeError": "コードを入力してください。",
+    "maxLengthError": "{maxLength}文字以内でコードを入力してください。現在{currentLength}文字です。",
+    "unexpectedError": "予期せぬエラーが発生しました。",
+    "copiedToClipboard": "クリップボードにコピーしました！",
+    "title": "AIコード翻訳",
+    "description": "AI支援により、プログラミング言語と自然言語の間で簡単に翻訳します",
+    "translatingButton": "翻訳中...",
+    "translateButton": "翻訳",
+    "copiedButton": "コピーしました！",
+    "copyOutputButton": "出力をコピー",
+    "statusTranslating": "コードを翻訳中...",
+    "statusComplete": "翻訳完了！",
+    "statusInitial": "コードを入力して「翻訳」をクリックしてください",
+    "inputLabel": "入力",
+    "outputLabel": "出力"
+  },
+  "ChatWithPdfIdPage": {
+    "onlyPdfAlert": "PDFファイルのみを選択してください",
+    "chatNotFoundTitle": "会話が見つかりません",
+    "chatNotFoundDescription": "このチャットIDまたはパスはシステムに存在しません。",
+    "uploadPdfLabel": "PDFをアップロード",
+    "uploadPdfHint": "ドラッグ＆ドロップまたはクリックしてファイルを選択",
+    "selectFileButton": "ファイルを選択",
+    "uploadedFilesTitle": "アップロードされたファイル",
+    "noFilesUploaded": "まだファイルがアップロードされていません",
+    "processingButton": "処理中...",
+    "processPdfButton": "PDFを処理",
+    "processingProgressTitle": "処理の進行状況",
+    "noFileSelected": "ファイルが選択されていません",
+    "confirmDeleteTitle": "ファイル削除の確認",
+    "confirmDeleteDescription": "このファイルを削除してもよろしいですか？",
+    "confirmDeleteButton": "削除",
+    "cancelDeleteButton": "キャンセル"
+  },
+  "ChatWithPdfWelcomePage": {
+    "title": "AIでPDFとチャット",
+    "ragTitle": "RAG (Retrieval-Augmented Generation)",
+    "ragDescription": "は、データ検索と自動言語生成を組み合わせた高度な技術です。インテリジェントシステムがPDFドキュメントから正確な情報を検索・抽出し、AIを使用して一貫性のある詳細な回答を生成します。",
+    "feature1": "任意のPDFファイルをアップロード",
+    "feature2": "ドキュメントの内容について質問する",
+    "feature3": "ドキュメントから直接インテリジェントな回答を受け取る",
+    "tagMultiLanguage": "多言語対応",
+    "tagDataSecurity": "個人データセキュリティ",
+    "loadingButton": "初期化中...",
+    "startButton": "チャットを開始"
+  },
+  "EnhancePromptPage": {
+    "apiKeyError": "APIキーを入力してください。",
+    "maxLengthError": "{maxLength}文字以内で入力してください。現在：{currentLength}文字。",
+    "unexpectedError": "不明なエラーが発生しました。",
+    "title": "プロンプトを強化",
+    "sourcePlaceholder": "強化するプロンプトを入力...",
+    "enhanceButton": "強化",
+    "enhanceAgainButton": "再度強化",
+    "translateToEnglishButton": "英語に翻訳",
+    "enhancedPlaceholderLoading": "プロンプトを強化中...",
+    "enhancedPlaceholder": "強化されたプロンプトはここに表示されます...",
+    "copied": "コピーしました",
+    "translatedPlaceholder": "英語の翻訳はここに表示されます..."
+  },
+  "LocaleSwitcher": {
+    "en": "English",
+    "vi": "Vietnamese",
+    "ja": "Japanese"
+  }
+}

@@ -1,6 +1,7 @@
 'use client';
 import { cn } from '@/src/lib/utils';
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/src/components/ui/button';
 import {
   DropdownMenu,
@@ -27,6 +28,7 @@ import {
 } from '@/src/types/model';
 
 export function ModelSelector({ className }: {} & React.ComponentProps<typeof Button>) {
+  const t = useTranslations();
   const [open, setOpen] = useState(false);
   const [model, setModel] = useState<ModelAI | undefined>(undefined);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
@@ -51,7 +53,7 @@ export function ModelSelector({ className }: {} & React.ComponentProps<typeof Bu
     } else if (modelList.length > 0) {
       localStorage.setItem(STORAGE_KEY_MODEL, JSON.stringify(modelList[0]));
     }
-  }, [setModel]);
+  }, []); // Changed dependency array to empty to run only on mount
 
   const handleModelChange = (chatModel: ModelAI) => {
     if (chatModel.model == model?.model) {
@@ -120,40 +122,41 @@ export function ModelSelector({ className }: {} & React.ComponentProps<typeof Bu
       <Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
         <DialogContent className='sm:max-w-2xl max-w-[1200px] px-4 sm:px-6'>
           <DialogHeader>
-            <DialogTitle className='text-2xl'>Change AI Model</DialogTitle>
+            <DialogTitle className='text-2xl'>{t('ModelSelector.changeModelTitle')}</DialogTitle>
             <DialogDescription className='text-base'>
-              You are about to switch from {model?.name} to {pendingModel?.name}. Please review the pricing and model
-              characteristics carefully.
+              {t('ModelSelector.changeModelDesc', { current: model?.name ?? '', next: pendingModel?.name ?? '' })}
             </DialogDescription>
           </DialogHeader>
           <div className='space-y-6'>
             <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
               <div className='bg-muted p-4 rounded-lg border'>
-                <h3 className='text-base sm:text-lg font-semibold text-primary mb-3'>Current Model</h3>
+                <h3 className='text-base sm:text-lg font-semibold text-primary mb-3'>
+                  {t('ModelSelector.currentModel')}
+                </h3>
                 <div className='space-y-2'>
                   <div className='flex justify-between text-sm sm:text-base'>
-                    <span className='font-medium'>Model Name:</span>
+                    <span className='font-medium'>{t('ModelSelector.modelName')}</span>
                     <span className='text-muted-foreground'>{model?.name}</span>
                   </div>
                   <div className='flex justify-between text-sm sm:text-base'>
-                    <span className='font-medium'>Input Price:</span>
+                    <span className='font-medium'>{t('ModelSelector.inputPrice')}</span>
                     <span className='text-muted-foreground'>${model?.priceInput?.toFixed(2)} / 1M tokens</span>
                   </div>
                   <div className='flex justify-between text-sm sm:text-base'>
-                    <span className='font-medium'>Output Price:</span>
+                    <span className='font-medium'>{t('ModelSelector.outputPrice')}</span>
                     <span className='text-muted-foreground'>${model?.priceOutput?.toFixed(2)} / 1M tokens</span>
                   </div>
                 </div>
               </div>
               <div className='bg-muted p-4 rounded-lg border'>
-                <h3 className='text-base sm:text-lg font-semibold text-primary mb-3'>New Model</h3>
+                <h3 className='text-base sm:text-lg font-semibold text-primary mb-3'>{t('ModelSelector.newModel')}</h3>
                 <div className='space-y-2'>
                   <div className='flex justify-between text-sm sm:text-base'>
-                    <span className='font-medium'>Model Name:</span>
+                    <span className='font-medium'>{t('ModelSelector.modelName')}</span>
                     <span className='text-muted-foreground'>{pendingModel?.name}</span>
                   </div>
                   <div className='flex justify-between text-sm sm:text-base'>
-                    <span className='font-medium'>Input Price:</span>
+                    <span className='font-medium'>{t('ModelSelector.inputPrice')}</span>
                     <span
                       className={`text-muted-foreground ${
                         pendingModel?.priceInput && model?.priceInput && pendingModel.priceInput > model?.priceInput
@@ -165,7 +168,7 @@ export function ModelSelector({ className }: {} & React.ComponentProps<typeof Bu
                     </span>
                   </div>
                   <div className='flex justify-between text-sm sm:text-base'>
-                    <span className='font-medium'>Output Price:</span>
+                    <span className='font-medium'>{t('ModelSelector.outputPrice')}</span>
                     <span
                       className={`text-muted-foreground ${
                         pendingModel?.priceOutput && model?.priceOutput && pendingModel.priceOutput > model?.priceOutput
@@ -182,10 +185,10 @@ export function ModelSelector({ className }: {} & React.ComponentProps<typeof Bu
           </div>
           <DialogFooter className='mt-4'>
             <Button variant='outline' onClick={cancelModelChange}>
-              Keep Current Model
+              {t('ModelSelector.keepCurrentModel')}
             </Button>
             <Button onClick={confirmModelChange} variant='default'>
-              Switch to {pendingModel?.name}
+              {t('ModelSelector.switchToModel', { name: pendingModel?.name ?? '' })}
             </Button>
           </DialogFooter>
         </DialogContent>

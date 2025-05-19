@@ -3,10 +3,12 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import { chatHistoryStore, ChatHistory } from '@/src/lib/database/chatHistoryDB';
 import { Button } from '@/src/components/ui/button';
 
 export default function ChatWithPDFWelcome() {
+  const t = useTranslations();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
@@ -40,12 +42,11 @@ export default function ChatWithPDFWelcome() {
         {/* Nội dung chính */}
         <div className='flex-1 text-center md:text-left space-y-4'>
           <h1 className='text-3xl md:text-5xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 drop-shadow-md'>
-            Chat với PDF bằng AI
+            {t('ChatWithPdfWelcomePage.title')}
           </h1>
           <p className='mb-4 text-gray-700 text-lg leading-relaxed'>
-            <b className='text-blue-600'>RAG (Retrieval-Augmented Generation)</b> là kỹ thuật tiên tiến kết hợp truy
-            xuất dữ liệu và sinh ngôn ngữ tự động. Hệ thống thông minh sẽ tìm kiếm và trích xuất thông tin chính xác từ
-            tài liệu PDF của bạn, sau đó sử dụng AI để tạo ra các câu trả lời mạch lạc và chuyên sâu.
+            <b className='text-blue-600'>{t('ChatWithPdfWelcomePage.ragTitle')}</b>{' '}
+            {t('ChatWithPdfWelcomePage.ragDescription')}
           </p>
           <ul className='mb-6 text-gray-600 text-base list-none space-y-2'>
             <li className='flex items-center'>
@@ -57,7 +58,7 @@ export default function ChatWithPDFWelcome() {
                   d='M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'
                 />
               </svg>
-              Tải lên file PDF bất kỳ
+              {t('ChatWithPdfWelcomePage.feature1')}
             </li>
             <li className='flex items-center'>
               <svg className='w-5 h-5 mr-2 text-blue-500' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
@@ -68,7 +69,7 @@ export default function ChatWithPDFWelcome() {
                   d='M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'
                 />
               </svg>
-              Đặt câu hỏi về nội dung tài liệu
+              {t('ChatWithPdfWelcomePage.feature2')}
             </li>
             <li className='flex items-center'>
               <svg className='w-5 h-5 mr-2 text-blue-500' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
@@ -79,15 +80,15 @@ export default function ChatWithPDFWelcome() {
                   d='M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'
                 />
               </svg>
-              Nhận câu trả lời thông minh từ chính tài liệu
+              {t('ChatWithPdfWelcomePage.feature3')}
             </li>
           </ul>
           <div className='mb-6 flex flex-wrap justify-center md:justify-start gap-2'>
             <span className='inline-block bg-blue-50 text-blue-700 px-4 py-1.5 rounded-full text-sm font-medium shadow-sm'>
-              Hỗ trợ đa ngôn ngữ
+              {t('ChatWithPdfWelcomePage.tagMultiLanguage')}
             </span>
             <span className='inline-block bg-purple-50 text-purple-700 px-4 py-1.5 rounded-full text-sm font-medium shadow-sm'>
-              Bảo mật dữ liệu cá nhân
+              {t('ChatWithPdfWelcomePage.tagDataSecurity')}
             </span>
           </div>
           <Button
@@ -112,7 +113,7 @@ export default function ChatWithPDFWelcome() {
               </svg>
             )}
             {loading ? (
-              'Đang khởi tạo...'
+              t('ChatWithPdfWelcomePage.loadingButton')
             ) : (
               <>
                 <svg
@@ -128,7 +129,7 @@ export default function ChatWithPDFWelcome() {
                     d='M8 17l4 4 4-4m0-5V3m-8 9v6a2 2 0 002 2h4a2 2 0 002-2v-6'
                   />
                 </svg>
-                Bắt đầu chat
+                {t('ChatWithPdfWelcomePage.startButton')}
               </>
             )}
           </Button>

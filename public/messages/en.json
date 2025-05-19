@@ -1,0 +1,233 @@
+{
+  "App": {
+    "title": "AI QUICK",
+    "description": "AI Translate Everything"
+  },
+  "Metadata": {
+    "languageTranslator": {
+      "title": "Smart AI Translator | Multi-Language Translation",
+      "description": "Powerful AI-powered translation tool supporting Japanese, English, and Vietnamese languages. Instant, accurate translations using ChatGPT technology.",
+      "keywords": [
+        "AI translator",
+        "language translation",
+        "Japanese translation",
+        "English translation",
+        "Vietnamese translation",
+        "ChatGPT translator"
+      ],
+      "og": {
+        "title": "Smart AI Translator",
+        "description": "Instant AI-powered translations across multiple languages"
+      }
+    },
+    "codeTranslator": {
+      "title": "AI Code Translator | Cross-Language Code Translation",
+      "description": "Powerful AI-driven code translation tool. Convert code between multiple programming languages and natural language with ease and accuracy.",
+      "keywords": [
+        "AI code translator",
+        "programming language translation",
+        "code conversion",
+        "AI programming assistant",
+        "multilingual code translation",
+        "natural language to code",
+        "code to natural language"
+      ],
+      "og": {
+        "title": "AI Code Translator",
+        "description": "Seamless code translation across programming languages"
+      }
+    },
+    "enhancePrompt": {
+      "title": "Enhance Prompt | AI Prompt Optimization",
+      "description": "Optimize and enhance your AI prompts for better results with AI-powered suggestions.",
+      "keywords": [
+        "AI prompt enhancement",
+        "prompt optimization",
+        "better AI prompts",
+        "prompt engineering",
+        "AI assistant"
+      ],
+      "og": {
+        "title": "AI Prompt Enhancer",
+        "description": "Get better results from AI with optimized prompts"
+      }
+    },
+    "chatWithPdf": {
+      "title": "Chat with PDF | AI-Powered Document Interaction",
+      "description": "Interact with your PDF documents using AI. Ask questions and get instant answers from your files.",
+      "keywords": [
+        "PDF chat",
+        "document AI",
+        "PDF assistant",
+        "document Q&A",
+        "AI document analysis",
+        "PDF interaction"
+      ],
+      "og": {
+        "title": "Chat with PDF",
+        "description": "Intelligent conversations with your PDF documents"
+      }
+    }
+  },
+  "Sidebar": {
+    "brand": "AI QUICK",
+    "groupLabel": {
+      "aiTranslator": "AI Translator",
+      "other": "Other",
+      "chat": "Chat"
+    },
+    "menu": {
+      "languageTranslate": "Language Translate",
+      "codeTranslate": "Code Translate",
+      "enhancePrompt": "Enhance Prompt",
+      "chatWithPdf": "Chat with PDF"
+    }
+  },
+  "Dialog": {
+    "settings": "Settings",
+    "openaiApiKey": "OpenAI API Key",
+    "openaiApiKeyDesc": "Your OpenAI API Key is stored locally and never sent to our servers",
+    "geminiApiKey": "Google Gemini API Key",
+    "geminiApiKeyDesc": "Gemini API key for using Google Gemini models. This key is optional.",
+    "saveChanges": "Save changes",
+    "close": "Close"
+  },
+  "Chat": {
+    "notFoundTitle": "Conversation not found",
+    "notFoundDesc": "This chat ID or path does not exist in the system.",
+    "noFile": "No file has been processed",
+    "inputPlaceholder": "Enter your question about the PDF content...",
+    "sending": "Processing...",
+    "send": "Send",
+    "error": "An error occurred: {{error}}"
+  },
+  "Confirm": {
+    "title": "Confirm",
+    "desc": "Are you sure you want to perform this action?",
+    "ok": "OK",
+    "cancel": "Cancel"
+  },
+  "Model": {
+    "selectModel": "Select Model",
+    "changeModel": "Change AI Model",
+    "switchDesc": "You are about to switch from {current} to {pending}. Please review the pricing and model characteristics carefully.",
+    "currentModel": "Current Model",
+    "newModel": "New Model",
+    "modelName": "Model Name:",
+    "inputPrice": "Input Price:",
+    "outputPrice": "Output Price:",
+    "keepCurrent": "Keep Current Model",
+    "switchTo": "Switch to {pending}"
+  },
+  "ModelSelector": {
+    "changeModelTitle": "Change AI Model",
+    "changeModelDesc": "You are about to switch from {current} to {next}. Please review the pricing and model characteristics carefully.",
+    "currentModel": "Current Model",
+    "newModel": "New Model",
+    "modelName": "Model Name:",
+    "inputPrice": "Input Price:",
+    "outputPrice": "Output Price:",
+    "keepCurrentModel": "Keep Current Model",
+    "switchToModel": "Switch to {name}"
+  },
+  "Pdf": {
+    "noFile": "No PDF file selected",
+    "loadingFile": "Loading PDF file...",
+    "loading": "Loading...",
+    "exit": "Exit",
+    "loadError": "Error loading PDF",
+    "loadErrorDesc": "The PDF file could not be loaded. Please check the file.",
+    "loadingPdf": "Loading PDF...",
+    "loadingPage": "Loading page...",
+    "pageError": "Error loading page"
+  },
+  "SidebarToggle": {
+    "toggle": "Toggle Sidebar",
+    "tooltip": "Toggle Sidebar"
+  },
+  "ChatHistory": {
+    "history": "Chat history",
+    "delete": "Delete history"
+  },
+  "TranslatePage": {
+    "apiKeyError": "Please enter an API key.",
+    "selectDifferentLanguagesError": "Please select different languages.",
+    "maxLengthError": "Please enter data less than {maxLength} characters. You are currently at {currentLength} characters.",
+    "unexpectedError": "An unexpected error occurred.",
+    "switchingTooFastWarning": "You are switching too fast!",
+    "title": "Smart AI Translator Powered by ChatGPT",
+    "japanese": "Japanese",
+    "english": "English",
+    "vietnamese": "Vietnamese",
+    "detectLanguage": "Detect language",
+    "sourcePlaceholder": "Type or paste text here to translate"
+  },
+  "CodeTranslatePage": {
+    "apiKeyError": "Please enter an API key.",
+    "selectDifferentLanguagesError": "Please select different languages.",
+    "enterCodeError": "Please enter some code.",
+    "maxLengthError": "Please enter code less than {maxLength} characters. You are currently at {currentLength} characters.",
+    "unexpectedError": "An unexpected error occurred.",
+    "copiedToClipboard": "Copied to clipboard!",
+    "title": "AI Code Translator",
+    "description": "Easily translate between programming languages and natural language with AI assistance",
+    "translatingButton": "Translating...",
+    "translateButton": "Translate",
+    "copiedButton": "Copied!",
+    "copyOutputButton": "Copy Output",
+    "statusTranslating": "Translating your code...",
+    "statusComplete": "Translation complete!",
+    "statusInitial": "Enter some code and click \"Translate\"",
+    "inputLabel": "Input",
+    "outputLabel": "Output"
+  },
+  "ChatWithPdfIdPage": {
+    "onlyPdfAlert": "Please select PDF files only",
+    "chatNotFoundTitle": "Conversation not found",
+    "chatNotFoundDescription": "This chat ID or path does not exist in the system.",
+    "uploadPdfLabel": "Upload PDF",
+    "uploadPdfHint": "Drag and drop or click to select file",
+    "selectFileButton": "Select file",
+    "uploadedFilesTitle": "Uploaded Files",
+    "noFilesUploaded": "No files uploaded yet",
+    "processingButton": "Processing...",
+    "processPdfButton": "Process PDF",
+    "processingProgressTitle": "Processing Progress",
+    "noFileSelected": "No file selected",
+    "confirmDeleteTitle": "Confirm File Deletion",
+    "confirmDeleteDescription": "Are you sure you want to delete this file?",
+    "confirmDeleteButton": "Delete",
+    "cancelDeleteButton": "Cancel"
+  },
+  "ChatWithPdfWelcomePage": {
+    "title": "Chat with PDF using AI",
+    "ragTitle": "RAG (Retrieval-Augmented Generation)",
+    "ragDescription": "is an advanced technique that combines data retrieval and automatic language generation. The intelligent system will search and extract accurate information from your PDF documents, then use AI to generate coherent and in-depth answers.",
+    "feature1": "Upload any PDF file",
+    "feature2": "Ask questions about the document content",
+    "feature3": "Receive intelligent answers directly from the document",
+    "tagMultiLanguage": "Multi-language Support",
+    "tagDataSecurity": "Personal Data Security",
+    "loadingButton": "Initializing...",
+    "startButton": "Start Chat"
+  },
+  "EnhancePromptPage": {
+    "apiKeyError": "Please enter API key.",
+    "maxLengthError": "Please enter less than {maxLength} characters. Currently: {currentLength} characters.",
+    "unexpectedError": "An unknown error occurred.",
+    "title": "Enhance Prompt",
+    "sourcePlaceholder": "Enter prompt to enhance...",
+    "enhanceButton": "Enhance",
+    "enhanceAgainButton": "Enhance Again",
+    "translateToEnglishButton": "Translate to English",
+    "enhancedPlaceholderLoading": "Enhancing prompt...",
+    "enhancedPlaceholder": "Enhanced prompt will be displayed here...",
+    "copied": "Copied",
+    "translatedPlaceholder": "English translation will be displayed here..."
+  },
+  "LocaleSwitcher": {
+    "en": "English",
+    "vi": "Vietnamese",
+    "ja": "Japanese"
+  }
+}
