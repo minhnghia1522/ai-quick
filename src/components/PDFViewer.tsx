@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect, useRef, useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import { ChevronLeft, ChevronRight, Maximize, Minimize, Plus, Minus, Download } from 'lucide-react';
 import { Button } from '@/src/components/ui/button';
 import dynamic from 'next/dynamic';
@@ -15,6 +16,7 @@ interface PDFViewerProps {
 }
 
 export function PDFViewer({ file }: PDFViewerProps) {
+  const t = useTranslations();
   const [numPages, setNumPages] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [zoom, setZoom] = useState(100);
@@ -173,7 +175,7 @@ export function PDFViewer({ file }: PDFViewerProps) {
   if (!file) {
     return (
       <div className='flex items-center justify-center h-full bg-gray-100 rounded-lg'>
-        <p className='text-gray-500'>Không có tệp PDF nào được chọn</p>
+        <p className='text-gray-500'>{t('PDFViewer.noFileSelected')}</p>
       </div>
     );
   }
@@ -181,7 +183,7 @@ export function PDFViewer({ file }: PDFViewerProps) {
   if (!fileUrl) {
     return (
       <div className='flex items-center justify-center h-full bg-gray-100 rounded-lg'>
-        <p className='text-gray-500'>Đang tải tệp PDF...</p>
+        <p className='text-gray-500'>{t('PDFViewer.loadingFile')}</p>
       </div>
     );
   }
@@ -212,7 +214,7 @@ export function PDFViewer({ file }: PDFViewerProps) {
             </div>
           ))
         ) : (
-          <div className='p-2 text-xs text-center text-gray-500'>Đang tải...</div>
+          <div className='p-2 text-xs text-center text-gray-500'>{t('PDFViewer.loading')}</div>
         )}
       </div>
 
@@ -248,7 +250,7 @@ export function PDFViewer({ file }: PDFViewerProps) {
             </Button>
             {isFullscreen && (
               <Button variant='outline' size='sm' onClick={() => setIsFullscreen(false)}>
-                <Minimize className='h-4 w-4 mr-1' /> Thoát
+                <Minimize className='h-4 w-4 mr-1' /> {t('PDFViewer.exit')}
               </Button>
             )}
           </div>
@@ -263,14 +265,14 @@ export function PDFViewer({ file }: PDFViewerProps) {
               file={fileUrl}
               onLoadSuccess={onDocumentLoadSuccess}
               onLoadError={(error) => {
-                console.error('Lỗi khi tải PDF:', error);
+                console.error(t('PDFViewer.loadErrorConsole'), error);
                 // Có thể thêm xử lý lỗi ở đây nếu cần
               }}
-              loading={<p className='text-center'>Đang tải PDF...</p>}
+              loading={<p className='text-center'>{t('PDFViewer.loadingFile')}</p>}
               error={
                 <div className='text-center p-4'>
-                  <p className='text-red-500 font-medium mb-2'>Lỗi tải PDF</p>
-                  <p className='text-sm text-gray-600'>Tệp PDF không thể được tải. Vui lòng kiểm tra lại tệp.</p>
+                  <p className='text-red-500 font-medium mb-2'>{t('PDFViewer.loadErrorTitle')}</p>
+                  <p className='text-sm text-gray-600'>{t('PDFViewer.loadErrorDesc')}</p>
                 </div>
               }
               options={pdfOptions}
@@ -281,8 +283,8 @@ export function PDFViewer({ file }: PDFViewerProps) {
                 renderTextLayer
                 renderAnnotationLayer
                 className='shadow-lg'
-                loading={<p className='text-center'>Đang tải trang...</p>}
-                error={<p className='text-center text-red-500'>Lỗi tải trang</p>}
+                loading={<p className='text-center'>{t('PDFViewer.loadingPage')}</p>}
+                error={<p className='text-center text-red-500'>{t('PDFViewer.pageError')}</p>}
               />
             </Document>
           </div>

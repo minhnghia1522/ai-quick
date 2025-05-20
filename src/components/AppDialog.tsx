@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from './ui/dialog';
 import { Button } from './ui/button';
 
@@ -23,12 +24,13 @@ const AppDialog = ({
   title,
   description,
   bodyContent,
-  btnSubmitName = 'Save changes',
-  btnCloseName = 'Close',
+  btnSubmitName,
+  btnCloseName,
   onOpenChange,
   closeCallback,
   submitCallback
 }: Props) => {
+  const t = useTranslations();
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
@@ -44,10 +46,10 @@ const AppDialog = ({
                 closeCallback?.();
               }}
             >
-              {btnCloseName}
+              {btnCloseName ?? t('Dialog.close')}
             </Button>
             <Button type='submit' onClick={submitCallback}>
-              {btnSubmitName}
+              {btnSubmitName ?? t('Dialog.saveChanges')}
             </Button>
           </div>
         </DialogFooter>

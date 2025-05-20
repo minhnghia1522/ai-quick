@@ -17,49 +17,51 @@ import Link from 'next/link';
 import SidebarSetting from './SidebarSetting';
 import { usePathname } from 'next/navigation';
 import ChatSidebarGroup from './ChatSidebarGroup';
-
-// Menu items.
-const menuItems = [
-  {
-    groupLabel: 'AI Translator',
-    items: [
-      {
-        title: 'Language Translate',
-        url: '/translate/languages',
-        icon: Languages
-      },
-      {
-        title: 'Code Translate',
-        url: '/translate/code',
-        icon: Code
-      }
-    ]
-  },
-  {
-    groupLabel: 'Other',
-    items: [
-      {
-        title: 'Cải thiện prompt',
-        url: '/enhance-prompt',
-        icon: Sparkles
-      }
-    ]
-  },
-  {
-    groupLabel: 'Chat',
-    items: [
-      {
-        title: 'Chat with PDF',
-        url: '/chat-with-pdf',
-        icon: FileText
-      }
-    ]
-  }
-];
+import { useTranslations } from 'next-intl';
 
 const AppSidebar = () => {
+  const t = useTranslations();
   const pathname = usePathname();
   const { setOpenMobile } = useSidebar();
+
+  // Menu items chuyển vào trong function để dùng hook
+  const menuItems = [
+    {
+      groupLabel: t('Sidebar.groupLabel.aiTranslator'),
+      items: [
+        {
+          title: t('Sidebar.menu.languageTranslate'),
+          url: '/translate/languages',
+          icon: Languages
+        },
+        {
+          title: t('Sidebar.menu.codeTranslate'),
+          url: '/translate/code',
+          icon: Code
+        }
+      ]
+    },
+    {
+      groupLabel: t('Sidebar.groupLabel.other'),
+      items: [
+        {
+          title: t('Sidebar.menu.enhancePrompt'),
+          url: '/enhance-prompt',
+          icon: Sparkles
+        }
+      ]
+    },
+    {
+      groupLabel: t('Sidebar.groupLabel.chat'),
+      items: [
+        {
+          title: t('Sidebar.menu.chatWithPdf'),
+          url: '/chat-with-pdf',
+          icon: FileText
+        }
+      ]
+    }
+  ];
 
   const handleCloseSidebarOnMobile = () => {
     if (window.innerWidth < 768) {
@@ -79,7 +81,9 @@ const AppSidebar = () => {
               }}
               className='flex flex-row gap-3 items-center'
             >
-              <span className='text-xl font-bold px-2 hover:bg-muted rounded-md cursor-pointer'>AI QUICK</span>
+              <span className='text-xl font-bold px-2 hover:bg-muted rounded-md cursor-pointer'>
+                {t('Sidebar.brand')}
+              </span>
             </Link>
           </div>
         </SidebarMenu>
@@ -87,7 +91,7 @@ const AppSidebar = () => {
       <SidebarContent>
         {menuItems.map(({ items, groupLabel }, index) => {
           // Nếu là group Chat thì render thêm lịch sử chat
-          if (groupLabel === 'Chat') {
+          if (groupLabel === t('Sidebar.groupLabel.chat')) {
             return (
               <ChatSidebarGroup key={index} pathname={pathname} onCloseSidebarMobile={handleCloseSidebarOnMobile} />
             );

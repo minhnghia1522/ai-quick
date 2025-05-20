@@ -1,0 +1,227 @@
+{
+  "App": {
+    "title": "AI QUICK",
+    "description": "AI Dịch Mọi Thứ"
+  },
+  "Metadata": {
+    "languageTranslator": {
+      "title": "AI Dịch Thông Minh | Dịch Đa Ngôn Ngữ",
+      "description": "Công cụ dịch thuật mạnh mẽ hỗ trợ tiếng Nhật, tiếng Anh và tiếng Việt. Dịch thuật chính xác, tức thì bằng công nghệ ChatGPT.",
+      "keywords": [
+        "AI dịch thuật",
+        "dịch ngôn ngữ",
+        "dịch tiếng Nhật",
+        "dịch tiếng Anh",
+        "dịch tiếng Việt",
+        "dịch thuật ChatGPT"
+      ],
+      "og": {
+        "title": "AI Dịch Thông Minh",
+        "description": "Dịch thuật tức thì đa ngôn ngữ bằng AI"
+      }
+    },
+    "codeTranslator": {
+      "title": "AI Dịch Mã Nguồn | Chuyển Đổi Mã Giữa Các Ngôn Ngữ",
+      "description": "Công cụ dịch mã nguồn mạnh mẽ. Chuyển đổi mã giữa nhiều ngôn ngữ lập trình và ngôn ngữ tự nhiên một cách dễ dàng và chính xác.",
+      "keywords": [
+        "AI dịch mã nguồn",
+        "chuyển đổi ngôn ngữ lập trình",
+        "chuyển đổi mã",
+        "trợ lý lập trình AI",
+        "dịch mã đa ngôn ngữ",
+        "ngôn ngữ tự nhiên sang mã",
+        "mã sang ngôn ngữ tự nhiên"
+      ],
+      "og": {
+        "title": "AI Dịch Mã Nguồn",
+        "description": "Chuyển đổi mã nguồn liền mạch giữa các ngôn ngữ lập trình"
+      }
+    },
+    "enhancePrompt": {
+      "title": "Cải Thiện Prompt | Tối Ưu Hóa Prompt AI",
+      "description": "Tối ưu hóa và cải thiện prompt của bạn bằng AI để có kết quả tốt hơn.",
+      "keywords": ["Cải thiện prompt AI", "tối ưu hóa prompt", "prompt AI tốt hơn", "kỹ thuật prompt", "trợ lý AI"],
+      "og": {
+        "title": "Công Cụ Cải Thiện Prompt AI",
+        "description": "Nhận kết quả tốt hơn từ AI với prompt được tối ưu hóa"
+      }
+    },
+    "chatWithPdf": {
+      "title": "Chat Với PDF | Tương Tác Tài Liệu Bằng AI",
+      "description": "Trò chuyện với file PDF của bạn bằng AI. Đặt câu hỏi và nhận câu trả lời ngay lập tức từ tài liệu của bạn.",
+      "keywords": [
+        "Chat PDF",
+        "AI tài liệu",
+        "trợ lý PDF",
+        "hỏi đáp tài liệu",
+        "phân tích tài liệu AI",
+        "tương tác PDF"
+      ],
+      "og": {
+        "title": "Chat Với PDF",
+        "description": "Trò chuyện thông minh với tài liệu PDF của bạn"
+      }
+    }
+  },
+  "Sidebar": {
+    "brand": "AI QUICK",
+    "groupLabel": {
+      "aiTranslator": "AI Dịch thuật",
+      "other": "Khác",
+      "chat": "Trò chuyện"
+    },
+    "menu": {
+      "languageTranslate": "Dịch ngôn ngữ",
+      "codeTranslate": "Dịch mã nguồn",
+      "enhancePrompt": "Cải thiện prompt",
+      "chatWithPdf": "Chat với PDF"
+    }
+  },
+  "Dialog": {
+    "settings": "Cài đặt",
+    "openaiApiKey": "OpenAI API Key",
+    "openaiApiKeyDesc": "API Key của bạn được lưu trữ cục bộ và không bao giờ gửi lên máy chủ",
+    "geminiApiKey": "Google Gemini API Key",
+    "geminiApiKeyDesc": "API key Gemini để sử dụng mô hình Google Gemini. Trường này không bắt buộc.",
+    "saveChanges": "Lưu thay đổi",
+    "close": "Đóng"
+  },
+  "Chat": {
+    "notFoundTitle": "Không tìm thấy cuộc trò chuyện",
+    "notFoundDesc": "Đường dẫn hoặc mã cuộc trò chuyện này không tồn tại trong hệ thống.",
+    "noFile": "Chưa có file nào được xử lý",
+    "inputPlaceholder": "Nhập câu hỏi của bạn về nội dung PDF...",
+    "sending": "Đang xử lý...",
+    "send": "Gửi",
+    "error": "Có lỗi xảy ra: {{error}}"
+  },
+  "Confirm": {
+    "title": "Xác nhận",
+    "desc": "Bạn có chắc chắn muốn thực hiện thao tác này?",
+    "ok": "OK",
+    "cancel": "Hủy"
+  },
+  "Model": {
+    "selectModel": "Chọn mô hình",
+    "changeModel": "Thay đổi mô hình AI",
+    "switchDesc": "Bạn sắp chuyển từ {current} sang {pending}. Vui lòng kiểm tra kỹ giá và đặc điểm mô hình.",
+    "currentModel": "Mô hình hiện tại",
+    "newModel": "Mô hình mới",
+    "modelName": "Tên mô hình:",
+    "inputPrice": "Giá đầu vào:",
+    "outputPrice": "Giá đầu ra:",
+    "keepCurrent": "Giữ mô hình hiện tại",
+    "switchTo": "Chuyển sang {pending}"
+  },
+  "ModelSelector": {
+    "changeModelTitle": "Thay đổi Mô hình AI",
+    "changeModelDesc": "Bạn sắp chuyển từ {current} sang {next}. Vui lòng xem xét kỹ giá cả và đặc điểm của mô hình.",
+    "currentModel": "Mô hình Hiện tại",
+    "newModel": "Mô hình Mới",
+    "modelName": "Tên Mô hình:",
+    "inputPrice": "Giá Đầu vào:",
+    "outputPrice": "Giá Đầu ra:",
+    "keepCurrentModel": "Giữ Mô hình Hiện tại",
+    "switchToModel": "Chuyển sang {name}"
+  },
+  "Pdf": {
+    "noFile": "Chưa chọn file PDF",
+    "loadingFile": "Đang tải file PDF...",
+    "loading": "Đang tải...",
+    "exit": "Thoát",
+    "loadError": "Lỗi tải PDF",
+    "loadErrorDesc": "Không thể tải file PDF. Vui lòng kiểm tra lại file.",
+    "loadingPdf": "Đang tải PDF...",
+    "loadingPage": "Đang tải trang...",
+    "pageError": "Lỗi tải trang"
+  },
+  "SidebarToggle": {
+    "toggle": "Bật/tắt thanh bên",
+    "tooltip": "Bật/tắt thanh bên"
+  },
+  "ChatHistory": {
+    "history": "Lịch sử chat",
+    "delete": "Xóa lịch sử"
+  },
+  "TranslatePage": {
+    "apiKeyError": "Vui lòng nhập API key.",
+    "selectDifferentLanguagesError": "Vui lòng chọn các ngôn ngữ khác nhau.",
+    "maxLengthError": "Vui lòng nhập dữ liệu ít hơn {maxLength} ký tự. Bạn hiện đang ở {currentLength} ký tự.",
+    "unexpectedError": "Đã xảy ra lỗi không mong muốn.",
+    "switchingTooFastWarning": "Bạn đang chuyển đổi quá nhanh!",
+    "title": "Trình dịch AI thông minh được cung cấp bởi ChatGPT",
+    "japanese": "Nhật",
+    "english": "Anh",
+    "vietnamese": "Việt",
+    "detectLanguage": "Phát hiện ngôn ngữ",
+    "sourcePlaceholder": "Nhập hoặc dán văn bản vào đây để dịch"
+  },
+  "CodeTranslatePage": {
+    "apiKeyError": "Vui lòng nhập API key.",
+    "selectDifferentLanguagesError": "Vui lòng chọn các ngôn ngữ khác nhau.",
+    "enterCodeError": "Vui lòng nhập một số mã.",
+    "maxLengthError": "Vui lòng nhập mã ít hơn {maxLength} ký tự. Bạn hiện đang ở {currentLength} ký tự.",
+    "unexpectedError": "Đã xảy ra lỗi không mong muốn.",
+    "copiedToClipboard": "Đã sao chép vào clipboard!",
+    "title": "Trình dịch mã AI",
+    "description": "Dễ dàng dịch giữa các ngôn ngữ lập trình và ngôn ngữ tự nhiên với sự hỗ trợ của AI",
+    "translatingButton": "Đang dịch...",
+    "translateButton": "Dịch",
+    "copiedButton": "Đã sao chép!",
+    "copyOutputButton": "Sao chép đầu ra",
+    "statusTranslating": "Đang dịch mã của bạn...",
+    "statusComplete": "Dịch hoàn tất!",
+    "statusInitial": "Nhập một số mã và nhấp vào \"Dịch\"",
+    "inputLabel": "Đầu vào",
+    "outputLabel": "Đầu ra"
+  },
+  "ChatWithPdfIdPage": {
+    "onlyPdfAlert": "Vui lòng chỉ chọn file PDF",
+    "chatNotFoundTitle": "Cuộc trò chuyện không tồn tại",
+    "chatNotFoundDescription": "Đường dẫn hoặc mã cuộc trò chuyện này không tồn tại trong hệ thống.",
+    "uploadPdfLabel": "Tải lên PDF",
+    "uploadPdfHint": "Kéo thả hoặc click để chọn file",
+    "selectFileButton": "Chọn tệp",
+    "uploadedFilesTitle": "File đã tải lên",
+    "noFilesUploaded": "Chưa có file nào được tải lên",
+    "processingButton": "Đang xử lý...",
+    "processPdfButton": "Xử lý PDF",
+    "processingProgressTitle": "Tiến trình xử lý",
+    "noFileSelected": "Không có file nào được chọn",
+    "confirmDeleteTitle": "Xác nhận xóa file",
+    "confirmDeleteDescription": "Bạn có chắc chắn muốn xóa file này không?",
+    "confirmDeleteButton": "Xóa",
+    "cancelDeleteButton": "Hủy"
+  },
+  "ChatWithPdfWelcomePage": {
+    "title": "Chat với PDF bằng AI",
+    "ragTitle": "RAG (Retrieval-Augmented Generation)",
+    "ragDescription": "là kỹ thuật tiên tiến kết hợp truy xuất dữ liệu và sinh ngôn ngữ tự động. Hệ thống thông minh sẽ tìm kiếm và trích xuất thông tin chính xác từ tài liệu PDF của bạn, sau đó sử dụng AI để tạo ra các câu trả lời mạch lạc và chuyên sâu.",
+    "feature1": "Tải lên file PDF bất kỳ",
+    "feature2": "Đặt câu hỏi về nội dung tài liệu",
+    "feature3": "Nhận câu trả lời thông minh từ chính tài liệu",
+    "tagMultiLanguage": "Hỗ trợ đa ngôn ngữ",
+    "tagDataSecurity": "Bảo mật dữ liệu cá nhân",
+    "loadingButton": "Đang khởi tạo...",
+    "startButton": "Bắt đầu chat"
+  },
+  "EnhancePromptPage": {
+    "apiKeyError": "Vui lòng nhập API key.",
+    "maxLengthError": "Vui lòng nhập dưới {maxLength} ký tự. Hiện tại: {currentLength} ký tự.",
+    "unexpectedError": "Đã xảy ra lỗi không xác định.",
+    "title": "Cải thiện Prompt",
+    "sourcePlaceholder": "Nhập prompt cần cải thiện...",
+    "enhanceButton": "Cải thiện",
+    "enhanceAgainButton": "Cải thiện lại",
+    "translateToEnglishButton": "Dịch sang tiếng Anh",
+    "enhancedPlaceholderLoading": "Đang cải thiện prompt...",
+    "enhancedPlaceholder": "Prompt đã được cải thiện sẽ hiển thị ở đây...",
+    "copied": "Đã sao chép",
+    "translatedPlaceholder": "Bản dịch tiếng Anh sẽ hiển thị ở đây..."
+  },
+  "LocaleSwitcher": {
+    "en": "English",
+    "vi": "Vietnamese",
+    "ja": "Japanese"
+  }
+}

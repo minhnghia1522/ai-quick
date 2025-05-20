@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from './ui/dialog';
 import { Button } from './ui/button';
 
@@ -14,26 +15,27 @@ interface ConfirmDialogProps {
 
 export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   open,
-  title = 'Xác nhận',
-  description = 'Bạn có chắc chắn muốn thực hiện thao tác này?',
-  confirmText = 'OK',
-  cancelText = 'Hủy',
+  title,
+  description,
+  confirmText,
+  cancelText,
   onConfirm,
   onCancel
 }) => {
+  const t = useTranslations();
   return (
     <Dialog open={open} onOpenChange={onCancel}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>{description}</DialogDescription>
+          <DialogTitle>{title ?? t('ConfirmDialog.title')}</DialogTitle>
+          <DialogDescription>{description ?? t('ConfirmDialog.description')}</DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <Button variant='outline' onClick={onCancel}>
-            {cancelText}
+            {cancelText ?? t('ConfirmDialog.cancelText')}
           </Button>
           <Button variant='destructive' onClick={onConfirm}>
-            {confirmText}
+            {confirmText ?? t('ConfirmDialog.confirmText')}
           </Button>
         </DialogFooter>
       </DialogContent>

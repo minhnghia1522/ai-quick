@@ -5,6 +5,7 @@ import { Button } from '@/src/components/ui/button';
 import { Input } from '@/src/components/ui/input';
 import { FileText, Loader2, AlertCircle } from 'lucide-react';
 import { useCustomChat } from '@/src/hooks/useCustomChat';
+import { useTranslations } from 'next-intl';
 
 import ReactMarkdown from 'react-markdown';
 
@@ -14,6 +15,7 @@ type ChatInterfaceProps = {
 };
 
 export const ChatInterface = ({ isFileEmbedding, chatId }: ChatInterfaceProps) => {
+  const t = useTranslations();
   const { messages, input, handleInputChange, handleSubmit, isLoading, error, notFound } = useCustomChat(chatId);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -26,10 +28,8 @@ export const ChatInterface = ({ isFileEmbedding, chatId }: ChatInterfaceProps) =
     return (
       <div className='w-1/2 flex flex-col items-center justify-center h-full'>
         <AlertCircle className='h-12 w-12 text-red-400 mb-4' />
-        <h3 className='text-lg font-medium mb-2'>Cuộc trò chuyện không tồn tại</h3>
-        <p className='text-sm text-gray-500 mb-4'>
-          Đường dẫn hoặc mã cuộc trò chuyện này không tồn tại trong hệ thống.
-        </p>
+        <h3 className='text-lg font-medium mb-2'>{t('Chat.notFoundTitle')}</h3>
+        <p className='text-sm text-gray-500 mb-4'>{t('Chat.notFoundDesc')}</p>
       </div>
     );
   }
@@ -43,7 +43,7 @@ export const ChatInterface = ({ isFileEmbedding, chatId }: ChatInterfaceProps) =
             {!isFileEmbedding ? (
               <div className='h-full flex flex-col justify-center p-6 text-center'>
                 <FileText className='h-12 w-12 text-gray-300 mx-auto mb-4' />
-                <h3 className='text-lg font-medium mb-2'>Không có file nào đã được xử lý</h3>
+                <h3 className='text-lg font-medium mb-2'>{t('Chat.noFile')}</h3>
               </div>
             ) : (
               <div className='space-y-4'>
@@ -85,7 +85,7 @@ export const ChatInterface = ({ isFileEmbedding, chatId }: ChatInterfaceProps) =
           <div className='p-2 border-t bg-white'>
             <form onSubmit={handleSubmit} className='flex gap-2'>
               <Input
-                placeholder='Nhập câu hỏi của bạn về nội dung PDF...'
+                placeholder={t('Chat.inputPlaceholder')}
                 value={input}
                 onChange={handleInputChange}
                 className='flex-1'
@@ -95,17 +95,17 @@ export const ChatInterface = ({ isFileEmbedding, chatId }: ChatInterfaceProps) =
                 {isLoading ? (
                   <>
                     <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-                    Đang xử lý...
+                    {t('Chat.sending')}
                   </>
                 ) : (
-                  'Gửi'
+                  t('Chat.send')
                 )}
               </Button>
             </form>
           </div>
         </div>
       </div>
-      {error && <div className='p-4 text-red-500 text-sm'>Có lỗi xảy ra: {error.message}</div>}
+      {error && <div className='p-4 text-red-500 text-sm'>{t('Chat.error', { error: error.message })}</div>}
     </div>
   );
 };
