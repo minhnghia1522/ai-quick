@@ -6,7 +6,7 @@ import { ThemeProvider } from 'next-themes';
 import dynamic from 'next/dynamic';
 import { PropsWithChildren, Suspense, useEffect, useState } from 'react';
 import { Toaster } from 'sonner';
-import { getClientLocale, loadLocaleMessages, setClientLocale } from '../service/clientLocale';
+import { getUserLocale, loadLocaleMessages, setClientLocale } from '../service/clientLocale';
 import { AppHeader } from '../components/AppHeader';
 import AppSidebar from '../components/AppSidebar';
 import { SidebarProvider, SidebarInset } from '../components/ui/sidebar';
@@ -25,7 +25,7 @@ export default function LayoutClient({ children }: PropsWithChildren) {
     const initClientLocale = async () => {
       try {
         // Always use client locale
-        const clientLocale = getClientLocale();
+        const clientLocale = getUserLocale();
         const clientMessages = await loadLocaleMessages(clientLocale);
 
         setLocale(clientLocale);

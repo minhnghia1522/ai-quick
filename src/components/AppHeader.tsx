@@ -23,9 +23,7 @@ export function AppHeader() {
     <header className='flex sticky top-0 bg-background py-1.5 items-center px-2 md:px-2 gap-2'>
       <SidebarToggle />
       <ModelSelector className='order-1 md:order-2' />
-      <div className='ml-auto order-2 md:order-3'>
-        <LocaleSwitcher />
-      </div>
+      <LocaleSwitcher className='ml-auto order-2 md:order-3' />
       <APIKeyInputDialog ref={dialogRef} />
     </header>
   );

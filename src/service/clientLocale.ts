@@ -1,19 +1,13 @@
-import { STORAGE_KEY_LOCALE } from '../i18n/request';
-
-// Default locale if none is stored
-const DEFAULT_LOCALE = 'en';
-
-// List of supported locales
-const SUPPORTED_LOCALES = ['en', 'vi', 'ja'];
+import { DEFAULT_LOCALE, Locale, STORAGE_KEY_LOCALE, SUPPORTED_LOCALES } from '../i18n/config';
 
 /**
  * Gets the user's locale from localStorage or navigator preferences
  */
-export function getClientLocale(): string {
+export function getUserLocale(): string {
   if (typeof window === 'undefined') return DEFAULT_LOCALE;
 
   // First check localStorage
-  const savedLocale = localStorage.getItem(STORAGE_KEY_LOCALE);
+  const savedLocale = localStorage.getItem(STORAGE_KEY_LOCALE) as Locale;
   if (savedLocale && SUPPORTED_LOCALES.includes(savedLocale)) {
     return savedLocale;
   }
@@ -23,7 +17,7 @@ export function getClientLocale(): string {
 
   // Find the first browser locale that matches our supported locales
   for (const locale of browserLocales) {
-    const shortLocale = locale.split('-')[0];
+    const shortLocale = locale.split('-')[0] as Locale;
     if (SUPPORTED_LOCALES.includes(shortLocale)) {
       return shortLocale;
     }
@@ -36,7 +30,7 @@ export function getClientLocale(): string {
  * Sets the user's locale in localStorage
  */
 export function setClientLocale(locale: string): void {
-  if (typeof window !== 'undefined' && SUPPORTED_LOCALES.includes(locale)) {
+  if (typeof window !== 'undefined' && SUPPORTED_LOCALES.includes(locale as Locale)) {
     localStorage.setItem(STORAGE_KEY_LOCALE, locale);
   }
 }

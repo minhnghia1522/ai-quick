@@ -3,18 +3,13 @@
 import { useLocale, useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation'; // Sử dụng useRouter từ next/navigation
 import { useEffect, useState } from 'react';
-import { Locale, STORAGE_KEY_LOCALE } from '../i18n/request';
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem
-} from '@radix-ui/react-dropdown-menu';
+import { Locale } from '../i18n/request';
 import { ChevronDownIcon } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { Button } from './ui/button';
-
-const locales = ['en', 'vi', 'ja'];
+import { STORAGE_KEY_LOCALE, SUPPORTED_LOCALES } from '../i18n/config';
+import { CheckCircleFillIcon } from './icons';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
 
 export default function LocaleSwitcher({ className }: { className?: string }) {
   const t = useTranslations('LocaleSwitcher');
@@ -42,15 +37,29 @@ export default function LocaleSwitcher({ className }: { className?: string }) {
         asChild
         className={cn('w-fit data-[state=open]:bg-accent data-[state=open]:text-accent-foreground', className)}
       >
-        <Button variant='outline' className='md:px-2 md:h-[34px]'>
+        <Button data-testid='model-selector' variant='outline' className='md:px-2 md:h-[34px]'>
           {t(selectedLocale)}
           <ChevronDownIcon />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align='start' className='min-w-[150px]'>
-        {locales.map((locale) => (
-          <DropdownMenuItem key={locale} onSelect={() => handleLocaleChange(locale as Locale)} className='gap-2'>
-            {t(locale)}
+        {SUPPORTED_LOCALES.map((locale) => (
+          <DropdownMenuItem
+            key={locale}
+            onSelect={() => handleLocaleChange(locale as Locale)}
+            className='gap-2'
+            data-active={locale === selectedLocale}
+            asChild
+          >
+            <button type='button' className='gap-4 group/item flex flex-row justify-between items-center w-full'>
+              <div className='flex flex-col gap-1 items-start'>
+                <div>{t(locale)}</div>
+              </div>
+
+              <div className='text-foreground dark:text-foreground opacity-0 group-data-[active=true]/item:opacity-100'>
+                <CheckCircleFillIcon />
+              </div>
+            </button>
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>
