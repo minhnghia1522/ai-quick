@@ -9,8 +9,8 @@ import { createEnhancePrompt } from '@/src/prompt/enhancePrompt';
 import { createPromptTranslateEnhancePrompt } from '@/src/prompt/languageTranslatePrompt';
 import { LANGUAGES } from '@/src/types/model';
 import { modelCallWithStreaming } from '@/src/service/translateService';
-import { Label } from '@/src/components/ui/label';
 import { areAnyApiKeysAvailable } from '@/src/utils/getProvider';
+import PageView from '@/src/components/PageView';
 
 const MAX_TEXT_LENGTH = 10000;
 
@@ -127,11 +127,8 @@ const Page = () => {
     if (textAreaEnhancedRef.current) textAreaEnhancedRef.current.style.height = 'auto';
   };
 
-  return (
-    <div className='flex flex-col size-full min-w-0 bg-background text-black px-4 sm:px-10 gap-10'>
-      <div className='p-1 flex flex-col items-center justify-center sm:mt-10'>
-        <Label className='text-4xl'>{t('EnhancePromptPage.title')}</Label>
-      </div>
+  const renderBody = () => {
+    return (
       <div className='flex flex-col md:flex-row justify-center w-full max-w-full gap-3 md:px-0 lg:px-14 xl:px-32'>
         <div className='flex flex-col gap-1 w-full md:w-1/2'>
           <div className='relative w-full flex rounded-md border border-input bg-background px-1 pt-1 pb-8'>
@@ -139,8 +136,8 @@ const Page = () => {
               ref={textAreaSourceRef}
               value={sourceText}
               className='w-full min-h-[128px] resize-none border-none outline-none bg-transparent
-                focus:outline-none focus:ring-0 focus:ring-offset-0 focus:shadow-none
-                focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0'
+                  focus:outline-none focus:ring-0 focus:ring-offset-0 focus:shadow-none
+                  focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0'
               placeholder={t('EnhancePromptPage.sourcePlaceholder')}
               onChange={handleSourceTextInput}
               disabled={isLoading}
@@ -231,7 +228,16 @@ const Page = () => {
           </div>
         </div>
       </div>
-    </div>
+    );
+  };
+
+  return (
+    <PageView
+      title={{
+        titleName: t('EnhancePromptPage.title')
+      }}
+      body={renderBody()}
+    />
   );
 };
 

@@ -27,7 +27,7 @@ export default function ChatWithPDFWelcome() {
   };
 
   return (
-    <div className='w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-100 p-0 md:p-0'>
+    <div className='w-full h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-100 p-0 md:p-0'>
       <div className='max-w-5xl w-auto md:w-full mx-auto rounded-xl md:rounded-2xl shadow-2xl bg-white/95 p-4 md:p-8 flex flex-col md:flex-row items-center gap-4 md:gap-8 transform transition-all duration-300 hover:scale-[1.01] hover:shadow-3xl'>
         <div className='hidden md:block flex-shrink-0 animate-float'>
           <Image

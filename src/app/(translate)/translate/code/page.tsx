@@ -10,6 +10,7 @@ import { modelCallWithStreaming } from '@/src/service/translateService';
 import { Button } from '@/src/components/ui/button';
 import { ArrowRight, Clipboard, LoaderCircle } from 'lucide-react';
 import { areAnyApiKeysAvailable } from '@/src/utils/getProvider';
+import PageView from '@/src/components/PageView';
 
 export default function Home() {
   const t = useTranslations();
@@ -112,106 +113,132 @@ export default function Home() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [outputLanguage]);
 
-  return (
-    <div className='flex h-full flex-col items-center bg-background px-4 text-foreground sm:px-10'>
-      <div className='flex flex-col items-center justify-center pt-4'>
-        <h1 className='text-center text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent'>
-          {t('CodeTranslatePage.title')}
-        </h1>
-        <p className='mt-2 text-muted-foreground text-center max-w-md'>{t('CodeTranslatePage.description')}</p>
-      </div>
+  const renderBody = () => {
+    return (
+      <div className='flex flex-col w-full max-w-[1400px] mx-auto gap-5 px-4 md:px-6'>
+        {/* Control Panel */}
+        <div className='flex flex-col sm:flex-row items-center justify-between gap-4 bg-muted/30 rounded-lg p-4 border shadow-sm'>
+          <div className='flex items-center gap-2'>
+            <Button
+              className='flex items-center gap-2 min-w-[120px]'
+              variant='default'
+              size='sm'
+              onClick={handleTranslate}
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  <LoaderCircle className='h-4 w-4 animate-spin' />
+                  {t('CodeTranslatePage.translatingButton')}
+                </>
+              ) : (
+                <>
+                  {t('CodeTranslatePage.translateButton')}
+                  <ArrowRight className='h-4 w-4' />
+                </>
+              )}
+            </Button>
 
-      <div className='mt-6 flex items-center gap-4'>
-        <Button
-          className='flex items-center gap-2 min-w-[140px]'
-          variant='default'
-          size='lg'
-          onClick={handleTranslate}
-          disabled={loading}
-        >
-          {loading ? (
-            <>
-              <LoaderCircle className='h-4 w-4 animate-spin' />
-              {t('CodeTranslatePage.translatingButton')}
-            </>
-          ) : (
-            <>
-              {t('CodeTranslatePage.translateButton')}
-              <ArrowRight className='h-4 w-4' />
-            </>
-          )}
-        </Button>
-
-        {hasTranslated && outputCode && (
-          <Button variant='outline' size='lg' onClick={handleCopyOutput} className='flex items-center gap-2'>
-            <Clipboard className='h-4 w-4' />
-            {copied ? t('CodeTranslatePage.copiedButton') : t('CodeTranslatePage.copyOutputButton')}
-          </Button>
-        )}
-      </div>
-
-      <div className='mt-2 text-center text-xs text-muted-foreground'>
-        {loading
-          ? t('CodeTranslatePage.statusTranslating')
-          : hasTranslated
-          ? t('CodeTranslatePage.statusComplete')
-          : t('CodeTranslatePage.statusInitial')}
-      </div>
-
-      <div className='mt-8 grid w-full max-w-[1200px] gap-6 lg:grid-cols-2'>
-        <div className='flex h-full flex-col space-y-3 rounded-lg border p-4 shadow-sm'>
-          <h2 className='text-center text-xl font-semibold'>{t('CodeTranslatePage.inputLabel')}</h2>
-          <LanguageSelect
-            language={inputLanguage}
-            onChange={(value) => {
-              setInputLanguage(value);
-              setHasTranslated(false);
-              setInputCode('');
-              setOutputCode('');
-            }}
-          />
-          <div className='flex-1 overflow-hidden rounded-md border'>
-            {inputLanguage === 'Natural Language' ? (
-              <TextBlock
-                text={inputCode}
-                editable={!loading}
-                onChange={(value) => {
-                  setInputCode(value);
-                  setHasTranslated(false);
-                }}
-              />
-            ) : (
-              <CodeBlock
-                code={inputCode}
-                editable={!loading}
-                onChange={(value) => {
-                  setInputCode(value);
-                  setHasTranslated(false);
-                }}
-              />
+            {hasTranslated && outputCode && (
+              <Button
+                variant='outline'
+                size='sm'
+                onClick={handleCopyOutput}
+                className={`flex items-center gap-2 ${
+                  copied
+                    ? 'bg-green-50 text-green-700 border-green-300 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800'
+                    : ''
+                }`}
+              >
+                <Clipboard className='h-4 w-4' />
+                {copied ? t('CodeTranslatePage.copiedButton') : t('CodeTranslatePage.copyOutputButton')}
+              </Button>
             )}
           </div>
         </div>
 
-        <div className='flex h-full flex-col space-y-3 rounded-lg border p-4 shadow-sm'>
-          <h2 className='text-center text-xl font-semibold'>{t('CodeTranslatePage.outputLabel')}</h2>
-          <LanguageSelect
-            language={outputLanguage}
-            onChange={(value) => {
-              setOutputLanguage(value);
-              setOutputCode('');
-            }}
-          />
-          <div className='relative flex-1 overflow-hidden rounded-md border'>
-            {outputLanguage === 'Natural Language' ? <TextBlock text={outputCode} /> : <CodeBlock code={outputCode} />}
-            {loading && (
-              <div className='absolute inset-0 flex items-center justify-center bg-background/80'>
-                <LoaderCircle className='h-8 w-8 animate-spin text-primary' />
+        {/* Code Editors */}
+        <div className='grid w-full gap-6 lg:grid-cols-2 mb-10'>
+          {/* Input Panel */}
+          <div className='flex h-full flex-col space-y-3 rounded-lg border p-5 shadow-sm bg-card'>
+            <div className='flex justify-between items-center gap-5'>
+              <h2 className='text-xl font-semibold whitespace-nowrap flex-shrink-0'>
+                {t('CodeTranslatePage.inputLabel')}
+              </h2>
+              <div className='flex-1'>
+                <LanguageSelect
+                  language={inputLanguage}
+                  onChange={(value) => {
+                    setInputLanguage(value);
+                    setHasTranslated(false);
+                    setInputCode('');
+                    setOutputCode('');
+                  }}
+                />
               </div>
-            )}
+            </div>
+            <div className='flex-1 overflow-hidden rounded-md border bg-muted/40 min-h-[450px]'>
+              {inputLanguage === 'Natural Language' ? (
+                <TextBlock
+                  text={inputCode}
+                  editable={!loading}
+                  onChange={(value) => {
+                    setInputCode(value);
+                    setHasTranslated(false);
+                  }}
+                />
+              ) : (
+                <CodeBlock
+                  code={inputCode}
+                  editable={!loading}
+                  onChange={(value) => {
+                    setInputCode(value);
+                    setHasTranslated(false);
+                  }}
+                />
+              )}
+            </div>
+          </div>
+
+          {/* Output Panel */}
+          <div className='flex h-full flex-col space-y-3 rounded-lg border p-5 shadow-sm bg-card'>
+            <div className='flex justify-between items-center gap-5'>
+              <h2 className='text-xl font-semibold whitespace-nowrap flex-shrink-0'>
+                {t('CodeTranslatePage.outputLabel')}
+              </h2>
+              <div className='flex-1'>
+                <LanguageSelect
+                  language={outputLanguage}
+                  onChange={(value) => {
+                    setOutputLanguage(value);
+                    setOutputCode('');
+                  }}
+                />
+              </div>
+            </div>
+            <div className='relative flex-1 overflow-hidden rounded-md border bg-muted/40 min-h-[450px]'>
+              {outputLanguage === 'Natural Language' ? (
+                <TextBlock text={outputCode} />
+              ) : (
+                <CodeBlock code={outputCode} />
+              )}
+              {loading && (
+                <div className='absolute inset-0 flex flex-col items-center justify-center bg-card/90 backdrop-blur-sm transition-all'>
+                  <LoaderCircle className='h-10 w-10 animate-spin text-primary mb-3' />
+                  <div className='text-sm text-muted-foreground'>{t('CodeTranslatePage.statusTranslating')}</div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    );
+  };
+
+  return (
+    <PageView
+      title={{ titleName: t('CodeTranslatePage.title'), description: t('CodeTranslatePage.description') }}
+      body={renderBody()}
+    />
   );
 }
