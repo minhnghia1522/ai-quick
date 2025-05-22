@@ -27,7 +27,7 @@ const PasswordField = ({ value, onChange, ...rest }: Props) => {
       <button
         type='button'
         onClick={toggleShowPassword}
-        className='absolute inset-y-0 right-0 flex items-center px-3 text-gray-500'
+        className='absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 hover:text-gray-900'
         aria-label={showPassword ? 'Hide password' : 'Show password'}
       >
         {showPassword ? <EyeOff className='h-5 w-5' /> : <Eye className='h-5 w-5' />}
