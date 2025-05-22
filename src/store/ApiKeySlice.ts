@@ -4,8 +4,8 @@ import { SetState } from '.';
 export type ApiKeySlice = {
   isOpenApiKey: boolean;
   isGeminiApiKey: boolean;
-  setIsOpenApiKey: (flag: boolean) => void;
-  setIsGeminiApiKey: (flag: boolean) => void;
+  setIsOpenApiKey: (haveKey: boolean) => void;
+  setIsGeminiApiKey: (haveKey: boolean) => void;
 };
 
 const initData = {
@@ -15,6 +15,6 @@ const initData = {
 
 export const createApiKeySlice = (set: SetState<ApiKeySlice>, get: () => ApiKeySlice): ApiKeySlice => ({
   ...initData,
-  setIsOpenApiKey: (flag: boolean) => set({ isOpenApiKey: flag }),
-  setIsGeminiApiKey: (flag: boolean) => set({ isGeminiApiKey: flag })
+  setIsOpenApiKey: (haveKey: boolean) => set({ isOpenApiKey: haveKey }),
+  setIsGeminiApiKey: (haveKey: boolean) => set({ isGeminiApiKey: haveKey })
 });

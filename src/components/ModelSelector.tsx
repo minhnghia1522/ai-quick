@@ -24,11 +24,14 @@ import {
   openAIModels,
   STORAGE_KEY_OPENAI_API_KEY,
   STORAGE_KEY_GEMINI_API_KEY,
-  STORAGE_KEY_MODEL
+  STORAGE_KEY_MODEL,
+  MODEL_DEFAULT
 } from '@/src/types/model';
+import { useAppStore } from '../store';
 
 export function ModelSelector({ className }: {} & React.ComponentProps<typeof Button>) {
   const t = useTranslations();
+  const { isOpenApiKey, isGeminiApiKey } = useAppStore();
   const [open, setOpen] = useState(false);
   const [model, setModel] = useState<ModelAI | undefined>(undefined);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
@@ -51,9 +54,10 @@ export function ModelSelector({ className }: {} & React.ComponentProps<typeof Bu
     if (modelLocalStorage !== null && modelLocalStorage !== 'undefined') {
       setModel(JSON.parse(modelLocalStorage));
     } else if (modelList.length > 0) {
-      localStorage.setItem(STORAGE_KEY_MODEL, JSON.stringify(modelList[0]));
+      localStorage.setItem(STORAGE_KEY_MODEL, JSON.stringify(MODEL_DEFAULT));
+      setModel(MODEL_DEFAULT);
     }
-  }, []); // Changed dependency array to empty to run only on mount
+  }, [isOpenApiKey, isGeminiApiKey]);
 
   const handleModelChange = (chatModel: ModelAI) => {
     if (chatModel.model == model?.model) {

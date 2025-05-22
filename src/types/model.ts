@@ -1,6 +1,7 @@
 export const STORAGE_KEY_MODEL: string = 'modelData';
 export const STORAGE_KEY_OPENAI_API_KEY: string = 'apiKey';
 export const STORAGE_KEY_GEMINI_API_KEY: string = 'geminiApiKey';
+
 export interface ModelAI {
   id: number;
   model: string;
@@ -102,3 +103,5 @@ export const LANGUAGES = {
   en: 'English',
   natural: 'Natural languages'
 };
+
+export const MODEL_DEFAULT = openAIModels[1];

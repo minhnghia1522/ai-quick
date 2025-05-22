@@ -1,45 +1,57 @@
 'use client';
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
+import isEmpty from 'lodash/isEmpty';
 import { useTranslations } from 'next-intl';
-import { Input } from './ui/input';
 import { Label } from './ui/label';
 import AppDialog, { AppDialogRefHandle } from './AppDialog';
+import { useAppStore } from '../store';
+import PasswordField from './PasswordField';
 
 const APIKeyInputDialog = forwardRef<AppDialogRefHandle>((_, ref) => {
   const t = useTranslations();
-  const [open, setOpen] = useState(false);
+  const { setIsGeminiApiKey, setIsOpenApiKey } = useAppStore();
 
+  const [open, setOpen] = useState(false);
   const [apiKey, setApiKey] = useState<string>('');
   const [geminiApiKey, setGeminiApiKey] = useState<string>('');
 
   useEffect(() => {
+    if (!open) {
+      return;
+    }
     const apiKeyLocalStorage = localStorage.getItem('apiKey');
     const geminiApiKeyLocalStorage = localStorage.getItem('geminiApiKey');
 
     if (apiKeyLocalStorage) {
       setApiKey(apiKeyLocalStorage);
+      setIsOpenApiKey(true);
     }
     if (geminiApiKeyLocalStorage) {
       setGeminiApiKey(geminiApiKeyLocalStorage);
+      setIsGeminiApiKey(true);
     }
-  }, []);
+  }, [open, setIsGeminiApiKey, setIsOpenApiKey]);
 
-  const onChange = (value: string) => {
+  const onChangeOpenApiKey = (value: string) => {
     setApiKey(value);
   };
 
-  const onChangeGemini = (value: string) => {
+  const onChangeGeminiKey = (value: string) => {
     setGeminiApiKey(value);
   };
 
   const submitCallback = () => {
     localStorage.setItem('apiKey', apiKey);
+    setIsOpenApiKey(isEmpty(apiKey));
     localStorage.setItem('geminiApiKey', geminiApiKey);
+    setIsGeminiApiKey(isEmpty(geminiApiKey));
     setOpen(false);
   };
 
   const closeCallback = () => {
     setOpen(false);
+    setApiKey('');
+    setGeminiApiKey('');
   };
 
   useImperativeHandle(ref, () => ({
@@ -51,7 +63,7 @@ const APIKeyInputDialog = forwardRef<AppDialogRefHandle>((_, ref) => {
     <AppDialog
       open={open}
       title={t('Dialog.settings')}
-      onOpenChange={(openChange) => setOpen(openChange)}
+      onOpenChange={() => closeCallback()}
       submitCallback={submitCallback}
       closeCallback={closeCallback}
       bodyContent={
@@ -61,26 +73,14 @@ const APIKeyInputDialog = forwardRef<AppDialogRefHandle>((_, ref) => {
               <Label>{t('Dialog.openaiApiKey')}</Label>
               <div className='text-xs text-gray-600'>{t('Dialog.openaiApiKeyDesc')}</div>
             </div>
-            <Input
-              className='w-full'
-              type='password'
-              placeholder={t('Dialog.openaiApiKey')}
-              value={apiKey}
-              onChange={(e) => onChange(e.target.value)}
-            />
+            <PasswordField value={apiKey} onChange={onChangeOpenApiKey} placeholder={t('Dialog.openaiApiKey')} />
           </div>
           <div>
             <div className='mb-2'>
               <Label>{t('Dialog.geminiApiKey')}</Label>
               <div className='text-xs text-gray-600'>{t('Dialog.geminiApiKeyDesc')}</div>
             </div>
-            <Input
-              className='w-full'
-              type='password'
-              placeholder={t('Dialog.geminiApiKey')}
-              value={geminiApiKey}
-              onChange={(e) => onChangeGemini(e.target.value)}
-            />
+            <PasswordField value={geminiApiKey} onChange={onChangeGeminiKey} placeholder={t('Dialog.geminiApiKey')} />
           </div>
         </div>
       }

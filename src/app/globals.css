@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @plugin "tailwindcss-animate";
 
@@ -126,4 +126,15 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Hide browser's default password toggle icon */
+.no-browser-password-toggle::-ms-reveal,
+.no-browser-password-toggle::-ms-clear {
+  display: none;
+}
+.no-browser-password-toggle::-webkit-reveal,
+.no-browser-password-toggle::-webkit-clear-button {
+  display: none !important;
+  -webkit-appearance: none !important;
 }
