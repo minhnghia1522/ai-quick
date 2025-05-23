@@ -12,17 +12,19 @@ export interface RequestConfig {
 }
 
 export default getRequestConfig(async (): Promise<RequestConfig> => {
-  const locale = await getUserLocale();
+  const locale = getUserLocale();
 
   if (!SUPPORTED_LOCALES.includes(locale as Locale)) {
+    const mod = await import(`../../public/messages/en.json`);
     return {
       locale: 'en',
-      messages: (await import(`../../public/messages/en.json`)).default
+      messages: mod.default
     };
   }
 
+  const mod = await import(`../../public/messages/${locale}.json`);
   return {
     locale: locale as Locale,
-    messages: (await import(`../../public/messages/${locale}.json`)).default
+    messages: mod.default
   };
 });

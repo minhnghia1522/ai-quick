@@ -147,8 +147,23 @@ export default function ChatWithPDF() {
     }
 
     // Embedding chỉ cho file thực sự chưa từng xử lý
+
     const embeddingResults = await Promise.all(
       pendingFiles.map(async (file) => {
+        const updateProgress = (progress: number) => {
+          setFiles((prevFiles) =>
+            prevFiles.map((f) =>
+              f.id === file.id
+                ? {
+                    ...f,
+                    status: progress < 100 ? ('processing' as const) : ('completed' as const),
+                    progress
+                  }
+                : f
+            )
+          );
+        };
+
         try {
           const allChunks = await extractChunksFromPDF(file.file);
           const chunksWithEmbedding: PDFChunk[] = [];
@@ -161,30 +176,10 @@ export default function ChatWithPDF() {
               embedding: embeddingArr[0] as number[] | undefined
             });
             // Cập nhật progress cho file này
-            setFiles((prevFiles) =>
-              prevFiles.map((f) =>
-                f.id === file.id
-                  ? {
-                      ...f,
-                      status: 'processing' as const,
-                      progress: Math.round(((i + 1) / allChunks.length) * 100)
-                    }
-                  : f
-              )
-            );
+            updateProgress(Math.round(((i + 1) / allChunks.length) * 100));
           }
           // Sau khi xong toàn bộ chunk, cập nhật trạng thái file thành completed
-          setFiles((prevFiles) =>
-            prevFiles.map((f) =>
-              f.id === file.id
-                ? {
-                    ...f,
-                    status: 'completed' as const,
-                    progress: 100
-                  }
-                : f
-            )
-          );
+          updateProgress(100);
           return {
             file,
             chunks: chunksWithEmbedding
