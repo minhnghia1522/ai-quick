@@ -140,6 +140,19 @@ export default function ChatWithPDF() {
     );
   };
 
+  const updateFileStatusToError = (fileId: string) => {
+    setFiles((prevFiles) =>
+      prevFiles.map((f) =>
+        f.id === fileId
+          ? {
+              ...f,
+              status: 'error' as const
+            }
+          : f
+      )
+    );
+  };
+
   const handleProcessFiles = async () => {
     setIsProcessing(true);
 
@@ -190,16 +203,7 @@ export default function ChatWithPDF() {
             toast.error(error.message);
           }
           updateFileProgress(file.id, 0); // Reset progress on error
-          setFiles((prevFiles) =>
-            prevFiles.map((f) =>
-              f.id === file.id
-                ? {
-                    ...f,
-                    status: 'error' as const
-                  }
-                : f
-            )
-          );
+          updateFileStatusToError(file.id);
           return null;
         }
       })
