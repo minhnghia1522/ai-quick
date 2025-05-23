@@ -196,8 +196,15 @@ export function PDFViewer({ file }: PDFViewerProps) {
           Array.from({ length: numPages }).map((_, index) => (
             <div
               key={index}
+              role='button'
+              tabIndex={0}
               className={`cursor-pointer mb-2 mx-2 rounded ${currentPage === index + 1 ? 'ring-2 ring-blue-500' : ''}`}
               onClick={() => setCurrentPage(index + 1)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  setCurrentPage(index + 1);
+                }
+              }}
             >
               <div className='bg-white shadow-md'>
                 <Document file={fileUrl} loading={null} error={null}>

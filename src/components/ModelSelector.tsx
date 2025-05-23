@@ -29,7 +29,7 @@ import {
 } from '@/src/types/model';
 import { useAppStore } from '../store';
 
-export function ModelSelector({ className }: {} & React.ComponentProps<typeof Button>) {
+export function ModelSelector({ className }: React.ComponentProps<typeof Button>) {
   const t = useTranslations();
   const { isOpenApiKey, isGeminiApiKey } = useAppStore();
   const [open, setOpen] = useState(false);
