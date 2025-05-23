@@ -126,6 +126,20 @@ export default function ChatWithPDF() {
     embedding?: number[];
   }
 
+  const updateFileProgress = (fileId: string, progress: number) => {
+    setFiles((prevFiles) =>
+      prevFiles.map((f) =>
+        f.id === fileId
+          ? {
+              ...f,
+              status: progress < 100 ? ('processing' as const) : ('completed' as const),
+              progress
+            }
+          : f
+      )
+    );
+  };
+
   const handleProcessFiles = async () => {
     setIsProcessing(true);
 
@@ -150,20 +164,6 @@ export default function ChatWithPDF() {
 
     const embeddingResults = await Promise.all(
       pendingFiles.map(async (file) => {
-        const updateProgress = (progress: number) => {
-          setFiles((prevFiles) =>
-            prevFiles.map((f) =>
-              f.id === file.id
-                ? {
-                    ...f,
-                    status: progress < 100 ? ('processing' as const) : ('completed' as const),
-                    progress
-                  }
-                : f
-            )
-          );
-        };
-
         try {
           const allChunks = await extractChunksFromPDF(file.file);
           const chunksWithEmbedding: PDFChunk[] = [];
@@ -176,10 +176,10 @@ export default function ChatWithPDF() {
               embedding: embeddingArr[0] as number[] | undefined
             });
             // Cập nhật progress cho file này
-            updateProgress(Math.round(((i + 1) / allChunks.length) * 100));
+            updateFileProgress(file.id, Math.round(((i + 1) / allChunks.length) * 100));
           }
           // Sau khi xong toàn bộ chunk, cập nhật trạng thái file thành completed
-          updateProgress(100);
+          updateFileProgress(file.id, 100);
           return {
             file,
             chunks: chunksWithEmbedding
@@ -189,6 +189,17 @@ export default function ChatWithPDF() {
           if (error instanceof Error) {
             toast.error(error.message);
           }
+          updateFileProgress(file.id, 0); // Reset progress on error
+          setFiles((prevFiles) =>
+            prevFiles.map((f) =>
+              f.id === file.id
+                ? {
+                    ...f,
+                    status: 'error' as const
+                  }
+                : f
+            )
+          );
           return null;
         }
       })
