@@ -75,7 +75,7 @@ const AppSidebar = () => {
         <SidebarMenu>
           <div className='flex flex-row justify-between items-center'>
             <Link
-              href='/public'
+              href='/'
               onClick={() => {
                 handleCloseSidebarOnMobile();
               }}
