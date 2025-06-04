@@ -33,7 +33,6 @@ const TextareaAutosize = forwardRef<HTMLTextAreaElement, TextareaAutosizeProps>(
         : scrollHeight;
       const height = Math.max(targetHeight, scrollHeight);
       textarea.style.height = `${height}px`;
-      console.log('height', height);
       onHeightChange?.(height);
     }, [textareaRef, onHeightChange, forcedHeight]);
 

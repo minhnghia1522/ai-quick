@@ -24,7 +24,6 @@ const Page = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const abortControllerRef = useRef<AbortController | null>(null);
-  const languageChangeTimestampsRef = useRef<number[]>([]);
 
   const handleTranslate = useCallback(async () => {
     setTranslatedText('');
@@ -83,18 +82,22 @@ const Page = () => {
     };
   }, [sourceText, inputLanguage, outputLanguage, handleTranslate]);
 
-  const handleLanguageChange = (callback: () => void) => {
-    const now = Date.now();
-    languageChangeTimestampsRef.current = languageChangeTimestampsRef.current.filter(
-      (timestamp) => now - timestamp <= 1000
-    );
-    languageChangeTimestampsRef.current.push(now);
+  const handleInputLanguageChange = (language: string) => () => {
+    setInputLanguage((preValue) => {
+      if (language == outputLanguage) {
+        setOutputLanguage(preValue);
+      }
+      return language;
+    });
+  };
 
-    if (languageChangeTimestampsRef.current.length >= 3) {
-      toast.warning(t('TranslatePage.switchingTooFastWarning'));
-      return;
-    }
-    callback();
+  const handleOutLanguageChange = (language: string) => () => {
+    setOutputLanguage((preValue) => {
+      if (inputLanguage == language) {
+        setInputLanguage(preValue);
+      }
+      return language;
+    });
   };
 
   const handleClearSourceText = () => {
@@ -110,33 +113,31 @@ const Page = () => {
   }, []);
 
   const renderBody = () => (
-    <div className='flex flex-col md:flex-row justify-center w-full max-w-full gap-3 md:px-0 lg:px-14 xl:px-32'>
+    <div className='flex flex-col md:flex-row justify-center w-full max-w-full gap-3 md:px-0 lg:px-6 xl:px-16'>
       <div className='flex flex-col gap-1 w-full md:w-1/2'>
-        <div className='flex flex-wrap'>
+        <div className='flex flex-nowrap gap-1 overflow-x-auto'>
           <Button
             variant={inputLanguage === LANGUAGES.ja ? 'default' : 'link'}
-            onClick={() => handleLanguageChange(() => setInputLanguage(LANGUAGES.ja))}
-            disabled={outputLanguage === LANGUAGES.ja}
+            onClick={handleInputLanguageChange(LANGUAGES.ja)}
           >
             {t('TranslatePage.japanese')}
           </Button>
           <Button
             variant={inputLanguage === LANGUAGES.en ? 'default' : 'link'}
-            onClick={() => handleLanguageChange(() => setInputLanguage(LANGUAGES.en))}
-            disabled={outputLanguage === LANGUAGES.en}
+            onClick={handleInputLanguageChange(LANGUAGES.en)}
+            className={`hidden block xs:block md:hidden lg:block xl:block`}
           >
             {t('TranslatePage.english')}
           </Button>
           <Button
             variant={inputLanguage === LANGUAGES.vn ? 'default' : 'link'}
-            onClick={() => handleLanguageChange(() => setInputLanguage(LANGUAGES.vn))}
-            disabled={outputLanguage === LANGUAGES.vn}
+            onClick={handleInputLanguageChange(LANGUAGES.vn)}
           >
             {t('TranslatePage.vietnamese')}
           </Button>
           <Button
             variant={inputLanguage === LANGUAGES.natural ? 'default' : 'link'}
-            onClick={() => handleLanguageChange(() => setInputLanguage(LANGUAGES.natural))}
+            onClick={handleInputLanguageChange(LANGUAGES.natural)}
           >
             {t('TranslatePage.detectLanguage')}
           </Button>
@@ -170,25 +171,22 @@ const Page = () => {
         </Button>
       </div>
       <div className='flex flex-col gap-1 w-full md:w-1/2'>
-        <div className='flex flex-wrap'>
+        <div className='flex flex-nowrap gap-1 overflow-x-auto'>
           <Button
             variant={outputLanguage === LANGUAGES.vn ? 'default' : 'link'}
-            onClick={() => handleLanguageChange(() => setOutputLanguage(LANGUAGES.vn))}
-            disabled={inputLanguage === LANGUAGES.vn}
+            onClick={handleOutLanguageChange(LANGUAGES.vn)}
           >
             {t('TranslatePage.vietnamese')}
           </Button>
           <Button
             variant={outputLanguage === LANGUAGES.en ? 'default' : 'link'}
-            onClick={() => handleLanguageChange(() => setOutputLanguage(LANGUAGES.en))}
-            disabled={inputLanguage === LANGUAGES.en}
+            onClick={handleOutLanguageChange(LANGUAGES.en)}
           >
             {t('TranslatePage.english')}
           </Button>
           <Button
             variant={outputLanguage === LANGUAGES.ja ? 'default' : 'link'}
-            onClick={() => handleLanguageChange(() => setOutputLanguage(LANGUAGES.ja))}
-            disabled={inputLanguage === LANGUAGES.ja}
+            onClick={handleOutLanguageChange(LANGUAGES.ja)}
           >
             {t('TranslatePage.japanese')}
           </Button>
