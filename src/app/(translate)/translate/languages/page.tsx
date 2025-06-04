@@ -1,6 +1,5 @@
 'use client';
 import { Button } from '@/src/components/ui/button';
-import { Textarea } from '@/src/components/ui/textarea';
 import { LANGUAGES } from '@/src/types/model';
 import { ArrowRightLeft, Loader2, X } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -10,8 +9,10 @@ import { createPromptTranslateLanguage } from '@/src/prompt/languageTranslatePro
 import { modelCallWithStreaming } from '@/src/service/translateService';
 import { areAnyApiKeysAvailable } from '@/src/utils/getProvider';
 import PageView from '@/src/components/PageView';
+import TextareaAutosize from '@/src/components/input/TextareaAutosize';
 
 const MAX_TEXT_LENGTH = 5000;
+const TEXT_AREA_HEIGHT_DEFAULT = 128;
 
 const Page = () => {
   const t = useTranslations();
@@ -19,10 +20,9 @@ const Page = () => {
   const [translatedText, setTranslatedText] = useState('');
   const [inputLanguage, setInputLanguage] = useState(LANGUAGES.ja);
   const [outputLanguage, setOutputLanguage] = useState(LANGUAGES.vn);
+  const [sharedHeight, setSharedHeight] = useState<number>(TEXT_AREA_HEIGHT_DEFAULT);
   const [isLoading, setIsLoading] = useState(false);
 
-  const textAreaSourceRef = useRef<HTMLTextAreaElement>(null);
-  const textAreaTranslatedRef = useRef<HTMLTextAreaElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const languageChangeTimestampsRef = useRef<number[]>([]);
 
@@ -83,20 +83,6 @@ const Page = () => {
     };
   }, [sourceText, inputLanguage, outputLanguage, handleTranslate]);
 
-  const handleSourceTextInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const textAreaSourceCurrent = textAreaSourceRef.current;
-    if (textAreaSourceCurrent) {
-      textAreaSourceCurrent.style.height = 'auto'; // Reset height
-
-      const height = textAreaSourceCurrent.scrollHeight;
-      textAreaSourceCurrent.style.height = `${height}px`; // Update height của phần tử
-      if (textAreaTranslatedRef.current) {
-        textAreaTranslatedRef.current.style.height = `${height}px`;
-      }
-    }
-    setSourceText(e.target.value);
-  };
-
   const handleLanguageChange = (callback: () => void) => {
     const now = Date.now();
     languageChangeTimestampsRef.current = languageChangeTimestampsRef.current.filter(
@@ -116,9 +102,12 @@ const Page = () => {
     abortControllerRef.current?.abort();
     setSourceText('');
     setTranslatedText('');
-    textAreaSourceRef.current!.style.height = 'auto';
-    textAreaTranslatedRef.current!.style.height = 'auto';
+    setSharedHeight(TEXT_AREA_HEIGHT_DEFAULT);
   };
+
+  const handleSourceHeightChange = useCallback((newHeight: number) => {
+    setSharedHeight(newHeight);
+  }, []);
 
   const renderBody = () => (
     <div className='flex flex-col md:flex-row justify-center w-full max-w-full gap-3 md:px-0 lg:px-14 xl:px-32'>
@@ -153,14 +142,15 @@ const Page = () => {
           </Button>
         </div>
         <div className='relative w-full flex rounded-md border border-input bg-background px-1 pt-1 pb-8'>
-          <Textarea
-            ref={textAreaSourceRef}
+          <TextareaAutosize
             value={sourceText}
-            className='w-full min-h-[128px] resize-none border-none outline-none bg-transparent
+            className='w-full border-none outline-none bg-transparent
           focus:outline-none focus:ring-0 focus:ring-offset-0 focus:shadow-none
           focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0'
             placeholder={t('TranslatePage.sourcePlaceholder')}
-            onChange={handleSourceTextInput}
+            onChange={(e) => setSourceText(e.target.value)}
+            forcedHeight={sharedHeight}
+            onHeightChange={handleSourceHeightChange}
           />
           <span>
             {sourceText !== '' ? (
@@ -205,11 +195,12 @@ const Page = () => {
         </div>
         <div className=''>
           <div className='w-full flex rounded-md border border-input bg-gray-50 px-1 pt-1 pb-8 '>
-            <Textarea
-              ref={textAreaTranslatedRef}
-              className='min-h-[128px] resize-none w-full border-none outline-none disabled:cursor-auto disabled:bg-gray-50 disabled:opacity-100'
+            <TextareaAutosize
+              className='w-full border-none outline-none disabled:cursor-auto disabled:bg-gray-50 disabled:opacity-100'
               value={translatedText}
               disabled={true}
+              forcedHeight={sharedHeight}
+              onHeightChange={handleSourceHeightChange}
             />
           </div>
         </div>
