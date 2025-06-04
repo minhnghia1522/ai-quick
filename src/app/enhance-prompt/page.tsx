@@ -1,7 +1,7 @@
 'use client';
 import { Button } from '@/src/components/ui/button';
 import { Textarea } from '@/src/components/ui/textarea';
-import { Copy, Loader2, X } from 'lucide-react';
+import { Copy, Loader2, WandSparkles, X } from 'lucide-react';
 import React, { useCallback, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
@@ -159,9 +159,15 @@ const Page = () => {
                 {isLoading ? (
                   <Loader2 className='animate-spin' />
                 ) : enhancedText ? (
-                  t('EnhancePromptPage.enhanceAgainButton')
+                  <>
+                    <WandSparkles />
+                    {t('EnhancePromptPage.enhanceAgainButton')}
+                  </>
                 ) : (
-                  t('EnhancePromptPage.enhanceButton')
+                  <>
+                    <WandSparkles />
+                    {t('EnhancePromptPage.enhanceButton')}
+                  </>
                 )}
               </Button>
               {enhancedText && (
