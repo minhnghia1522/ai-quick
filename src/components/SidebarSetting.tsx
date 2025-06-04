@@ -1,16 +1,15 @@
 import React from 'react';
 import ButtonSetting from './ButtonSetting';
-import { SidebarMenu, SidebarMenuItem } from './ui/sidebar';
+import { SidebarMenuItem } from './ui/sidebar';
+import CreatedBy from './CreatedBy';
 
 export default function SidebarSetting() {
   return (
-    <SidebarMenu>
-      <SidebarMenuItem>
-        <span className='flex p-2 gap-2 items-center'>
-          {/* <ModelSelect /> */}
-          <ButtonSetting />
-        </span>
-      </SidebarMenuItem>
-    </SidebarMenu>
+    <SidebarMenuItem>
+      <span className='flex p-2 gap-2 items-center'>
+        <CreatedBy />
+        <ButtonSetting />
+      </span>
+    </SidebarMenuItem>
   );
 }

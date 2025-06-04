@@ -75,6 +75,9 @@
       "codeTranslate": "Dịch mã nguồn",
       "enhancePrompt": "Cải thiện prompt",
       "chatWithPdf": "Chat với PDF"
+    },
+    "footer": {
+      "createdBy": "Được tạo bởi"
     }
   },
   "Dialog": {
@@ -149,7 +152,8 @@
     "maxLengthError": "Vui lòng nhập dữ liệu ít hơn {maxLength} ký tự. Bạn hiện đang ở {currentLength} ký tự.",
     "unexpectedError": "Đã xảy ra lỗi không mong muốn.",
     "switchingTooFastWarning": "Bạn đang chuyển đổi quá nhanh!",
-    "title": "Trình dịch AI thông minh được cung cấp bởi ChatGPT",
+    "title": "Trình dịch thuật AI",
+    "description": "Một công cụ mạnh mẽ giúp dịch thuật nhanh chóng và chính xác.",
     "japanese": "Nhật",
     "english": "Anh",
     "vietnamese": "Việt",
@@ -174,6 +178,21 @@
     "statusInitial": "Nhập một số mã và nhấp vào \"Dịch\"",
     "inputLabel": "Đầu vào",
     "outputLabel": "Đầu ra"
+  },
+  "EnhancePromptPage": {
+    "apiKeyError": "Vui lòng nhập API key.",
+    "maxLengthError": "Vui lòng nhập dưới {maxLength} ký tự. Hiện tại: {currentLength} ký tự.",
+    "unexpectedError": "Đã xảy ra lỗi không xác định.",
+    "title": "Cải Thiện Prompt AI",
+    "description": "AI giúp cải thiện và tối ưu hóa prompt của bạn. Biến những prompt đơn giản thành những hướng dẫn chi tiết và hiệu quả hơn cho AI",
+    "sourcePlaceholder": "Nhập prompt cần cải thiện...",
+    "enhanceButton": "Cải thiện",
+    "enhanceAgainButton": "Cải thiện lại",
+    "translateToEnglishButton": "Dịch sang tiếng Anh",
+    "enhancedPlaceholderLoading": "Đang cải thiện prompt...",
+    "enhancedPlaceholder": "Prompt đã được cải thiện sẽ hiển thị ở đây...",
+    "copied": "Đã sao chép",
+    "translatedPlaceholder": "Bản dịch tiếng Anh sẽ hiển thị ở đây..."
   },
   "ChatWithPdfIdPage": {
     "onlyPdfAlert": "Vui lòng chỉ chọn file PDF",
@@ -204,20 +223,6 @@
     "tagDataSecurity": "Bảo mật dữ liệu cá nhân",
     "loadingButton": "Đang khởi tạo...",
     "startButton": "Bắt đầu chat"
-  },
-  "EnhancePromptPage": {
-    "apiKeyError": "Vui lòng nhập API key.",
-    "maxLengthError": "Vui lòng nhập dưới {maxLength} ký tự. Hiện tại: {currentLength} ký tự.",
-    "unexpectedError": "Đã xảy ra lỗi không xác định.",
-    "title": "Cải thiện Prompt",
-    "sourcePlaceholder": "Nhập prompt cần cải thiện...",
-    "enhanceButton": "Cải thiện",
-    "enhanceAgainButton": "Cải thiện lại",
-    "translateToEnglishButton": "Dịch sang tiếng Anh",
-    "enhancedPlaceholderLoading": "Đang cải thiện prompt...",
-    "enhancedPlaceholder": "Prompt đã được cải thiện sẽ hiển thị ở đây...",
-    "copied": "Đã sao chép",
-    "translatedPlaceholder": "Bản dịch tiếng Anh sẽ hiển thị ở đây..."
   },
   "LocaleSwitcher": {
     "en": "English",

@@ -206,7 +206,15 @@ const Page = () => {
     </div>
   );
 
-  return <PageView title={{ titleName: t('TranslatePage.title') }} body={renderBody()} />;
+  return (
+    <PageView
+      title={{
+        titleName: t('TranslatePage.title'),
+        description: t('TranslatePage.description')
+      }}
+      body={renderBody()}
+    />
+  );
 };
 
 export default Page;

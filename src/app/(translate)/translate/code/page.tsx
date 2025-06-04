@@ -237,7 +237,10 @@ export default function Home() {
 
   return (
     <PageView
-      title={{ titleName: t('CodeTranslatePage.title'), description: t('CodeTranslatePage.description') }}
+      title={{
+        titleName: t('CodeTranslatePage.title'),
+        description: t('CodeTranslatePage.description')
+      }}
       body={renderBody()}
     />
   );

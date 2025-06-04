@@ -234,7 +234,8 @@ const Page = () => {
   return (
     <PageView
       title={{
-        titleName: t('EnhancePromptPage.title')
+        titleName: t('EnhancePromptPage.title'),
+        description: t('EnhancePromptPage.description')
       }}
       body={renderBody()}
     />

@@ -74,6 +74,9 @@
       "codeTranslate": "コード翻訳",
       "enhancePrompt": "プロンプト強化",
       "chatWithPdf": "PDFとチャット"
+    },
+    "footer": {
+      "createdBy": "作成者"
     }
   },
   "Dialog": {
@@ -148,7 +151,8 @@
     "maxLengthError": "{maxLength}文字以内で入力してください。現在{currentLength}文字です。",
     "unexpectedError": "予期せぬエラーが発生しました。",
     "switchingTooFastWarning": "言語の切り替えが速すぎます！",
-    "title": "ChatGPT搭載 スマートAI翻訳",
+    "title": "強力なAI翻訳",
+    "description": "迅速かつ正確な翻訳を実現する強力なツール。",
     "japanese": "日本語",
     "english": "英語",
     "vietnamese": "ベトナム語",
@@ -173,6 +177,21 @@
     "statusInitial": "コードを入力して「翻訳」をクリックしてください",
     "inputLabel": "入力",
     "outputLabel": "出力"
+  },
+  "EnhancePromptPage": {
+    "apiKeyError": "APIキーを入力してください。",
+    "maxLengthError": "{maxLength}文字以内で入力してください。現在：{currentLength}文字。",
+    "unexpectedError": "不明なエラーが発生しました。",
+    "title": "プロンプトを強化",
+    "description": "AIはあなたのプロンプトを改善し、最適化する手助けをします。シンプルなプロンプトを、AI向けのより詳細かつ効果的な指示へと変換します。",
+    "sourcePlaceholder": "強化するプロンプトを入力...",
+    "enhanceButton": "強化",
+    "enhanceAgainButton": "再度強化",
+    "translateToEnglishButton": "英語に翻訳",
+    "enhancedPlaceholderLoading": "プロンプトを強化中...",
+    "enhancedPlaceholder": "強化されたプロンプトはここに表示されます...",
+    "copied": "コピーしました",
+    "translatedPlaceholder": "英語の翻訳はここに表示されます..."
   },
   "ChatWithPdfIdPage": {
     "onlyPdfAlert": "PDFファイルのみを選択してください",
@@ -203,20 +222,6 @@
     "tagDataSecurity": "個人データセキュリティ",
     "loadingButton": "初期化中...",
     "startButton": "チャットを開始"
-  },
-  "EnhancePromptPage": {
-    "apiKeyError": "APIキーを入力してください。",
-    "maxLengthError": "{maxLength}文字以内で入力してください。現在：{currentLength}文字。",
-    "unexpectedError": "不明なエラーが発生しました。",
-    "title": "プロンプトを強化",
-    "sourcePlaceholder": "強化するプロンプトを入力...",
-    "enhanceButton": "強化",
-    "enhanceAgainButton": "再度強化",
-    "translateToEnglishButton": "英語に翻訳",
-    "enhancedPlaceholderLoading": "プロンプトを強化中...",
-    "enhancedPlaceholder": "強化されたプロンプトはここに表示されます...",
-    "copied": "コピーしました",
-    "translatedPlaceholder": "英語の翻訳はここに表示されます..."
   },
   "LocaleSwitcher": {
     "en": "English",

@@ -81,6 +81,9 @@
       "codeTranslate": "Code Translate",
       "enhancePrompt": "Enhance Prompt",
       "chatWithPdf": "Chat with PDF"
+    },
+    "footer": {
+      "createdBy": "Created by"
     }
   },
   "Dialog": {
@@ -155,7 +158,8 @@
     "maxLengthError": "Please enter data less than {maxLength} characters. You are currently at {currentLength} characters.",
     "unexpectedError": "An unexpected error occurred.",
     "switchingTooFastWarning": "You are switching too fast!",
-    "title": "Smart AI Translator Powered by ChatGPT",
+    "title": "Powerful AI translation",
+    "description": "A powerful tool that helps translate quickly and accurately.",
     "japanese": "Japanese",
     "english": "English",
     "vietnamese": "Vietnamese",
@@ -180,6 +184,21 @@
     "statusInitial": "Enter some code and click \"Translate\"",
     "inputLabel": "Input",
     "outputLabel": "Output"
+  },
+  "EnhancePromptPage": {
+    "apiKeyError": "Please enter API key.",
+    "maxLengthError": "Please enter less than {maxLength} characters. Currently: {currentLength} characters.",
+    "unexpectedError": "An unknown error occurred.",
+    "title": "Enhance Prompt",
+    "description": "AI helps improve and optimize your prompts. Turn simple prompts into more detailed and effective instructions for AI.",
+    "sourcePlaceholder": "Enter prompt to enhance...",
+    "enhanceButton": "Enhance",
+    "enhanceAgainButton": "Enhance Again",
+    "translateToEnglishButton": "Translate to English",
+    "enhancedPlaceholderLoading": "Enhancing prompt...",
+    "enhancedPlaceholder": "Enhanced prompt will be displayed here...",
+    "copied": "Copied",
+    "translatedPlaceholder": "English translation will be displayed here..."
   },
   "ChatWithPdfIdPage": {
     "onlyPdfAlert": "Please select PDF files only",
@@ -210,20 +229,6 @@
     "tagDataSecurity": "Personal Data Security",
     "loadingButton": "Initializing...",
     "startButton": "Start Chat"
-  },
-  "EnhancePromptPage": {
-    "apiKeyError": "Please enter API key.",
-    "maxLengthError": "Please enter less than {maxLength} characters. Currently: {currentLength} characters.",
-    "unexpectedError": "An unknown error occurred.",
-    "title": "Enhance Prompt",
-    "sourcePlaceholder": "Enter prompt to enhance...",
-    "enhanceButton": "Enhance",
-    "enhanceAgainButton": "Enhance Again",
-    "translateToEnglishButton": "Translate to English",
-    "enhancedPlaceholderLoading": "Enhancing prompt...",
-    "enhancedPlaceholder": "Enhanced prompt will be displayed here...",
-    "copied": "Copied",
-    "translatedPlaceholder": "English translation will be displayed here..."
   },
   "LocaleSwitcher": {
     "en": "English",
