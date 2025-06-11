@@ -8,7 +8,7 @@ const CreatedBy = () => {
   return (
     <div style={{ fontSize: 12, textAlign: 'center' }}>
       {t('Sidebar.footer.createdBy')}{' '}
-      <Link href={'https://github.com/minhnghia22'} className='underline' target='_blank' rel='noopener noreferrer'>
+      <Link href={'https://github.com/minhnghia1522'} className='underline' target='_blank' rel='noopener noreferrer'>
         Lê Minh Nghĩa
       </Link>
     </div>
