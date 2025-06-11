@@ -10,6 +10,7 @@ import { modelCallWithStreaming } from '@/src/service/translateService';
 import { areAnyApiKeysAvailable } from '@/src/utils/getProvider';
 import PageView from '@/src/components/PageView';
 import TextareaAutosize from '@/src/components/input/TextareaAutosize';
+import { isEmpty } from 'lodash';
 
 const MAX_TEXT_LENGTH = 5000;
 const TEXT_AREA_HEIGHT_DEFAULT = 128;
@@ -149,7 +150,13 @@ const Page = () => {
           focus:outline-none focus:ring-0 focus:ring-offset-0 focus:shadow-none
           focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0'
             placeholder={t('TranslatePage.sourcePlaceholder')}
-            onChange={(e) => setSourceText(e.target.value)}
+            onChange={(e) => {
+              if (isEmpty(e.target.value)) {
+                handleClearSourceText();
+              } else {
+                setSourceText(e.target.value);
+              }
+            }}
             forcedHeight={sharedHeight}
             onHeightChange={handleSourceHeightChange}
           />

@@ -9,7 +9,7 @@ interface TextareaAutosizeProps extends Omit<TextareaHTMLAttributes<HTMLTextArea
   onHeightChange?: (height: number) => void;
   customStyle?: Omit<CSSProperties, 'height' | 'resize' | 'overflowY'>;
   forcedHeight?: number;
-  rows?: number | undefined;
+  rows?: number;
 }
 
 const TextareaAutosize = forwardRef<HTMLTextAreaElement, TextareaAutosizeProps>(
@@ -26,11 +26,16 @@ const TextareaAutosize = forwardRef<HTMLTextAreaElement, TextareaAutosizeProps>(
       textarea.style.resize = 'none';
 
       const scrollHeight = textarea.scrollHeight;
-      const targetHeight = forcedHeight
-        ? typeof forcedHeight === 'number'
-          ? forcedHeight
-          : scrollHeight
-        : scrollHeight;
+      let targetHeight: number;
+      if (forcedHeight) {
+        if (typeof forcedHeight === 'number') {
+          targetHeight = forcedHeight;
+        } else {
+          targetHeight = scrollHeight;
+        }
+      } else {
+        targetHeight = scrollHeight;
+      }
       const height = Math.max(targetHeight, scrollHeight);
       textarea.style.height = `${height}px`;
       onHeightChange?.(height);

@@ -41,6 +41,6 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function TranslateLayout({ children }: { children: React.ReactNode }) {
+export default function TranslateLayout({ children }: { readonly children: React.ReactNode }) {
   return <>{children}</>;
 }
