@@ -51,6 +51,7 @@ const TextareaAutosize = forwardRef<HTMLTextAreaElement, TextareaAutosizeProps>(
 
     const combinedStyle: CSSProperties = {
       ...customStyle,
+      fontSize: 'var(--text-base, 1rem)',
       overflowY: 'hidden',
       resize: 'none'
     };

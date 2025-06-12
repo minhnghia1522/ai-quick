@@ -1,7 +1,6 @@
 'use client';
 import { Button } from '@/src/components/ui/button';
-import { Textarea } from '@/src/components/ui/textarea';
-import { Copy, Loader2, WandSparkles, X } from 'lucide-react';
+import { Copy, Languages, Loader2, WandSparkles, X } from 'lucide-react';
 import React, { useCallback, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
@@ -11,8 +10,11 @@ import { LANGUAGES } from '@/src/types/model';
 import { modelCallWithStreaming } from '@/src/service/translateService';
 import { areAnyApiKeysAvailable } from '@/src/utils/getProvider';
 import PageView from '@/src/components/PageView';
+import TextareaAutosize from '@/src/components/input/TextareaAutosize';
+import { isEmpty } from 'lodash';
 
 const MAX_TEXT_LENGTH = 10000;
+const TEXT_AREA_HEIGHT_DEFAULT = 128;
 
 const Page = () => {
   const t = useTranslations();
@@ -20,9 +22,8 @@ const Page = () => {
   const [enhancedText, setEnhancedText] = useState('');
   const [translatedText, setTranslatedText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [sharedHeight, setSharedHeight] = useState<number>(TEXT_AREA_HEIGHT_DEFAULT);
 
-  const textAreaSourceRef = useRef<HTMLTextAreaElement>(null);
-  const textAreaEnhancedRef = useRef<HTMLTextAreaElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const handleEnhance = useCallback(async () => {
@@ -64,19 +65,6 @@ const Page = () => {
     }
     setIsLoading(false);
   }, [sourceText, t]);
-
-  const handleSourceTextInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const textAreaSourceCurrent = textAreaSourceRef.current;
-    if (textAreaSourceCurrent) {
-      textAreaSourceCurrent.style.height = 'auto';
-      const height = textAreaSourceCurrent.scrollHeight;
-      textAreaSourceCurrent.style.height = `${height}px`;
-      if (textAreaEnhancedRef.current) {
-        textAreaEnhancedRef.current.style.height = `${height}px`;
-      }
-    }
-    setSourceText(e.target.value);
-  };
 
   const handleTranslateToEnglish = useCallback(async () => {
     if (!enhancedText || enhancedText.trim() === '') {
@@ -123,24 +111,34 @@ const Page = () => {
     setSourceText('');
     setEnhancedText('');
     setTranslatedText('');
-    if (textAreaSourceRef.current) textAreaSourceRef.current.style.height = 'auto';
-    if (textAreaEnhancedRef.current) textAreaEnhancedRef.current.style.height = 'auto';
+    setSharedHeight(TEXT_AREA_HEIGHT_DEFAULT);
   };
+
+  const handleSourceHeightChange = useCallback((newHeight: number) => {
+    setSharedHeight(newHeight);
+  }, []);
 
   const renderBody = () => {
     return (
       <div className='flex flex-col md:flex-row justify-center w-full max-w-full gap-3 md:px-0 lg:px-14 xl:px-32'>
         <div className='flex flex-col gap-1 w-full md:w-1/2'>
           <div className='relative w-full flex rounded-md border border-input bg-background px-1 pt-1 pb-8'>
-            <Textarea
-              ref={textAreaSourceRef}
+            <TextareaAutosize
               value={sourceText}
               className='w-full min-h-[128px] resize-none border-none outline-none bg-transparent
                   focus:outline-none focus:ring-0 focus:ring-offset-0 focus:shadow-none
                   focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0'
               placeholder={t('EnhancePromptPage.sourcePlaceholder')}
-              onChange={handleSourceTextInput}
+              onChange={(e) => {
+                if (isEmpty(e.target.value)) {
+                  handleClearSourceText();
+                } else {
+                  setSourceText(e.target.value);
+                }
+              }}
               disabled={isLoading}
+              forcedHeight={sharedHeight}
+              onHeightChange={handleSourceHeightChange}
             />
             <span>
               {sourceText !== '' ? (
@@ -156,23 +154,15 @@ const Page = () => {
           <div className='flex justify-end mt-2'>
             <div className='flex gap-2'>
               <Button onClick={handleEnhance} disabled={isLoading || !sourceText.trim()} className='w-32'>
-                {isLoading ? (
-                  <Loader2 className='animate-spin' />
-                ) : enhancedText ? (
-                  <>
-                    <WandSparkles />
-                    {t('EnhancePromptPage.enhanceAgainButton')}
-                  </>
-                ) : (
-                  <>
-                    <WandSparkles />
-                    {t('EnhancePromptPage.enhanceButton')}
-                  </>
-                )}
+                <>
+                  {isLoading ? <Loader2 className='animate-spin' /> : <WandSparkles />}
+                  {t(enhancedText ? 'EnhancePromptPage.enhanceAgainButton' : 'EnhancePromptPage.enhanceButton')}
+                </>
               </Button>
               {enhancedText && (
                 <Button onClick={handleTranslateToEnglish} disabled={isLoading} className='w-42' variant='outline'>
-                  {isLoading ? <Loader2 className='animate-spin' /> : t('EnhancePromptPage.translateToEnglishButton')}
+                  {isLoading ? <Loader2 className='animate-spin' /> : <Languages />}
+                  {t('EnhancePromptPage.translateToEnglishButton')}
                 </Button>
               )}
             </div>
@@ -181,9 +171,8 @@ const Page = () => {
         <div className='flex flex-col gap-1 w-full md:w-1/2'>
           <div className='w-full flex flex-col gap-3'>
             <div className='relative w-full flex rounded-md border border-input bg-gray-50 px-1 pt-1 pb-8'>
-              <Textarea
-                ref={textAreaEnhancedRef}
-                className='min-h-[128px] resize-none w-full border-none outline-none disabled:cursor-auto disabled:bg-gray-50 disabled:opacity-100'
+              <TextareaAutosize
+                className='w-full border-none outline-none disabled:cursor-auto disabled:bg-gray-50 disabled:opacity-100'
                 value={enhancedText}
                 placeholder={
                   isLoading
@@ -191,6 +180,8 @@ const Page = () => {
                     : t('EnhancePromptPage.enhancedPlaceholder')
                 }
                 disabled={true}
+                forcedHeight={sharedHeight}
+                onHeightChange={handleSourceHeightChange}
               />
               <span>
                 {enhancedText !== '' ? (
@@ -209,7 +200,7 @@ const Page = () => {
             </div>
             {translatedText && (
               <div className='relative w-full flex rounded-md border border-input bg-gray-50 px-1 pt-1 pb-8'>
-                <Textarea
+                <TextareaAutosize
                   className='min-h-[128px] resize-none w-full border-none outline-none disabled:cursor-auto disabled:bg-gray-50 disabled:opacity-100'
                   value={translatedText}
                   placeholder={t('EnhancePromptPage.translatedPlaceholder')}
