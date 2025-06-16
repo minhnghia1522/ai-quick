@@ -16,59 +16,40 @@ export const openAIModels: Array<ModelAI> = [
   {
     id: 0,
     model: 'gpt-4.1',
-    name: 'gpt-4.1',
+    name: 'GPT-4.1',
     description: 'Flagship GPT model for complex tasks',
     priceInput: 2.0,
     priceOutput: 8.0
   },
   {
     id: 1,
-    model: 'gpt-4o-mini',
-    name: 'gpt-4o-mini',
-    description: 'Affordable small model for fast, everyday tasks',
-    priceInput: 0.015,
-    priceOutput: 0.6
+    model: 'gpt-4.1-mini',
+    name: 'GPT-4.1 mini',
+    description: 'Affordable model balancing speed and intelligence',
+    priceInput: 0.4,
+    priceOutput: 1.6
   },
   {
     id: 2,
+    model: 'gpt-4.1-nano',
+    name: 'GPT-4.1 nano',
+    description: 'Fastest, most cost-effective model for low-latency tasks',
+    priceInput: 0.1,
+    priceOutput: 0.4
+  },
+  {
+    id: 3,
     model: 'gpt-4o',
     name: 'gpt-4o',
-    description: 'High-intelligence model for complex tasks',
+    description: 'Fast, intelligent, flexible GPT model',
     priceInput: 2.5,
     priceOutput: 10.0
   },
   {
-    id: 3,
-    model: 'o1-mini',
-    name: 'o1-mini',
-    description: 'Uses advanced reasoning',
-    priceInput: 0.15,
-    priceOutput: 0.6
-  },
-  {
     id: 4,
-    model: 'o3-mini-2025-01-31',
-    name: 'o3-mini (high)',
-    description: 'Uses advanced reasoning',
-    reasoningEffort: 'high',
-    priceInput: 1.1,
-    priceOutput: 4.4
-  },
-  {
-    id: 5,
-    model: 'o3-mini-2025-01-31',
-    name: 'o3-mini (medium)',
-    description: 'Uses advanced reasoning',
-    reasoningEffort: 'medium',
-    priceInput: 1.1,
-    priceOutput: 4.4
-  },
-  {
-    id: 6,
-    model: 'o3-mini-2025-01-31',
-    name: 'o3-mini (low)',
-    description: 'Uses advanced reasoning',
-    reasoningEffort: 'low',
+    model: 'o4-mini',
+    name: 'o4-mini',
+    description: 'Our faster, cost-efficient reasoning model delivering strong performance on math, coding and vision',
     priceInput: 1.1,
     priceOutput: 4.4
   }
