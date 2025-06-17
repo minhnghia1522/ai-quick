@@ -39,14 +39,6 @@ export const openAIModels: Array<ModelAI> = [
   },
   {
     id: 3,
-    model: 'gpt-4o',
-    name: 'gpt-4o',
-    description: 'Fast, intelligent, flexible GPT model',
-    priceInput: 2.5,
-    priceOutput: 10.0
-  },
-  {
-    id: 4,
     model: 'o4-mini',
     name: 'o4-mini',
     description: 'Our faster, cost-efficient reasoning model delivering strong performance on math, coding and vision',
