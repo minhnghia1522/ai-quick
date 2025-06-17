@@ -164,7 +164,8 @@
     "english": "English",
     "vietnamese": "Vietnamese",
     "detectLanguage": "Detect language",
-    "sourcePlaceholder": "Type or paste text here to translate"
+    "sourcePlaceholder": "Type or paste text here to translate",
+    "copied": "Translation has been copied"
   },
   "CodeTranslatePage": {
     "apiKeyError": "Please enter an API key.",

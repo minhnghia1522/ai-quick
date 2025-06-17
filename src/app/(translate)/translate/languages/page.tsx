@@ -1,7 +1,7 @@
 'use client';
 import { Button } from '@/src/components/ui/button';
 import { LANGUAGES } from '@/src/types/model';
-import { ArrowRightLeft, Loader2, X } from 'lucide-react';
+import { ArrowRightLeft, Copy, Loader2, X } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
@@ -207,6 +207,20 @@ const Page = () => {
               forcedHeight={sharedHeight}
               onHeightChange={handleSourceHeightChange}
             />
+            <span>
+              {translatedText !== '' ? (
+                <Button
+                  variant='ghost'
+                  size='icon'
+                  onClick={() => {
+                    navigator.clipboard.writeText(translatedText);
+                    toast.success(t('TranslatePage.copied'));
+                  }}
+                >
+                  <Copy />
+                </Button>
+              ) : undefined}
+            </span>
           </div>
         </div>
       </div>

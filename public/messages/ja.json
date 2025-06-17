@@ -157,7 +157,8 @@
     "english": "英語",
     "vietnamese": "ベトナム語",
     "detectLanguage": "言語を検出",
-    "sourcePlaceholder": "翻訳するテキストを入力または貼り付け"
+    "sourcePlaceholder": "翻訳するテキストを入力または貼り付け",
+    "copied": "翻訳文をコピーしました"
   },
   "CodeTranslatePage": {
     "apiKeyError": "APIキーを入力してください。",

@@ -158,7 +158,8 @@
     "english": "Anh",
     "vietnamese": "Việt",
     "detectLanguage": "Phát hiện ngôn ngữ",
-    "sourcePlaceholder": "Nhập hoặc dán văn bản vào đây để dịch"
+    "sourcePlaceholder": "Nhập hoặc dán văn bản vào đây để dịch",
+    "copied": "Đã sao chép bản dịch"
   },
   "CodeTranslatePage": {
     "apiKeyError": "Vui lòng nhập API key.",
