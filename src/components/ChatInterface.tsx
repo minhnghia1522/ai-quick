@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react'; // Thêm useEffect và useRef
+import { useEffect, useRef } from 'react';
 import { Button } from '@/src/components/ui/button';
 import { Input } from '@/src/components/ui/input';
 import { FileText, Loader2, AlertCircle } from 'lucide-react';
@@ -18,8 +18,6 @@ export const ChatInterface = ({ isFileEmbedding, chatId }: ChatInterfaceProps) =
   const t = useTranslations();
   const { messages, input, handleInputChange, handleSubmit, isLoading, error, notFound } = useCustomChat(chatId);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  // Tự động cuộn xuống dưới cùng khi có tin nhắn mới
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -38,7 +36,6 @@ export const ChatInterface = ({ isFileEmbedding, chatId }: ChatInterfaceProps) =
     <div className='w-1/2 flex flex-col h-full overflow-hidden'>
       <div className='flex flex-col h-full min-h-0'>
         <div className='flex-1 flex flex-col min-h-0'>
-          {/* Chat messages */}
           <div className='flex-1 min-h-0 p-2 overflow-auto'>
             {!isFileEmbedding ? (
               <div className='h-full flex flex-col justify-center p-6 text-center'>
@@ -49,8 +46,6 @@ export const ChatInterface = ({ isFileEmbedding, chatId }: ChatInterfaceProps) =
               <div className='space-y-4'>
                 {messages.map((message, index) => {
                   let content = '';
-
-                  // Xử lý nội dung tin nhắn
                   if (typeof message === 'string') {
                     content = message;
                   } else if (message.content) {
@@ -78,10 +73,8 @@ export const ChatInterface = ({ isFileEmbedding, chatId }: ChatInterfaceProps) =
                 })}
               </div>
             )}
-            <div ref={messagesEndRef} /> {/* Thêm div trống với ref để cuộn */}
+            <div ref={messagesEndRef} />
           </div>
-
-          {/* Input area */}
           <div className='p-2 border-t bg-white'>
             <form onSubmit={handleSubmit} className='flex gap-2'>
               <Input

@@ -96,7 +96,7 @@
     "inputPlaceholder": "Nhập câu hỏi của bạn về nội dung PDF...",
     "sending": "Đang xử lý...",
     "send": "Gửi",
-    "error": "Có lỗi xảy ra: {{error}}"
+    "error": "Có lỗi xảy ra: {error}"
   },
   "Confirm": {
     "title": "Xác nhận",
@@ -127,14 +127,14 @@
     "keepCurrentModel": "Giữ Mô hình Hiện tại",
     "switchToModel": "Chuyển sang {name}"
   },
-  "Pdf": {
-    "noFile": "Chưa chọn file PDF",
+  "PDFViewer": {
+    "noFileSelected": "Chưa chọn file PDF",
     "loadingFile": "Đang tải file PDF...",
     "loading": "Đang tải...",
     "exit": "Thoát",
-    "loadError": "Lỗi tải PDF",
+    "loadErrorConsole": "Lỗi khi tải tài liệu PDF:",
+    "loadErrorTitle": "Lỗi tải PDF",
     "loadErrorDesc": "Không thể tải file PDF. Vui lòng kiểm tra lại file.",
-    "loadingPdf": "Đang tải PDF...",
     "loadingPage": "Đang tải trang...",
     "pageError": "Lỗi tải trang"
   },

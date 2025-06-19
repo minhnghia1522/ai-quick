@@ -102,7 +102,7 @@
     "inputPlaceholder": "Enter your question about the PDF content...",
     "sending": "Processing...",
     "send": "Send",
-    "error": "An error occurred: {{error}}"
+    "error": "An error occurred: {error}"
   },
   "Confirm": {
     "title": "Confirm",
@@ -133,14 +133,14 @@
     "keepCurrentModel": "Keep Current Model",
     "switchToModel": "Switch to {name}"
   },
-  "Pdf": {
-    "noFile": "No PDF file selected",
+  "PDFViewer": {
+    "noFileSelected": "No PDF file selected",
     "loadingFile": "Loading PDF file...",
     "loading": "Loading...",
     "exit": "Exit",
-    "loadError": "Error loading PDF",
+    "loadErrorConsole": "Error loading PDF document:",
+    "loadErrorTitle": "Error loading PDF",
     "loadErrorDesc": "The PDF file could not be loaded. Please check the file.",
-    "loadingPdf": "Loading PDF...",
     "loadingPage": "Loading page...",
     "pageError": "Error loading page"
   },

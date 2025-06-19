@@ -1,7 +1,7 @@
 import { CoreMessage, streamText, tool } from 'ai';
 import { z } from 'zod';
 import { getEmbedding } from './embeddingService';
-import { ModelAI, STORAGE_KEY_MODEL } from '@/src/types/model';
+import { ModelAI, openAIModels, STORAGE_KEY_MODEL } from '@/src/types/model';
 import { FileStore } from '@/src/lib/database/fileDataDB';
 import { systemRagPrompt } from '@/src/prompt/chatSystemPrompt';
 import { getProviderByModelName } from '@/src/utils/getProvider';
@@ -47,12 +47,7 @@ const get_current_time = tool({
 
 export const chatPdfService = (messages: CoreMessage[], abortController: AbortSignal, chatId: string) => {
   const modelSelected = localStorage.getItem(STORAGE_KEY_MODEL);
-  let model = {
-    id: 1,
-    model: 'gpt-4o-mini',
-    name: 'gpt-4o-mini',
-    description: 'Affordable small model for fast, everyday tasks'
-  } as ModelAI;
+  let model = openAIModels[0] as ModelAI;
 
   if (modelSelected) {
     model = JSON.parse(modelSelected);
