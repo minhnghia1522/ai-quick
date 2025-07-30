@@ -1,5 +1,5 @@
 'use client';
-import { Code, Languages, FileText, Sparkles } from 'lucide-react';
+import { Code, Languages, FileText, Sparkles, Database } from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
@@ -48,6 +48,11 @@ const AppSidebar = () => {
           title: t('Sidebar.menu.enhancePrompt'),
           url: '/enhance-prompt',
           icon: Sparkles
+        },
+        {
+          title: t('Sidebar.menu.generateData'),
+          url: '/generate-data',
+          icon: Database
         }
       ]
     },
