@@ -45,6 +45,21 @@
         "description": "最適化されたプロンプトでAIからより良い結果を得る"
       }
     },
+    "generateData": {
+      "title": "SQLクエリからデータ生成",
+      "description": "SQLクエリをもとにテストや開発に役立つサンプルデータを素早く生成します。",
+      "keywords": [
+        "SQLデータ生成",
+        "SQLからテストデータ生成",
+        "SQLクエリ テストデータ",
+        "テストデータ生成",
+        "開発支援"
+      ],
+      "og": {
+        "title": "SQLクエリからデータ生成",
+        "description": "SQLクエリだけでテストや開発用のサンプルデータを簡単生成。"
+      }
+    },
     "chatWithPdf": {
       "title": "PDFとチャット | AI搭載ドキュメント対話",
       "description": "AIを使ってPDFドキュメントと対話。質問をして、ファイルから即座に回答を得ることができます。",
@@ -73,7 +88,8 @@
       "languageTranslate": "言語翻訳",
       "codeTranslate": "コード翻訳",
       "enhancePrompt": "プロンプト強化",
-      "chatWithPdf": "PDFとチャット"
+      "chatWithPdf": "PDFとチャット",
+      "generateData": "データを生成する"
     },
     "footer": {
       "createdBy": "作成者"
@@ -193,6 +209,21 @@
     "enhancedPlaceholder": "強化されたプロンプトはここに表示されます...",
     "copied": "コピーしました",
     "translatedPlaceholder": "英語の翻訳はここに表示されます..."
+  },
+  "GenerateData": {
+    "apiKeyError": "APIキーを入力してください。",
+    "maxLengthError": "{maxLength}文字以内で入力してください。現在: {currentLength}文字。",
+    "unexpectedError": "予期しないエラーが発生しました。",
+    "title": "SQLクエリからデータ生成",
+    "description": "SQLクエリからテストや開発用のサンプルデータを自動生成します。",
+    "sourcePlaceholder": "テーブル構造、SQLクエリ、または関連情報を入力してください...",
+    "enhanceButton": "データ生成",
+    "enhanceAgainButton": "再生成",
+    "translateToEnglishButton": "英語に翻訳",
+    "enhancedPlaceholderLoading": "データ生成中...",
+    "enhancedPlaceholder": "生成されたサンプルデータがここに表示されます...",
+    "copied": "コピーしました",
+    "translatedPlaceholder": "英訳がここに表示されます..."
   },
   "ChatWithPdfIdPage": {
     "onlyPdfAlert": "PDFファイルのみを選択してください",

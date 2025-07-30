@@ -46,6 +46,21 @@
         "description": "Nhận kết quả tốt hơn từ AI với prompt được tối ưu hóa"
       }
     },
+    "generateData": {
+      "title": "Sinh Dữ Liệu Từ Câu SQL",
+      "description": "Tạo dữ liệu mẫu từ các truy vấn SQL một cách nhanh chóng, hỗ trợ kiểm thử và phát triển ứng dụng hiệu quả hơn.",
+      "keywords": [
+        "Sinh dữ liệu SQL",
+        "tạo dữ liệu từ truy vấn SQL",
+        "sinh dữ liệu giả lập",
+        "test data SQL",
+        "hỗ trợ phát triển phần mềm"
+      ],
+      "og": {
+        "title": "Sinh Dữ Liệu Từ Câu SQL",
+        "description": "Tạo dữ liệu mẫu cho kiểm thử và phát triển chỉ với một câu truy vấn SQL."
+      }
+    },
     "chatWithPdf": {
       "title": "Chat Với PDF | Tương Tác Tài Liệu Bằng AI",
       "description": "Trò chuyện với file PDF của bạn bằng AI. Đặt câu hỏi và nhận câu trả lời ngay lập tức từ tài liệu của bạn.",
@@ -74,7 +89,8 @@
       "languageTranslate": "Dịch ngôn ngữ",
       "codeTranslate": "Dịch mã nguồn",
       "enhancePrompt": "Cải thiện prompt",
-      "chatWithPdf": "Chat với PDF"
+      "chatWithPdf": "Chat với PDF",
+      "generateData": "Sinh dữ liệu"
     },
     "footer": {
       "createdBy": "Được tạo bởi"
@@ -192,6 +208,21 @@
     "translateToEnglishButton": "Dịch sang tiếng Anh",
     "enhancedPlaceholderLoading": "Đang cải thiện prompt...",
     "enhancedPlaceholder": "Prompt đã được cải thiện sẽ hiển thị ở đây...",
+    "copied": "Đã sao chép",
+    "translatedPlaceholder": "Bản dịch tiếng Anh sẽ hiển thị ở đây..."
+  },
+  "GenerateData": {
+    "apiKeyError": "Vui lòng nhập API key.",
+    "maxLengthError": "Vui lòng nhập dưới {maxLength} ký tự. Hiện tại: {currentLength} ký tự.",
+    "unexpectedError": "Đã xảy ra lỗi không xác định.",
+    "title": "Sinh Dữ Liệu Từ Câu SQL",
+    "description": "Tạo dữ liệu mẫu tự động từ câu truy vấn SQL, hỗ trợ kiểm thử và phát triển phần mềm.",
+    "sourcePlaceholder": "Nhập cấu trúc bảng, câu truy vấn SQL hoặc thông tin liên quan...",
+    "enhanceButton": "Sinh dữ liệu",
+    "enhanceAgainButton": "Sinh lại dữ liệu",
+    "translateToEnglishButton": "Dịch sang tiếng Anh",
+    "enhancedPlaceholderLoading": "Đang sinh dữ liệu...",
+    "enhancedPlaceholder": "Dữ liệu mẫu sẽ hiển thị ở đây...",
     "copied": "Đã sao chép",
     "translatedPlaceholder": "Bản dịch tiếng Anh sẽ hiển thị ở đây..."
   },

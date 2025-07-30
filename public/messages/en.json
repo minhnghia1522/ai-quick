@@ -52,6 +52,21 @@
         "description": "Get better results from AI with optimized prompts"
       }
     },
+    "generateData": {
+      "title": "Generate Data from SQL Query",
+      "description": "Quickly create sample data from your SQL queries to support testing and software development.",
+      "keywords": [
+        "SQL data generation",
+        "generate test data from SQL",
+        "SQL query test data",
+        "test data generation",
+        "software development support"
+      ],
+      "og": {
+        "title": "Generate Data from SQL Query",
+        "description": "Easily create sample data for testing and development with just an SQL query."
+      }
+    },
     "chatWithPdf": {
       "title": "Chat with PDF | AI-Powered Document Interaction",
       "description": "Interact with your PDF documents using AI. Ask questions and get instant answers from your files.",
@@ -80,7 +95,8 @@
       "languageTranslate": "Language Translate",
       "codeTranslate": "Code Translate",
       "enhancePrompt": "Enhance Prompt",
-      "chatWithPdf": "Chat with PDF"
+      "chatWithPdf": "Chat with PDF",
+      "generateData": "Generate Data"
     },
     "footer": {
       "createdBy": "Created by"
@@ -200,6 +216,21 @@
     "enhancedPlaceholder": "Enhanced prompt will be displayed here...",
     "copied": "Copied",
     "translatedPlaceholder": "English translation will be displayed here..."
+  },
+  "GenerateData": {
+    "apiKeyError": "Please enter your API key.",
+    "maxLengthError": "Please enter less than {maxLength} characters. Current: {currentLength} characters.",
+    "unexpectedError": "An unexpected error has occurred.",
+    "title": "Generate Data from SQL Query",
+    "description": "Automatically generate mock data from your SQL queries for testing and development.",
+    "sourcePlaceholder": "Enter table structure, SQL query, or related information...",
+    "enhanceButton": "Generate Data",
+    "enhanceAgainButton": "Generate Again",
+    "translateToEnglishButton": "Translate to English",
+    "enhancedPlaceholderLoading": "Generating data...",
+    "enhancedPlaceholder": "The generated sample data will appear here...",
+    "copied": "Copied",
+    "translatedPlaceholder": "The English translation will appear here..."
   },
   "ChatWithPdfIdPage": {
     "onlyPdfAlert": "Please select PDF files only",
