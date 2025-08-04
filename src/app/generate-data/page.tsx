@@ -11,7 +11,7 @@ import { useTranslations } from 'next-intl';
 import { useCallback, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
-const MAX_TEXT_LENGTH = 10000;
+const MAX_TEXT_LENGTH = 100000;
 const TEXT_AREA_HEIGHT_DEFAULT = 128;
 
 const Page = () => {
