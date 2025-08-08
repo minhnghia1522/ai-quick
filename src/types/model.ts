@@ -16,30 +16,21 @@ export interface ModelAI {
 export const openAIModels: Array<ModelAI> = [
   {
     id: 4,
-    model: 'gpt-5',
+    model: 'gpt-5-2025-08-07',
     name: 'GPT-5',
     description: 'The best model for coding and agentic tasks across domains',
-    temperature: 1,
+    // temperature: 1,
     priceInput: 1.25,
-    priceOutput: 10.0,
+    priceOutput: 10.0
   },
   {
     id: 5,
-    model: 'gpt-5-mini',
+    model: 'gpt-5-mini-2025-08-07',
     name: 'GPT-5 mini',
     description: 'A faster, more cost-efficient version of GPT-5 for well-defined tasks',
-    temperature: 1,
+    // temperature: 1,
     priceInput: 0.25,
-    priceOutput: 2.0,
-  },
-  {
-    id: 6,
-    model: 'gpt-5-nano',
-    name: 'GPT-5 nano',
-    description: 'Fastest, most cost-efficient version of GPT-5',
-    temperature: 1,
-    priceInput: 0.05,
-    priceOutput: 0.4
+    priceOutput: 2.0
   },
   {
     id: 0,
