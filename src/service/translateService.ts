@@ -57,6 +57,7 @@ export const modelCallWithStreaming = async (
         ...(model.reasoningEffort && { reasoningEffort: model.reasoningEffort })
       }
     },
+    temperature: model.temperature,
     abortSignal: abortController,
     onError({ error }) {
       throw new Error(error as string);
