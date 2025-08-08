@@ -12,7 +12,7 @@ import PageView from '@/src/components/PageView';
 import TextareaAutosize from '@/src/components/input/TextareaAutosize';
 import { isEmpty } from 'lodash';
 
-const MAX_TEXT_LENGTH = 5000;
+const MAX_TEXT_LENGTH = 25000;
 const TEXT_AREA_HEIGHT_DEFAULT = 128;
 
 const Page = () => {
