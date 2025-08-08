@@ -19,7 +19,7 @@ export const openAIModels: Array<ModelAI> = [
     model: 'gpt-5-2025-08-07',
     name: 'GPT-5',
     description: 'The best model for coding and agentic tasks across domains',
-    // temperature: 1,
+    temperature: 1,
     priceInput: 1.25,
     priceOutput: 10.0
   },
@@ -28,7 +28,7 @@ export const openAIModels: Array<ModelAI> = [
     model: 'gpt-5-mini-2025-08-07',
     name: 'GPT-5 mini',
     description: 'A faster, more cost-efficient version of GPT-5 for well-defined tasks',
-    // temperature: 1,
+    temperature: 1,
     priceInput: 0.25,
     priceOutput: 2.0
   },
