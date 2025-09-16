@@ -2,7 +2,8 @@
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import { useTranslations } from 'next-intl';
-import { Label } from './ui/label';
+import { KeyRound } from 'lucide-react';
+import Link from 'next/link';
 import AppDialog, { AppDialogRefHandle } from './AppDialog';
 import { useAppStore } from '../store';
 import PasswordField from './PasswordField';
@@ -32,26 +33,16 @@ const APIKeyInputDialog = forwardRef<AppDialogRefHandle>((_, ref) => {
     }
   }, [open, setIsGeminiApiKey, setIsOpenApiKey]);
 
-  const onChangeOpenApiKey = (value: string) => {
-    setApiKey(value);
-  };
-
-  const onChangeGeminiKey = (value: string) => {
-    setGeminiApiKey(value);
-  };
-
   const submitCallback = () => {
     localStorage.setItem('apiKey', apiKey);
-    setIsOpenApiKey(isEmpty(apiKey));
+    setIsOpenApiKey(!isEmpty(apiKey));
     localStorage.setItem('geminiApiKey', geminiApiKey);
-    setIsGeminiApiKey(isEmpty(geminiApiKey));
+    setIsGeminiApiKey(!isEmpty(geminiApiKey));
     setOpen(false);
   };
 
   const closeCallback = () => {
     setOpen(false);
-    setApiKey('');
-    setGeminiApiKey('');
   };
 
   useImperativeHandle(ref, () => ({
@@ -63,24 +54,52 @@ const APIKeyInputDialog = forwardRef<AppDialogRefHandle>((_, ref) => {
     <AppDialog
       open={open}
       title={t('Dialog.settings')}
-      onOpenChange={() => closeCallback()}
+      onOpenChange={setOpen}
       submitCallback={submitCallback}
       closeCallback={closeCallback}
       bodyContent={
-        <div className='grid gap-8'>
-          <div>
-            <div className='mb-2'>
-              <Label>{t('Dialog.openaiApiKey')}</Label>
-              <div className='text-xs text-gray-600'>{t('Dialog.openaiApiKeyDesc')}</div>
+        <div className='grid gap-6'>
+          <div className='grid gap-3 p-4 border rounded-lg'>
+            <div className='flex items-center gap-2'>
+              <KeyRound className='w-5 h-5' />
+              <h3 className='text-lg font-semibold'>{t('Dialog.openaiApiKey')}</h3>
             </div>
-            <PasswordField value={apiKey} onChange={onChangeOpenApiKey} placeholder={t('Dialog.openaiApiKey')} />
+            <p className='text-sm text-muted-foreground'>{t('Dialog.openaiApiKeyDesc')}</p>
+            <PasswordField value={apiKey} onChange={setApiKey} placeholder={t('Dialog.openaiApiKey')} />
+            <p className='text-xs text-muted-foreground'>
+              {t('Dialog.getApiKeyFrom')}{' '}
+              <Link
+                href='https://platform.openai.com/api-keys'
+                target='_blank'
+                className='text-blue-600 underline'
+              >
+                OpenAI Dashboard
+              </Link>
+              .
+            </p>
           </div>
-          <div>
-            <div className='mb-2'>
-              <Label>{t('Dialog.geminiApiKey')}</Label>
-              <div className='text-xs text-gray-600'>{t('Dialog.geminiApiKeyDesc')}</div>
+          <div className='grid gap-3 p-4 border rounded-lg'>
+            <div className='flex items-center gap-2'>
+              <KeyRound className='w-5 h-5' />
+              <h3 className='text-lg font-semibold'>{t('Dialog.geminiApiKey')}</h3>
             </div>
-            <PasswordField value={geminiApiKey} onChange={onChangeGeminiKey} placeholder={t('Dialog.geminiApiKey')} />
+            <p className='text-sm text-muted-foreground'>{t('Dialog.geminiApiKeyDesc')}</p>
+            <PasswordField
+              value={geminiApiKey}
+              onChange={setGeminiApiKey}
+              placeholder={t('Dialog.geminiApiKey')}
+            />
+            <p className='text-xs text-muted-foreground'>
+              {t('Dialog.getApiKeyFrom')}{' '}
+              <Link
+                href='https://aistudio.google.com/app/apikey'
+                target='_blank'
+                className='text-blue-600 underline'
+              >
+                Google AI Studio
+              </Link>
+              .
+            </p>
           </div>
         </div>
       }

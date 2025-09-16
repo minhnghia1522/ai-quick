@@ -102,7 +102,8 @@
     "geminiApiKey": "Google Gemini APIキー",
     "geminiApiKeyDesc": "Google Geminiモデルを使用するためのGemini APIキー（任意）",
     "saveChanges": "変更を保存",
-    "close": "閉じる"
+    "close": "閉じる",
+    "getApiKeyFrom": "APIキーは次の場所から取得できます"
   },
   "Chat": {
     "notFoundTitle": "チャットが見つかりません",

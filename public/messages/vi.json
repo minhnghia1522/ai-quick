@@ -103,7 +103,8 @@
     "geminiApiKey": "Google Gemini API Key",
     "geminiApiKeyDesc": "API key Gemini để sử dụng mô hình Google Gemini. Trường này không bắt buộc.",
     "saveChanges": "Lưu thay đổi",
-    "close": "Đóng"
+    "close": "Đóng",
+    "getApiKeyFrom": "Bạn có thể lấy khóa API của mình từ"
   },
   "Chat": {
     "notFoundTitle": "Không tìm thấy cuộc trò chuyện",

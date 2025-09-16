@@ -109,7 +109,8 @@
     "geminiApiKey": "Google Gemini API Key",
     "geminiApiKeyDesc": "Gemini API key for using Google Gemini models. This key is optional.",
     "saveChanges": "Save changes",
-    "close": "Close"
+    "close": "Close",
+    "getApiKeyFrom": "You can get your API key from"
   },
   "Chat": {
     "notFoundTitle": "Conversation not found",
