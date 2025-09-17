@@ -182,7 +182,12 @@
     "vietnamese": "Vietnamese",
     "detectLanguage": "Detect language",
     "sourcePlaceholder": "Type or paste text here to translate",
-    "copied": "Translation has been copied"
+    "copied": "Translation has been copied",
+    "translationsMade": "Translations made",
+    "historyTitle": "History",
+    "clearHistory": "Clear all translations",
+    "historyCleared": "Translation history cleared.",
+    "noHistory": "No translation history yet."
   },
   "CodeTranslatePage": {
     "apiKeyError": "Please enter an API key.",

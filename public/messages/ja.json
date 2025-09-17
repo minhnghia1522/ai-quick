@@ -175,7 +175,12 @@
     "vietnamese": "ベトナム語",
     "detectLanguage": "言語を検出",
     "sourcePlaceholder": "翻訳するテキストを入力または貼り付け",
-    "copied": "翻訳文をコピーしました"
+    "copied": "翻訳文をコピーしました",
+    "translationsMade": "翻訳が完了しました",
+    "historyTitle": "履歴",
+    "clearHistory": "すべての翻訳履歴をクリア",
+    "historyCleared": "翻訳履歴がクリアされました。",
+    "noHistory": "翻訳履歴はまだありません。"
   },
   "CodeTranslatePage": {
     "apiKeyError": "APIキーを入力してください。",

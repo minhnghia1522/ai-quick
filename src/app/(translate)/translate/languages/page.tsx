@@ -11,6 +11,10 @@ import { areAnyApiKeysAvailable } from '@/src/utils/getProvider';
 import PageView from '@/src/components/PageView';
 import TextareaAutosize from '@/src/components/input/TextareaAutosize';
 import { isEmpty } from 'lodash';
+import TranslationHistory, {
+  ITranslationHistory,
+  ITranslationHistoryRefHandle
+} from '@/src/components/TranslationHistory';
 
 const MAX_TEXT_LENGTH = 25000;
 const TEXT_AREA_HEIGHT_DEFAULT = 128;
@@ -23,6 +27,7 @@ const Page = () => {
   const [outputLanguage, setOutputLanguage] = useState(LANGUAGES.vn);
   const [sharedHeight, setSharedHeight] = useState<number>(TEXT_AREA_HEIGHT_DEFAULT);
   const [isLoading, setIsLoading] = useState(false);
+  const translationHistoryRef = useRef<ITranslationHistoryRefHandle | null>(null);
 
   const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -83,6 +88,19 @@ const Page = () => {
     };
   }, [sourceText, inputLanguage, outputLanguage, handleTranslate]);
 
+  useEffect(() => {
+    if (!isLoading && translatedText && sourceText) {
+      const newEntry: ITranslationHistory = {
+        id: new Date().toISOString(),
+        sourceText,
+        translatedText,
+        inputLanguage,
+        outputLanguage
+      };
+      translationHistoryRef.current?.add(newEntry);
+    }
+  }, [isLoading, sourceText, translatedText, inputLanguage, outputLanguage]);
+
   const handleInputLanguageChange = (language: string) => () => {
     setInputLanguage((preValue) => {
       if (language == outputLanguage) {
@@ -114,117 +132,122 @@ const Page = () => {
   }, []);
 
   const renderBody = () => (
-    <div className='flex flex-col md:flex-row justify-center w-full max-w-full gap-3 md:px-0 lg:px-6 xl:px-16'>
-      <div className='flex flex-col gap-1 w-full md:w-1/2'>
-        <div className='flex flex-nowrap gap-1 overflow-x-auto'>
-          <Button
-            variant={inputLanguage === LANGUAGES.ja ? 'default' : 'link'}
-            onClick={handleInputLanguageChange(LANGUAGES.ja)}
-          >
-            {t('TranslatePage.japanese')}
-          </Button>
-          <Button
-            variant={inputLanguage === LANGUAGES.en ? 'default' : 'link'}
-            onClick={handleInputLanguageChange(LANGUAGES.en)}
-            className={`hidden block xs:block md:hidden lg:block xl:block`}
-          >
-            {t('TranslatePage.english')}
-          </Button>
-          <Button
-            variant={inputLanguage === LANGUAGES.vn ? 'default' : 'link'}
-            onClick={handleInputLanguageChange(LANGUAGES.vn)}
-          >
-            {t('TranslatePage.vietnamese')}
-          </Button>
-          <Button
-            variant={inputLanguage === LANGUAGES.natural ? 'default' : 'link'}
-            onClick={handleInputLanguageChange(LANGUAGES.natural)}
-          >
-            {t('TranslatePage.detectLanguage')}
-          </Button>
-        </div>
-        <div className='relative w-full flex rounded-md border border-input bg-background px-1 pt-1 pb-8'>
-          <TextareaAutosize
-            value={sourceText}
-            className='w-full border-none outline-none bg-transparent
+    <>
+      <div className='flex flex-col md:flex-row justify-center w-full max-w-full gap-3 md:px-0 lg:px-6 xl:px-16'>
+        <div className='flex flex-col gap-1 w-full md:w-1/2'>
+          <div className='flex flex-nowrap gap-1 overflow-x-auto'>
+            <Button
+              variant={inputLanguage === LANGUAGES.ja ? 'default' : 'link'}
+              onClick={handleInputLanguageChange(LANGUAGES.ja)}
+            >
+              {t('TranslatePage.japanese')}
+            </Button>
+            <Button
+              variant={inputLanguage === LANGUAGES.en ? 'default' : 'link'}
+              onClick={handleInputLanguageChange(LANGUAGES.en)}
+              className={`hidden block xs:block md:hidden lg:block xl:block`}
+            >
+              {t('TranslatePage.english')}
+            </Button>
+            <Button
+              variant={inputLanguage === LANGUAGES.vn ? 'default' : 'link'}
+              onClick={handleInputLanguageChange(LANGUAGES.vn)}
+            >
+              {t('TranslatePage.vietnamese')}
+            </Button>
+            <Button
+              variant={inputLanguage === LANGUAGES.natural ? 'default' : 'link'}
+              onClick={handleInputLanguageChange(LANGUAGES.natural)}
+            >
+              {t('TranslatePage.detectLanguage')}
+            </Button>
+          </div>
+          <div className='relative w-full flex rounded-md border border-input bg-background px-1 pt-1 pb-8'>
+            <TextareaAutosize
+              value={sourceText}
+              className='w-full border-none outline-none bg-transparent
           focus:outline-none focus:ring-0 focus:ring-offset-0 focus:shadow-none
           focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0'
-            placeholder={t('TranslatePage.sourcePlaceholder')}
-            onChange={(e) => {
-              if (isEmpty(e.target.value)) {
-                handleClearSourceText();
-              } else {
-                setSourceText(e.target.value);
-              }
-            }}
-            forcedHeight={sharedHeight}
-            onHeightChange={handleSourceHeightChange}
-          />
-          <span>
-            {sourceText !== '' ? (
-              <Button variant='ghost' size='icon' onClick={handleClearSourceText}>
-                <X />
-              </Button>
-            ) : undefined}
-          </span>
-          <div className='absolute bottom-0 right-3 text-gray-500 bg-white px-1'>
-            {sourceText.length.toLocaleString()}/{MAX_TEXT_LENGTH.toLocaleString()}
-          </div>
-        </div>
-      </div>
-      <div className='flex w-[10x]'>
-        <Button variant='ghost' size='icon' disabled>
-          {isLoading ? <Loader2 className='animate-spin' /> : <ArrowRightLeft />}
-        </Button>
-      </div>
-      <div className='flex flex-col gap-1 w-full md:w-1/2'>
-        <div className='flex flex-nowrap gap-1 overflow-x-auto'>
-          <Button
-            variant={outputLanguage === LANGUAGES.vn ? 'default' : 'link'}
-            onClick={handleOutLanguageChange(LANGUAGES.vn)}
-          >
-            {t('TranslatePage.vietnamese')}
-          </Button>
-          <Button
-            variant={outputLanguage === LANGUAGES.en ? 'default' : 'link'}
-            onClick={handleOutLanguageChange(LANGUAGES.en)}
-          >
-            {t('TranslatePage.english')}
-          </Button>
-          <Button
-            variant={outputLanguage === LANGUAGES.ja ? 'default' : 'link'}
-            onClick={handleOutLanguageChange(LANGUAGES.ja)}
-          >
-            {t('TranslatePage.japanese')}
-          </Button>
-        </div>
-        <div className=''>
-          <div className='w-full flex rounded-md border border-input bg-gray-50 px-1 pt-1 pb-8 '>
-            <TextareaAutosize
-              className='w-full border-none outline-none disabled:cursor-auto disabled:bg-gray-50 disabled:opacity-100'
-              value={translatedText}
-              disabled={true}
+              placeholder={t('TranslatePage.sourcePlaceholder')}
+              onChange={(e) => {
+                if (isEmpty(e.target.value)) {
+                  handleClearSourceText();
+                } else {
+                  setSourceText(e.target.value);
+                }
+              }}
               forcedHeight={sharedHeight}
               onHeightChange={handleSourceHeightChange}
             />
             <span>
-              {translatedText !== '' ? (
-                <Button
-                  variant='ghost'
-                  size='icon'
-                  onClick={() => {
-                    navigator.clipboard.writeText(translatedText);
-                    toast.success(t('TranslatePage.copied'));
-                  }}
-                >
-                  <Copy />
+              {sourceText !== '' ? (
+                <Button variant='ghost' size='icon' onClick={handleClearSourceText}>
+                  <X />
                 </Button>
               ) : undefined}
             </span>
+            <div className='absolute bottom-0 right-3 text-gray-500 bg-white px-1'>
+              {sourceText.length.toLocaleString()}/{MAX_TEXT_LENGTH.toLocaleString()}
+            </div>
+          </div>
+        </div>
+        <div className='flex w-[10x]'>
+          <Button variant='ghost' size='icon' disabled>
+            {isLoading ? <Loader2 className='animate-spin' /> : <ArrowRightLeft />}
+          </Button>
+        </div>
+        <div className='flex flex-col gap-1 w-full md:w-1/2'>
+          <div className='flex flex-nowrap gap-1 overflow-x-auto'>
+            <Button
+              variant={outputLanguage === LANGUAGES.vn ? 'default' : 'link'}
+              onClick={handleOutLanguageChange(LANGUAGES.vn)}
+            >
+              {t('TranslatePage.vietnamese')}
+            </Button>
+            <Button
+              variant={outputLanguage === LANGUAGES.en ? 'default' : 'link'}
+              onClick={handleOutLanguageChange(LANGUAGES.en)}
+            >
+              {t('TranslatePage.english')}
+            </Button>
+          <Button
+              variant={outputLanguage === LANGUAGES.ja ? 'default' : 'link'}
+              onClick={handleOutLanguageChange(LANGUAGES.ja)}
+            >
+              {t('TranslatePage.japanese')}
+            </Button>
+          </div>
+          <div className=''>
+            <div className='w-full flex rounded-md border border-input bg-gray-50 px-1 pt-1 pb-8 '>
+              <TextareaAutosize
+                className='w-full border-none outline-none disabled:cursor-auto disabled:bg-gray-50 disabled:opacity-100'
+                value={translatedText}
+                disabled={true}
+                forcedHeight={sharedHeight}
+                onHeightChange={handleSourceHeightChange}
+              />
+              <span>
+                {translatedText !== '' ? (
+                  <Button
+                    variant='ghost'
+                    size='icon'
+                    onClick={() => {
+                      navigator.clipboard.writeText(translatedText);
+                      toast.success(t('TranslatePage.copied'));
+                    }}
+                  >
+                    <Copy />
+                  </Button>
+                ) : undefined}
+              </span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+      <div className='w-full flex justify-center'>
+        <TranslationHistory ref={translationHistoryRef} />
+      </div>
+    </>
   );
 
   return (

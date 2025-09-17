@@ -176,7 +176,12 @@
     "vietnamese": "Việt",
     "detectLanguage": "Phát hiện ngôn ngữ",
     "sourcePlaceholder": "Nhập hoặc dán văn bản vào đây để dịch",
-    "copied": "Đã sao chép bản dịch"
+    "copied": "Đã sao chép bản dịch",
+    "translationsMade": "Các bản dịch đã thực hiện",
+    "historyTitle": "Lịch sử",
+    "clearHistory": "Xóa tất cả các bản dịch",
+    "historyCleared": "Đã xóa lịch sử dịch",
+    "noHistory": "Chưa có lịch sử dịch."
   },
   "CodeTranslatePage": {
     "apiKeyError": "Vui lòng nhập API key.",
