@@ -27,6 +27,7 @@ const Page = () => {
   const [outputLanguage, setOutputLanguage] = useState(LANGUAGES.vn);
   const [sharedHeight, setSharedHeight] = useState<number>(TEXT_AREA_HEIGHT_DEFAULT);
   const [isLoading, setIsLoading] = useState(false);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const translationHistoryRef = useRef<ITranslationHistoryRefHandle | null>(null);
 
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -95,7 +96,8 @@ const Page = () => {
         sourceText,
         translatedText,
         inputLanguage,
-        outputLanguage
+        outputLanguage,
+        timestamp: Date.now()
       };
       translationHistoryRef.current?.add(newEntry);
     }
@@ -130,6 +132,15 @@ const Page = () => {
   const handleSourceHeightChange = useCallback((newHeight: number) => {
     setSharedHeight(newHeight);
   }, []);
+
+  const handleReuseTranslation = (item: ITranslationHistory) => {
+    setSourceText(item.sourceText);
+    setTranslatedText(item.translatedText);
+    setInputLanguage(item.inputLanguage);
+    setOutputLanguage(item.outputLanguage);
+    setIsHistoryOpen(false);
+    toast.info(t('TranslatePage.translationReused'));
+  };
 
   const renderBody = () => (
     <>
@@ -210,7 +221,7 @@ const Page = () => {
             >
               {t('TranslatePage.english')}
             </Button>
-          <Button
+            <Button
               variant={outputLanguage === LANGUAGES.ja ? 'default' : 'link'}
               onClick={handleOutLanguageChange(LANGUAGES.ja)}
             >
@@ -245,7 +256,12 @@ const Page = () => {
         </div>
       </div>
       <div className='w-full flex justify-center'>
-        <TranslationHistory ref={translationHistoryRef} />
+        <TranslationHistory
+          ref={translationHistoryRef}
+          open={isHistoryOpen}
+          onOpenChange={setIsHistoryOpen}
+          onReuse={handleReuseTranslation}
+        />
       </div>
     </>
   );

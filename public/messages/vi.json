@@ -181,7 +181,17 @@
     "historyTitle": "Lịch sử",
     "clearHistory": "Xóa tất cả các bản dịch",
     "historyCleared": "Đã xóa lịch sử dịch",
-    "noHistory": "Chưa có lịch sử dịch."
+    "noHistory": "Chưa có lịch sử dịch.",
+    "copyTranslation": "Sao chép bản dịch",
+    "reuseTranslation": "Dùng lại bản dịch",
+    "deleteTranslation": "Xóa bản dịch",
+    "today": "Hôm nay",
+    "yesterday": "Hôm qua",
+    "previous7Days": "7 ngày trước",
+    "older": "Cũ hơn",
+    "searchHistory": "Tìm kiếm lịch sử...",
+    "noResultsFound": "Không tìm thấy kết quả.",
+    "historyItemDeleted": "Đã xóa bản dịch khỏi lịch sử."
   },
   "CodeTranslatePage": {
     "apiKeyError": "Vui lòng nhập API key.",

@@ -180,7 +180,17 @@
     "historyTitle": "履歴",
     "clearHistory": "すべての翻訳履歴をクリア",
     "historyCleared": "翻訳履歴がクリアされました。",
-    "noHistory": "翻訳履歴はまだありません。"
+    "noHistory": "翻訳履歴はまだありません。",
+    "copyTranslation": "翻訳をコピー",
+    "reuseTranslation": "翻訳を再利用",
+    "deleteTranslation": "翻訳を削除",
+    "today": "今日",
+    "yesterday": "昨日",
+    "previous7Days": "過去7日間",
+    "older": "それ以前",
+    "searchHistory": "履歴を検索...",
+    "noResultsFound": "結果が見つかりません。",
+    "historyItemDeleted": "履歴から削除しました。"
   },
   "CodeTranslatePage": {
     "apiKeyError": "APIキーを入力してください。",

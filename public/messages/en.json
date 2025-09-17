@@ -187,7 +187,18 @@
     "historyTitle": "History",
     "clearHistory": "Clear all translations",
     "historyCleared": "Translation history cleared.",
-    "noHistory": "No translation history yet."
+    "noHistory": "No translation history yet.",
+    "translationReused": "Translation reused",
+    "copyTranslation": "Copy translation",
+    "reuseTranslation": "Reuse translation",
+    "deleteTranslation": "Delete translation",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "previous7Days": "Previous 7 days",
+    "older": "Older",
+    "searchHistory": "Search history...",
+    "noResultsFound": "No results found.",
+    "historyItemDeleted": "History item deleted."
   },
   "CodeTranslatePage": {
     "apiKeyError": "Please enter an API key.",
