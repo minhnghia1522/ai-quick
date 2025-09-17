@@ -190,7 +190,16 @@
     "older": "それ以前",
     "searchHistory": "履歴を検索...",
     "noResultsFound": "結果が見つかりません。",
-    "historyItemDeleted": "履歴から削除しました。"
+    "historyItemDeleted": "履歴から削除しました。",
+    "searchLabel": "検索",
+    "dateLabel": "日付",
+    "inputLangLabel": "入力言語",
+    "outputLangLabel": "出力言語",
+    "filterByDate": "日付で絞り込み",
+    "filterByInputLanguage": "入力言語で絞り込み",
+    "filterByOutputLanguage": "出力言語で絞り込み",
+    "allInputLanguages": "すべての入力言語",
+    "allOutputLanguages": "すべての出力言語"
   },
   "CodeTranslatePage": {
     "apiKeyError": "APIキーを入力してください。",

@@ -38,7 +38,7 @@ const HistoryItem: React.FC<HistoryItemProps> = ({ item, onCopy, onDelete, onReu
         </span>
         <span className='text-slate-400'>{new Date(item.timestamp).toLocaleTimeString()}</span>
       </div>
-      <p className='text-sm text-muted-foreground line-clamp-3 mb-1 min-w-0 break-words whitespace-pre-wrap leading-relaxed'>
+      <p className='text-sm text-gray-700 line-clamp-3 mb-1 min-w-0 break-words whitespace-pre-wrap leading-relaxed'>
         {item.sourceText}
       </p>
       <p className='text-sm font-semibold text-foreground min-w-0 break-words whitespace-pre-wrap leading-relaxed'>

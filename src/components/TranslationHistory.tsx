@@ -1,13 +1,12 @@
 import React, { forwardRef, Ref, useEffect, useImperativeHandle, useMemo, useState } from 'react';
 import { Button } from './ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from './ui/sheet';
-import { History, Search } from 'lucide-react';
+import { History } from 'lucide-react';
 import { isEmpty } from 'lodash';
 import { useTranslations } from 'next-intl';
-// import { LANGUAGES } from '../types/model';
 import { toast } from 'sonner';
-import { Input } from './ui/input';
 import HistoryItem from './HistoryItem';
+import TranslationHistoryFilter from './TranslationHistoryFilter';
 
 export interface ITranslationHistory {
   id: string;
@@ -67,6 +66,9 @@ const TranslationHistory = (props: TranslationHistoryProps, ref: Ref<ITranslatio
   const t = useTranslations('TranslatePage');
   const [translationHistory, setTranslationHistory] = useState<ITranslationHistory[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchDate, setSearchDate] = useState('');
+  const [searchInputLang, setSearchInputLang] = useState('');
+  const [searchOutputLang, setSearchOutputLang] = useState('');
 
   useEffect(() => {
     try {
@@ -119,21 +121,23 @@ const TranslationHistory = (props: TranslationHistoryProps, ref: Ref<ITranslatio
   }));
 
   const filteredAndGroupedHistory = useMemo(() => {
-    const filtered = translationHistory.filter(
-      (item) =>
+    const filtered = translationHistory.filter((item) => {
+      const matchText =
         item.sourceText.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.translatedText.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+        item.translatedText.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchDate = !searchDate || new Date(item.timestamp).toISOString().slice(0, 10) === searchDate;
+      const matchInputLang = !searchInputLang || item.inputLanguage === searchInputLang;
+      const matchOutputLang = !searchOutputLang || item.outputLanguage === searchOutputLang;
+
+      return matchText && matchDate && matchInputLang && matchOutputLang;
+    });
     return groupHistoryByDate(filtered, t);
-  }, [translationHistory, searchQuery, t]);
+  }, [translationHistory, searchQuery, searchDate, searchInputLang, searchOutputLang, t]);
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetTrigger asChild>
-        <div
-          className='text-center mt-8 flex flex-col items-center cursor-pointer'
-          onClick={() => onOpenChange(true)}
-        >
+        <div className='text-center mt-8 flex flex-col items-center cursor-pointer' onClick={() => onOpenChange(true)}>
           <div className='rounded-full h-16 w-16 flex items-center justify-center border bg-gray-50 hover:bg-gray-100 transition-colors'>
             <History className='h-8 w-8 text-gray-500' />
           </div>
@@ -144,15 +148,17 @@ const TranslationHistory = (props: TranslationHistoryProps, ref: Ref<ITranslatio
         <SheetHeader>
           <SheetTitle>{t('historyTitle')}</SheetTitle>
         </SheetHeader>
-        <div className='relative my-1'>
-          <Search className='absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground' />
-          <Input
-            placeholder={t('searchHistory')}
-            className='pl-10'
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
+        <TranslationHistoryFilter
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          searchDate={searchDate}
+          setSearchDate={setSearchDate}
+          searchInputLang={searchInputLang}
+          setSearchInputLang={setSearchInputLang}
+          searchOutputLang={searchOutputLang}
+          setSearchOutputLang={setSearchOutputLang}
+          t={t}
+        />
         <div className='flex-1 overflow-y-auto flex flex-col'>
           {isEmpty(translationHistory) ? (
             <p className='text-gray-500 text-center mt-10'>{t('noHistory')}</p>

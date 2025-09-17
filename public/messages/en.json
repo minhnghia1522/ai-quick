@@ -198,7 +198,16 @@
     "older": "Older",
     "searchHistory": "Search history...",
     "noResultsFound": "No results found.",
-    "historyItemDeleted": "History item deleted."
+    "historyItemDeleted": "History item deleted.",
+    "searchLabel": "Search",
+    "dateLabel": "Date",
+    "inputLangLabel": "Input language",
+    "outputLangLabel": "Output language",
+    "filterByDate": "Filter by date",
+    "filterByInputLanguage": "Filter by input language",
+    "filterByOutputLanguage": "Filter by output language",
+    "allInputLanguages": "All input languages",
+    "allOutputLanguages": "All output languages"
   },
   "CodeTranslatePage": {
     "apiKeyError": "Please enter an API key.",

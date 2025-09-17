@@ -191,7 +191,16 @@
     "older": "Cũ hơn",
     "searchHistory": "Tìm kiếm lịch sử...",
     "noResultsFound": "Không tìm thấy kết quả.",
-    "historyItemDeleted": "Đã xóa bản dịch khỏi lịch sử."
+    "historyItemDeleted": "Đã xóa bản dịch khỏi lịch sử.",
+    "searchLabel": "Tìm kiếm",
+    "dateLabel": "Ngày",
+    "inputLangLabel": "Ngôn ngữ nguồn",
+    "outputLangLabel": "Ngôn ngữ đích",
+    "filterByDate": "Lọc theo ngày",
+    "filterByInputLanguage": "Lọc theo ngôn ngữ nguồn",
+    "filterByOutputLanguage": "Lọc theo ngôn ngữ đích",
+    "allInputLanguages": "Tất cả ngôn ngữ nguồn",
+    "allOutputLanguages": "Tất cả ngôn ngữ đích"
   },
   "CodeTranslatePage": {
     "apiKeyError": "Vui lòng nhập API key.",
