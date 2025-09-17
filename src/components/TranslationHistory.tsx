@@ -88,6 +88,7 @@ const TranslationHistory = (props: TranslationHistoryProps, ref: Ref<ITranslatio
     setTranslationHistory([]);
     localStorage.removeItem(HISTORY_KEY);
     toast.success(t('historyCleared'));
+    onOpenChange(false);
   };
 
   const handleOnAddHistory = (data: ITranslationHistory) => {
