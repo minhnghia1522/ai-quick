@@ -31,12 +31,12 @@ const HistoryItem: React.FC<HistoryItemProps> = ({ item, onCopy, onDelete, onReu
   const t = useTranslations('TranslatePage');
 
   return (
-    <li className='group flex flex-col min-w-0 rounded-lg border bg-card text-card-foreground p-4 sm:p-5 shadow-sm hover:shadow transition-shadow'>
-      <div className='flex justify-between items-center gap-3 text-xs text-muted-foreground mb-2'>
+    <li className='group flex flex-col min-w-0 rounded-lg border bg-card text-card-foreground p-4 sm:p-3 shadow-sm hover:shadow transition-shadow'>
+      <div className='flex justify-between items-center gap-3 text-xs text-slate-900 mb-2'>
         <span>
           {getLanguageName(item.inputLanguage, t)} → {getLanguageName(item.outputLanguage, t)}
         </span>
-        <span className='text-slate-400'>{new Date(item.timestamp).toLocaleTimeString()}</span>
+        <span className='text-slate-900'>{new Date(item.timestamp).toLocaleTimeString()}</span>
       </div>
       <p className='text-sm text-gray-700 line-clamp-3 mb-1 min-w-0 break-words whitespace-pre-wrap leading-relaxed'>
         {item.sourceText}
