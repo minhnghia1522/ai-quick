@@ -48,3 +48,5 @@ next-env.d.ts
 
 .roo/
 .scannerwork/
+
+sonar-project.properties
