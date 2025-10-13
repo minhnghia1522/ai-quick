@@ -268,6 +268,58 @@
     "loadingButton": "Initializing...",
     "startButton": "Start Chat"
   },
+  "PromptManager": {
+    "form": {
+      "nameRequired": "Prompt name is required.",
+      "nameMaxLength": "Prompt name must be 50 characters or fewer.",
+      "nameDuplicate": "A prompt with this name already exists.",
+      "contentRequired": "Prompt content is required.",
+      "submitCreate": "Create Prompt",
+      "submitEdit": "Save Changes",
+      "nameLabel": "Prompt Name",
+      "namePlaceholder": "Enter a unique prompt name",
+      "contentLabel": "Prompt Content",
+      "contentPlaceholder": "Describe the system prompt content here...",
+      "cancel": "Cancel",
+      "submitting": "Submitting..."
+    },
+    "select": {
+      "placeholder": "Select a system prompt",
+      "badgeDefault": "Default",
+      "badgeCustom": "Custom",
+      "badgeActive": "Active"
+    },
+    "toolbar": {
+      "create": "Create Prompt",
+      "manage": "Manage Prompts",
+      "useDefault": "Use Default Prompt"
+    },
+    "dialog": {
+      "titleCreate": "Create New Prompt",
+      "titleEdit": "Edit Prompt",
+      "descriptionCreate": "Configure a custom system prompt for language translation.",
+      "descriptionEdit": "Update the selected custom system prompt."
+    },
+    "list": {
+      "emptyBadge": "No Prompts",
+      "empty": "No custom prompts available yet.",
+      "badgeActive": "Active",
+      "badgeInactive": "Inactive",
+      "edit": "Edit",
+      "delete": "Delete",
+      "activate": "Activate"
+    },
+    "manager": {
+      "title": "Manage Custom Prompts",
+      "description": "Review, activate, edit, or delete your saved custom system prompts."
+    },
+    "confirm": {
+      "deleteTitle": "Delete Prompt",
+      "deleteDescription": "Are you sure you want to delete the prompt \"{name}\"? This action cannot be undone.",
+      "deleteConfirm": "Delete",
+      "deleteCancel": "Cancel"
+    }
+  },
   "LocaleSwitcher": {
     "en": "English",
     "vi": "Vietnamese",

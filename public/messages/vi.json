@@ -262,6 +262,58 @@
     "loadingButton": "Đang khởi tạo...",
     "startButton": "Bắt đầu chat"
   },
+  "PromptManager": {
+    "form": {
+      "nameRequired": "Tên prompt là bắt buộc.",
+      "nameMaxLength": "Tên prompt phải có tối đa 50 ký tự.",
+      "nameDuplicate": "Đã tồn tại prompt với tên này.",
+      "contentRequired": "Nội dung prompt là bắt buộc.",
+      "submitCreate": "Tạo Prompt",
+      "submitEdit": "Lưu Thay Đổi",
+      "nameLabel": "Tên Prompt",
+      "namePlaceholder": "Nhập tên prompt duy nhất",
+      "contentLabel": "Nội Dung Prompt",
+      "contentPlaceholder": "Nhập nội dung system prompt tại đây...",
+      "cancel": "Hủy",
+      "submitting": "Đang gửi..."
+    },
+    "select": {
+      "placeholder": "Chọn system prompt",
+      "badgeDefault": "Mặc định",
+      "badgeCustom": "Tùy chỉnh",
+      "badgeActive": "Đang dùng"
+    },
+    "toolbar": {
+      "create": "Tạo Prompt",
+      "manage": "Quản lý Prompt",
+      "useDefault": "Dùng Prompt Mặc Định"
+    },
+    "dialog": {
+      "titleCreate": "Tạo Prompt Mới",
+      "titleEdit": "Chỉnh Sửa Prompt",
+      "descriptionCreate": "Thiết lập system prompt tùy chỉnh cho tính năng dịch ngôn ngữ.",
+      "descriptionEdit": "Cập nhật system prompt tùy chỉnh đã chọn."
+    },
+    "list": {
+      "emptyBadge": "Chưa có Prompt",
+      "empty": "Chưa có prompt tùy chỉnh nào.",
+      "badgeActive": "Đang dùng",
+      "badgeInactive": "Không dùng",
+      "edit": "Chỉnh sửa",
+      "delete": "Xóa",
+      "activate": "Kích hoạt"
+    },
+    "manager": {
+      "title": "Quản lý Prompt Tùy Chỉnh",
+      "description": "Xem, kích hoạt, chỉnh sửa hoặc xóa các system prompt tùy chỉnh đã lưu."
+    },
+    "confirm": {
+      "deleteTitle": "Xóa Prompt",
+      "deleteDescription": "Bạn có chắc chắn muốn xóa prompt \"{name}\" không? Thao tác này không thể hoàn tác.",
+      "deleteConfirm": "Xóa",
+      "deleteCancel": "Hủy"
+    }
+  },
   "LocaleSwitcher": {
     "en": "English",
     "vi": "Vietnamese",

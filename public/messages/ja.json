@@ -261,6 +261,58 @@
     "loadingButton": "初期化中...",
     "startButton": "チャットを開始"
   },
+  "PromptManager": {
+    "form": {
+      "nameRequired": "プロンプト名は必須です。",
+      "nameMaxLength": "プロンプト名は50文字以内で入力してください。",
+      "nameDuplicate": "同じ名前のプロンプトが既に存在します。",
+      "contentRequired": "プロンプト内容は必須です。",
+      "submitCreate": "プロンプトを作成",
+      "submitEdit": "変更を保存",
+      "nameLabel": "プロンプト名",
+      "namePlaceholder": "一意のプロンプト名を入力",
+      "contentLabel": "プロンプト内容",
+      "contentPlaceholder": "ここにシステムプロンプトの内容を入力してください...",
+      "cancel": "キャンセル",
+      "submitting": "送信中..."
+    },
+    "select": {
+      "placeholder": "システムプロンプトを選択",
+      "badgeDefault": "デフォルト",
+      "badgeCustom": "カスタム",
+      "badgeActive": "使用中"
+    },
+    "toolbar": {
+      "create": "プロンプトを作成",
+      "manage": "プロンプトを管理",
+      "useDefault": "デフォルトを使用"
+    },
+    "dialog": {
+      "titleCreate": "新しいプロンプトを作成",
+      "titleEdit": "プロンプトを編集",
+      "descriptionCreate": "翻訳機能用のカスタムシステムプロンプトを設定します。",
+      "descriptionEdit": "選択したカスタムシステムプロンプトを更新します。"
+    },
+    "list": {
+      "emptyBadge": "プロンプトなし",
+      "empty": "カスタムプロンプトはまだありません。",
+      "badgeActive": "使用中",
+      "badgeInactive": "未使用",
+      "edit": "編集",
+      "delete": "削除",
+      "activate": "有効化"
+    },
+    "manager": {
+      "title": "カスタムプロンプトの管理",
+      "description": "保存済みのカスタムシステムプロンプトを確認し、有効化・編集・削除します。"
+    },
+    "confirm": {
+      "deleteTitle": "プロンプトの削除",
+      "deleteDescription": "プロンプト「{name}」を削除してもよろしいですか？この操作は元に戻せません。",
+      "deleteConfirm": "削除",
+      "deleteCancel": "キャンセル"
+    }
+  },
   "LocaleSwitcher": {
     "en": "English",
     "vi": "Vietnamese",
