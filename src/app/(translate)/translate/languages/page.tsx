@@ -10,7 +10,6 @@ import { modelCallWithStreaming } from '@/src/service/translateService';
 import { areAnyApiKeysAvailable } from '@/src/utils/getProvider';
 import PageView from '@/src/components/PageView';
 import TextareaAutosize from '@/src/components/input/TextareaAutosize';
-import { isEmpty } from 'lodash';
 import TranslationHistory, {
   ITranslationHistory,
   ITranslationHistoryRefHandle
@@ -28,12 +27,21 @@ const Page = () => {
   const [sharedHeight, setSharedHeight] = useState<number>(TEXT_AREA_HEIGHT_DEFAULT);
   const [isLoading, setIsLoading] = useState(false);
   const translationHistoryRef = useRef<ITranslationHistoryRefHandle | null>(null);
+  const skipHistorySaveRef = useRef(false);
 
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const handleTranslate = useCallback(async () => {
+    const trimmedSourceText = sourceText.trim();
+
+    if (trimmedSourceText !== sourceText) {
+      setSourceText(trimmedSourceText);
+    }
+
     setTranslatedText('');
-    if (!sourceText || sourceText === '' || sourceText == null) {
+
+    if (!trimmedSourceText) {
+      setIsLoading(false);
       return;
     }
 
@@ -47,19 +55,41 @@ const Page = () => {
       return;
     }
 
-    if (sourceText.length > MAX_TEXT_LENGTH) {
-      toast.error(t('TranslatePage.maxLengthError', { maxLength: MAX_TEXT_LENGTH, currentLength: sourceText.length }));
+    if (trimmedSourceText.length > MAX_TEXT_LENGTH) {
+      toast.error(
+        t('TranslatePage.maxLengthError', {
+          maxLength: MAX_TEXT_LENGTH,
+          currentLength: trimmedSourceText.length
+        })
+      );
       return;
     }
+
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
       setTranslatedText('');
     }
+
+    const historyList = translationHistoryRef.current?.getHistory?.() ?? [];
+    const matchedHistory = historyList.find(
+      (item) =>
+        item.sourceText === trimmedSourceText &&
+        item.inputLanguage === inputLanguage &&
+        item.outputLanguage === outputLanguage
+    );
+
+    if (matchedHistory) {
+      skipHistorySaveRef.current = true;
+      setTranslatedText(matchedHistory.translatedText);
+      setIsLoading(false);
+      return;
+    }
+
     const abortController = new AbortController();
     abortControllerRef.current = abortController;
 
     setIsLoading(true);
-    const prompt = createPromptTranslateLanguage(inputLanguage, outputLanguage, sourceText);
+    const prompt = createPromptTranslateLanguage(inputLanguage, outputLanguage, trimmedSourceText);
     try {
       const stream = await modelCallWithStreaming(prompt, abortController.signal);
 
@@ -73,10 +103,18 @@ const Page = () => {
       } else {
         toast.error(t('TranslatePage.unexpectedError'));
       }
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
-  }, [inputLanguage, outputLanguage, sourceText, t]);
+  }, [
+    abortControllerRef,
+    inputLanguage,
+    outputLanguage,
+    skipHistorySaveRef,
+    sourceText,
+    t,
+    translationHistoryRef
+  ]);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -89,17 +127,32 @@ const Page = () => {
   }, [sourceText, inputLanguage, outputLanguage, handleTranslate]);
 
   useEffect(() => {
-    if (!isLoading && translatedText && sourceText) {
+    const trimmedSourceText = sourceText.trim();
+
+    if (skipHistorySaveRef.current) {
+      skipHistorySaveRef.current = false;
+      return;
+    }
+
+    if (!isLoading && translatedText && trimmedSourceText) {
       const newEntry: ITranslationHistory = {
         id: new Date().toISOString(),
-        sourceText,
+        sourceText: trimmedSourceText,
         translatedText,
         inputLanguage,
         outputLanguage
       };
       translationHistoryRef.current?.add(newEntry);
     }
-  }, [isLoading, sourceText, translatedText, inputLanguage, outputLanguage]);
+  }, [
+    inputLanguage,
+    isLoading,
+    outputLanguage,
+    skipHistorySaveRef,
+    sourceText,
+    translatedText,
+    translationHistoryRef
+  ]);
 
   const handleInputLanguageChange = (language: string) => () => {
     setInputLanguage((preValue) => {
@@ -170,10 +223,11 @@ const Page = () => {
           focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0'
               placeholder={t('TranslatePage.sourcePlaceholder')}
               onChange={(e) => {
-                if (isEmpty(e.target.value)) {
+                const trimmedValue = e.target.value.trim();
+                if (trimmedValue === '') {
                   handleClearSourceText();
                 } else {
-                  setSourceText(e.target.value);
+                  setSourceText(trimmedValue);
                 }
               }}
               forcedHeight={sharedHeight}

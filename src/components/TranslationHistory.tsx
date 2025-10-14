@@ -19,6 +19,7 @@ const HISTORY_KEY = 'translationHistory';
 
 export interface ITranslationHistoryRefHandle {
   add: (data: ITranslationHistory) => void;
+  getHistory: () => ITranslationHistory[];
 }
 
 const TranslationHistory = (_props: unknown, ref: Ref<ITranslationHistoryRefHandle>) => {
@@ -69,7 +70,8 @@ const TranslationHistory = (_props: unknown, ref: Ref<ITranslationHistoryRefHand
   };
 
   useImperativeHandle(ref, () => ({
-    add: handleOnAddHistory
+    add: handleOnAddHistory,
+    getHistory: () => translationHistory
   }));
 
   return (
