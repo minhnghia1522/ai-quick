@@ -1,5 +1,5 @@
-import { CoreMessage, streamText, tool } from 'ai';
-import { z } from 'zod';
+import { ModelMessage, streamText, tool, stepCountIs } from 'ai';
+import { z } from 'zod/v3';
 import { getEmbedding } from './embeddingService';
 import { ModelAI, openAIModels, STORAGE_KEY_MODEL } from '@/src/types/model';
 import { FileStore } from '@/src/lib/database/fileDataDB';
@@ -29,7 +29,7 @@ const findRelevantContent = async (chatId: string, userQuery: string) => {
 const getInformation = (chatId: string) =>
   tool({
     description: `get information from your knowledge base to answer questions.`,
-    parameters: z.object({
+    inputSchema: z.object({
       question: z.string().describe('the users question')
     }),
     execute: async ({ question }) => findRelevantContent(chatId, question)
@@ -37,7 +37,7 @@ const getInformation = (chatId: string) =>
 
 const get_current_time = tool({
   description: `Return the current time in the UTC time zone.`,
-  parameters: z.object({
+  inputSchema: z.object({
     question: z.string().describe('get time UTC')
   }),
   execute: async () => {
@@ -45,7 +45,7 @@ const get_current_time = tool({
   }
 });
 
-export const chatPdfService = (messages: CoreMessage[], abortController: AbortSignal, chatId: string) => {
+export const chatPdfService = (messages: ModelMessage[], abortController: AbortSignal, chatId: string) => {
   const modelSelected = localStorage.getItem(STORAGE_KEY_MODEL);
   let model = openAIModels[0] as ModelAI;
 
@@ -57,9 +57,10 @@ export const chatPdfService = (messages: CoreMessage[], abortController: AbortSi
     model: getProviderByModelName(model.model),
     system: systemRagPrompt,
     messages,
-    maxSteps: 2, // Gọi streamText với maxSteps = 2 để đảm bảo LLM sẽ phản hồi sau khi tool chạy
+    stopWhen: stepCountIs(2),
     tools: { getInformation: getInformation(chatId), get_current_time },
     abortSignal: abortController,
+
     onError(error) {
       throw error;
     }

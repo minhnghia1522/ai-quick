@@ -12,7 +12,6 @@ export const getEmbedding = async ({ values }: { values: string[] }): Promise<nu
     throw new Error('API key is missing');
   }
   const openai = createOpenAI({
-    compatibility: 'strict',
     apiKey: key || ''
   });
 

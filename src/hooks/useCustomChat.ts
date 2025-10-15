@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { type CoreMessage } from 'ai';
+import { type ModelMessage } from 'ai';
 import { chatPdfService } from '@/src/service/chatService';
 import { chatHistoryStore, type ChatMessage } from '@/src/lib/database/chatHistoryDB';
 
@@ -17,7 +17,7 @@ export function useCustomChat(chatId: string) {
         const history = await chatHistoryStore.getChatHistory(chatId);
         if (history) {
           // Convert ChatMessage[] to CoreMessage[]
-          setMessages(history.messages as CoreMessage[]);
+          setMessages(history.messages as ModelMessage[]);
           setNotFound(false);
         } else {
           setNotFound(true);
@@ -64,7 +64,7 @@ export function useCustomChat(chatId: string) {
     e.preventDefault();
     if (!input.trim()) return;
 
-    const userMessage: CoreMessage = {
+    const userMessage: ModelMessage = {
       role: 'user',
       content: input
     };

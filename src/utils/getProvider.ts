@@ -7,7 +7,6 @@ export const getProviderByModelName = (modelName: string) => {
   const geminiKey = localStorage.getItem(STORAGE_KEY_GEMINI_API_KEY);
 
   const openai = createOpenAI({
-    compatibility: 'strict',
     apiKey: openAiKey || ''
   });
 
