@@ -1,13 +1,9 @@
+import { UIMessage } from '@/src/types/messages';
 import { openDB, DBSchema, IDBPDatabase } from 'idb';
-
-interface ChatMessage {
-  role: 'user' | 'assistant';
-  content: string;
-}
 
 interface ChatHistory {
   id: string;
-  messages: ChatMessage[];
+  messages: UIMessage[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -59,4 +55,4 @@ class ChatHistoryStore {
 }
 
 export const chatHistoryStore = new ChatHistoryStore();
-export type { ChatMessage, ChatHistory };
+export type { ChatHistory };

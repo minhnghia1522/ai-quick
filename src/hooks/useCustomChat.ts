@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { type ModelMessage } from 'ai';
+import { nanoid } from 'nanoid';
 import { chatPdfService } from '@/src/service/chatService';
-import { chatHistoryStore, type ChatMessage } from '@/src/lib/database/chatHistoryDB';
+import { chatHistoryStore } from '@/src/lib/database/chatHistoryDB';
+import { UIMessage } from '../types/messages';
 
 export function useCustomChat(chatId: string) {
-  const [messages, setMessages] = useState<CoreMessage[]>([]);
+  const [messages, setMessages] = useState<UIMessage[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
@@ -17,7 +18,7 @@ export function useCustomChat(chatId: string) {
         const history = await chatHistoryStore.getChatHistory(chatId);
         if (history) {
           // Convert ChatMessage[] to CoreMessage[]
-          setMessages(history.messages as ModelMessage[]);
+          setMessages(history.messages as UIMessage[]);
           setNotFound(false);
         } else {
           setNotFound(true);
@@ -37,7 +38,7 @@ export function useCustomChat(chatId: string) {
       try {
         // Filter out system messages and convert CoreMessage[] to ChatMessage[]
         const chatMessages = messages.filter(
-          (msg): msg is ChatMessage => msg.role === 'user' || msg.role === 'assistant'
+          (msg): msg is UIMessage => msg.role === 'user' || msg.role === 'assistant'
         );
 
         await chatHistoryStore.saveChatHistory({
@@ -64,9 +65,10 @@ export function useCustomChat(chatId: string) {
     e.preventDefault();
     if (!input.trim()) return;
 
-    const userMessage: ModelMessage = {
+    const userMessage: UIMessage = {
+      id: nanoid(),
       role: 'user',
-      content: input
+      parts: [{ type: 'text', text: input }]
     };
 
     setMessages((prev) => [...prev, userMessage]);
@@ -81,13 +83,25 @@ export function useCustomChat(chatId: string) {
       setMessages((prev) => [
         ...prev,
         {
+          id: nanoid(),
           role: 'assistant',
-          content: ''
+          parts: [{ type: 'text', text: '' }]
         }
       ]);
 
       // Xử lý stream text
-      const stream = chatPdfService([...messages, userMessage], controller.signal, chatId);
+      const modelMessages = [...messages, userMessage].map((msg) => {
+        const content = msg.parts
+          .filter((part): part is { type: 'text'; text: string } => part.type === 'text')
+          .map((part) => part.text)
+          .join('');
+        return {
+          role: msg.role as 'user' | 'assistant',
+          content
+        };
+      });
+
+      const stream = chatPdfService(modelMessages, controller.signal, chatId);
 
       let content = '';
 
@@ -96,7 +110,16 @@ export function useCustomChat(chatId: string) {
         setMessages((prev) => {
           const newMessages = [...prev];
           const lastMessage = newMessages[newMessages.length - 1];
-          lastMessage.content = content;
+          if (lastMessage && lastMessage.role === 'assistant') {
+            const textPart = lastMessage.parts.find(
+              (part) => part.type === 'text'
+            );
+            if (textPart && 'text' in textPart) {
+              textPart.text = content;
+            } else {
+              lastMessage.parts.push({ type: 'text', text: content });
+            }
+          }
           return newMessages;
         });
       }

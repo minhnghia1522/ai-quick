@@ -21,7 +21,8 @@ export const modelCallWithText = async ({ prompt }: { prompt: string }) => {
   try {
     const { text } = await generateText({
       model: getProviderByModelName(model.model),
-      prompt
+      prompt,
+      temperature: model.temperature ?? 0
     });
 
     return text;

@@ -38,6 +38,16 @@ const ChatSidebarGroup = ({ pathname, onCloseSidebarMobile }: ChatSidebarGroupPr
     setChatHistories((prev) => prev.filter((h) => h.id !== id));
   };
 
+  const getMessageContent = (message: ChatHistory['messages'][0]) => {
+    if (!message || !message.parts) {
+      return '';
+    }
+    return message.parts
+      .filter((part) => part.type === 'text' && typeof part.text === 'string')
+      .map((part) => part.text)
+      .join('');
+  };
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Chat</SidebarGroupLabel>
@@ -65,7 +75,7 @@ const ChatSidebarGroup = ({ pathname, onCloseSidebarMobile }: ChatSidebarGroupPr
                         onClick={onCloseSidebarMobile}
                         className='flex-1 min-w-0 truncate'
                       >
-                        <span>{history.messages[0]?.content?.slice(0, 20) || 'Chat history'}</span>
+                        <span>{getMessageContent(history.messages[0])?.slice(0, 20) || 'Chat history'}</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

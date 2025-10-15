@@ -48,12 +48,11 @@ export const ChatInterface = ({ isFileEmbedding, chatId }: ChatInterfaceProps) =
                   let content = '';
                   if (typeof message === 'string') {
                     content = message;
-                  } else if (message.content) {
-                    if (Array.isArray(message.content)) {
-                      content = message.content.join('');
-                    } else if (typeof message.content === 'string') {
-                      content = message.content;
-                    }
+                  } else if (Array.isArray(message.parts)) {
+                    content = message.parts
+                      .filter(part => part.type === 'text' && typeof part.text === 'string')
+                      .map(part => part.text)
+                      .join('');
                   }
 
                   // Loại bỏ các ký tự đặc biệt và metadata
