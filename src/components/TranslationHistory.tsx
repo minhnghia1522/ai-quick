@@ -21,6 +21,7 @@ const HISTORY_KEY = 'translationHistory';
 
 export interface ITranslationHistoryRefHandle {
   add: (data: ITranslationHistory) => void;
+  getHistory: () => ITranslationHistory[];
 }
 
 interface TranslationHistoryProps {
@@ -118,7 +119,8 @@ const TranslationHistory = (props: TranslationHistoryProps, ref: Ref<ITranslatio
   };
 
   useImperativeHandle(ref, () => ({
-    add: handleOnAddHistory
+    add: handleOnAddHistory,
+    getHistory: () => translationHistory
   }));
 
   const filteredAndGroupedHistory = useMemo(() => {
