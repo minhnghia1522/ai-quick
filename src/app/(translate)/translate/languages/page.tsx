@@ -29,6 +29,7 @@ const Page = () => {
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const translationHistoryRef = useRef<ITranslationHistoryRefHandle | null>(null);
   const skipHistorySaveRef = useRef(false);
+  const lastRequestedSourceRef = useRef<string>('');
 
   const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -90,6 +91,7 @@ const Page = () => {
     abortControllerRef.current = abortController;
 
     setIsLoading(true);
+    lastRequestedSourceRef.current = trimmedSourceText;
     const prompt = createPromptTranslateLanguage(inputLanguage, outputLanguage, trimmedSourceText);
     try {
       const stream = await modelCallWithStreaming(prompt, abortController.signal);
@@ -107,15 +109,7 @@ const Page = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [
-    abortControllerRef,
-    inputLanguage,
-    outputLanguage,
-    skipHistorySaveRef,
-    sourceText,
-    t,
-    translationHistoryRef
-  ]);
+  }, [abortControllerRef, inputLanguage, outputLanguage, skipHistorySaveRef, sourceText, t, translationHistoryRef]);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -135,7 +129,7 @@ const Page = () => {
       return;
     }
 
-    if (!isLoading && translatedText && trimmedSourceText) {
+    if (!isLoading && translatedText && trimmedSourceText && trimmedSourceText === lastRequestedSourceRef.current) {
       const newEntry: ITranslationHistory = {
         id: new Date().toISOString(),
         sourceText: trimmedSourceText,
@@ -146,15 +140,7 @@ const Page = () => {
       };
       translationHistoryRef.current?.add(newEntry);
     }
-  }, [
-    inputLanguage,
-    isLoading,
-    outputLanguage,
-    skipHistorySaveRef,
-    sourceText,
-    translatedText,
-    translationHistoryRef
-  ]);
+  }, [inputLanguage, isLoading, outputLanguage, skipHistorySaveRef, sourceText, translatedText, translationHistoryRef]);
 
   const handleInputLanguageChange = (language: string) => () => {
     setInputLanguage((preValue) => {
@@ -187,6 +173,7 @@ const Page = () => {
   }, []);
 
   const handleReuseTranslation = (item: ITranslationHistory) => {
+    skipHistorySaveRef.current = true;
     setSourceText(item.sourceText);
     setTranslatedText(item.translatedText);
     setInputLanguage(item.inputLanguage);
