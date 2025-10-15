@@ -30,6 +30,7 @@ const Page = () => {
   const translationHistoryRef = useRef<ITranslationHistoryRefHandle | null>(null);
   const skipHistorySaveRef = useRef(false);
   const lastRequestedSourceRef = useRef<string>('');
+  const sourceTextareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -37,7 +38,7 @@ const Page = () => {
     const trimmedSourceText = sourceText.trim();
 
     if (trimmedSourceText !== sourceText) {
-      setSourceText(trimmedSourceText);
+      /* keep UI value untrimmed */
     }
 
     setTranslatedText('');
@@ -215,17 +216,40 @@ const Page = () => {
           </div>
           <div className='relative w-full flex rounded-md border border-input bg-background px-1 pt-1 pb-8'>
             <TextareaAutosize
+              ref={sourceTextareaRef}
               value={sourceText}
               className='w-full border-none outline-none bg-transparent
           focus:outline-none focus:ring-0 focus:ring-offset-0 focus:shadow-none
           focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0'
               placeholder={t('TranslatePage.sourcePlaceholder')}
               onChange={(e) => {
-                const trimmedValue = e.target.value.trim();
-                if (trimmedValue === '') {
+                const rawValue = e.target.value;
+                if (rawValue.trim() === '') {
                   handleClearSourceText();
                 } else {
-                  setSourceText(trimmedValue);
+                  setSourceText(rawValue);
+                }
+              }}
+              onPaste={(e) => {
+                const text = e.clipboardData?.getData('text') ?? '';
+                const trimmed = text.trim();
+                if (trimmed !== text) {
+                  e.preventDefault();
+                  const el = sourceTextareaRef.current;
+                  if (el) {
+                    const { selectionStart, selectionEnd } = el;
+                    setSourceText((prev) => {
+                      const before = prev.slice(0, selectionStart);
+                      const after = prev.slice(selectionEnd);
+                      return before + trimmed + after;
+                    });
+                    requestAnimationFrame(() => {
+                      const pos = selectionStart + trimmed.length;
+                      try {
+                        el.setSelectionRange(pos, pos);
+                      } catch {}
+                    });
+                  }
                 }
               }}
               forcedHeight={sharedHeight}
