@@ -6,6 +6,7 @@ import APIKeyInputDialog from './APIKeyInputDialog';
 import { AppDialogRefHandle } from './AppDialog';
 import { areAnyApiKeysAvailable } from '@/src/utils/getProvider';
 import LocaleSwitcher from './LocaleSwitcher';
+import UsageCostBadge from './UsageCostBadge';
 
 export function AppHeader() {
   const dialogRef = useRef<AppDialogRefHandle>(null);
@@ -17,13 +18,14 @@ export function AppHeader() {
     if (!areAnyApiKeysAvailable()) {
       openDialog();
     }
-  }, []); // Added empty dependency array to run only on mount
+  }, []);
 
   return (
     <header className='flex sticky top-0 bg-background py-1.5 items-center px-2 md:px-2 gap-2'>
       <SidebarToggle />
       <ModelSelector className='order-1 md:order-2' />
-      <LocaleSwitcher className='ml-auto order-2 md:order-3' />
+      <UsageCostBadge className='order-2 md:order-3' />
+      <LocaleSwitcher className='ml-auto order-3 md:order-4' />
       <APIKeyInputDialog ref={dialogRef} />
     </header>
   );

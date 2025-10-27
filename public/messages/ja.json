@@ -284,5 +284,34 @@
     "en": "English",
     "vi": "Vietnamese",
     "ja": "Japanese"
+  },
+  "usage_analytics": {
+    "title": "使用状況分析",
+    "filters": {
+      "title": "フィルター",
+      "time_range_placeholder": "期間を選択",
+      "today": "今日",
+      "last_7_days": "過去7日間",
+      "last_30_days": "過去30日間",
+      "last_90_days": "過去90日間"
+    },
+    "summary": {
+      "creators": "クリエーター",
+      "tasks": "タスク",
+      "tokens": "トークン",
+      "inference": "推論"
+    },
+    "chart": {
+      "tokens": "トークン",
+      "inference": "推論"
+    },
+    "models": {
+      "title": "モデル",
+      "model": "モデル",
+      "provider": "プロバイダー",
+      "activity": "アクティビティ",
+      "tokens": "トークン",
+      "inference": "推論"
+    }
   }
 }

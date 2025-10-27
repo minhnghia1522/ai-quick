@@ -1,4 +1,5 @@
 import { createOpenAI } from '@ai-sdk/openai';
+import { addFromUsage } from '@/src/utils/usageCost';
 
 const enum OPENAI_EMBEDDING_MODELS {
   'text-embedding-3-small' = 'text-embedding-3-small',
@@ -15,13 +16,27 @@ export const getEmbedding = async ({ values }: { values: string[] }): Promise<nu
     apiKey: key || ''
   });
 
-  const model = openai.textEmbeddingModel(OPENAI_EMBEDDING_MODELS['text-embedding-3-small']);
+  const modelId = OPENAI_EMBEDDING_MODELS['text-embedding-3-small'];
+  const model = openai.textEmbeddingModel(modelId);
 
   try {
-    const { embeddings } = await model.doEmbed({
+    const result = await model.doEmbed({
       values
     });
-    return embeddings;
+
+    const rawUsage = result?.usage;
+    const usage = rawUsage
+      ? {
+          input_tokens: rawUsage.tokens ?? 0,
+          cached: Boolean((result as any)?.cached)
+        }
+      : null;
+
+    if (usage && usage.input_tokens > 0) {
+      addFromUsage('openai', modelId, usage, 'embedding');
+    }
+
+    return result.embeddings;
   } catch (error) {
     throw new Error(error as string);
   }

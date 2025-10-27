@@ -1,6 +1,7 @@
 import { ModelAI, STORAGE_KEY_MODEL } from '@/src/types/model';
 import { generateText, streamText } from 'ai';
 import { getProviderByModelName } from '@/src/utils/getProvider';
+import { addFromUsage } from '@/src/utils/usageCost';
 
 export const modelCallWithText = async ({ prompt }: { prompt: string }) => {
   const modelSelected = localStorage.getItem(STORAGE_KEY_MODEL);
@@ -19,13 +20,29 @@ export const modelCallWithText = async ({ prompt }: { prompt: string }) => {
   }
 
   try {
-    const { text } = await generateText({
+    const result = await generateText({
       model: getProviderByModelName(model.model),
       prompt,
       temperature: model.temperature ?? 0
     });
 
-    return text;
+    const rawUsage = result?.usage;
+    const usage = rawUsage
+      ? {
+          input_tokens: rawUsage.inputTokens ?? 0,
+          output_tokens: rawUsage.outputTokens ?? 0,
+          total_tokens: rawUsage.totalTokens ?? 0,
+          cached: Boolean((result as any)?.cached ?? rawUsage?.cachedInputTokens)
+        }
+      : null;
+        
+    if (usage && usage.input_tokens) {
+      const provider = model.model.toLowerCase().includes('gemini') ? 'google' : 'openai';
+      const modelId = model.model;
+      addFromUsage(provider, modelId, usage, 'translate');
+    }
+
+    return result.text;
   } catch (error) {
     throw new Error(error as string);
   }

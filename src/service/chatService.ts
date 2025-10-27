@@ -6,6 +6,30 @@ import { FileStore } from '@/src/lib/database/fileDataDB';
 import { systemRagPrompt } from '@/src/prompt/chatSystemPrompt';
 import { getProviderByModelName } from '@/src/utils/getProvider';
 
+import { addFromUsage } from '@/src/utils/usageCost';
+import { generateText } from 'ai';
+ 
+ export const sendMessage = async (messages: ModelMessage[], model: string) => {
+  const provider = 'openai';
+  const modelInstance = getProviderByModelName(model);
+  
+  const { usage, text } = await generateText({
+    model: modelInstance,
+    messages,
+  });
+
+  const formattedUsage = {
+    input_tokens: usage.inputTokens ?? 0,
+    output_tokens: usage.outputTokens ?? 0,
+    total_tokens: usage.totalTokens ?? 0,
+    cached: false, // Assuming non-stream is not cached, adjust if needed
+  };
+
+  addFromUsage(provider, model, formattedUsage, 'chat');
+
+  return text;
+ };
+
 const findRelevantContent = async (chatId: string, userQuery: string) => {
   const userQueryEmbedded = await getEmbedding({ values: [userQuery] });
   if (!userQueryEmbedded || userQueryEmbedded.length === 0) {

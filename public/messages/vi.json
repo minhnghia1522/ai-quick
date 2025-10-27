@@ -285,5 +285,34 @@
     "en": "English",
     "vi": "Vietnamese",
     "ja": "Japanese"
+  },
+  "usage_analytics": {
+    "title": "Phân tích sử dụng",
+    "filters": {
+      "title": "Bộ lọc",
+      "time_range_placeholder": "Chọn khoảng thời gian",
+      "today": "Hôm nay",
+      "last_7_days": "7 ngày qua",
+      "last_30_days": "30 ngày qua",
+      "last_90_days": "90 ngày qua"
+    },
+    "summary": {
+      "creators": "Người tạo",
+      "tasks": "Tác vụ",
+      "tokens": "Tokens",
+      "inference": "Suy luận"
+    },
+    "chart": {
+      "tokens": "Tokens",
+      "inference": "Suy luận"
+    },
+    "models": {
+      "title": "Mô hình",
+      "model": "Mô hình",
+      "provider": "Nhà cung cấp",
+      "activity": "Hoạt động",
+      "tokens": "Tokens",
+      "inference": "Suy luận"
+    }
   }
 }

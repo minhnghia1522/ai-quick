@@ -95,7 +95,6 @@ const AppSidebar = () => {
       </SidebarHeader>
       <SidebarContent>
         {menuItems.map(({ items, groupLabel }, index) => {
-          // Nếu là group Chat thì render thêm lịch sử chat
           if (groupLabel === t('Sidebar.groupLabel.chat')) {
             return (
               <ChatSidebarGroup key={index} pathname={pathname} onCloseSidebarMobile={handleCloseSidebarOnMobile} />
