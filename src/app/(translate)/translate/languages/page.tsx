@@ -95,7 +95,14 @@ const Page = () => {
     lastRequestedSourceRef.current = trimmedSourceText;
     const prompt = createPromptTranslateLanguage(inputLanguage, outputLanguage, trimmedSourceText);
     try {
-      const stream = await modelCallWithStreaming(prompt, abortController.signal);
+      const stream = await modelCallWithStreaming(
+        {
+          system: prompt.system,
+          prompt: prompt.prompt,
+          taskType: 'translate'
+        },
+        abortController.signal
+      );
 
       for await (const textPart of stream.textStream) {
         setTranslatedText((prevData) => prevData + textPart);

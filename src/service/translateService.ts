@@ -1,8 +1,15 @@
 import { ModelAI, STORAGE_KEY_MODEL } from '@/src/types/model';
 import { generateText, streamText } from 'ai';
 import { getProviderByModelName } from '@/src/utils/getProvider';
+import { costTrackingInterceptor, TaskType } from './costTrackingInterceptor';
 
-export const modelCallWithText = async ({ prompt }: { prompt: string }) => {
+export const modelCallWithText = async ({
+  prompt,
+  taskType = 'translate'
+}: {
+  prompt: string;
+  taskType?: TaskType;
+}) => {
   const modelSelected = localStorage.getItem(STORAGE_KEY_MODEL);
 
   let model = {
@@ -19,20 +26,23 @@ export const modelCallWithText = async ({ prompt }: { prompt: string }) => {
   }
 
   try {
-    const { text } = await generateText({
+    const result = await generateText({
       model: getProviderByModelName(model.model),
       prompt,
       temperature: model.temperature ?? 0
     });
 
-    return text;
+    // Track usage for cost analytics
+    await costTrackingInterceptor.trackUsage(result, taskType);
+
+    return result.text;
   } catch (error) {
     throw new Error(error as string);
   }
 };
 
 export const modelCallWithStreaming = async (
-  { system, prompt }: { prompt: string; system?: string },
+  { system, prompt, taskType = 'translate' }: { prompt: string; system?: string; taskType?: TaskType },
   abortController: AbortSignal
 ) => {
   const modelSelected = localStorage.getItem(STORAGE_KEY_MODEL);
@@ -49,7 +59,7 @@ export const modelCallWithStreaming = async (
     model = JSON.parse(modelSelected);
   }
 
-  return streamText({
+  const result = streamText({
     model: getProviderByModelName(model.model),
     system,
     prompt: prompt,
@@ -62,6 +72,12 @@ export const modelCallWithStreaming = async (
     abortSignal: abortController,
     onError({ error }) {
       throw new Error(error as string);
+    },
+    onFinish: async (event) => {
+      // Track usage for cost analytics when stream finishes
+      await costTrackingInterceptor.trackUsage(event, taskType);
     }
   });
+
+  return result;
 };

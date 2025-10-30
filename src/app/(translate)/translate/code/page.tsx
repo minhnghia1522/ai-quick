@@ -63,7 +63,8 @@ export default function Home() {
     try {
       const stream = await modelCallWithStreaming(
         {
-          prompt
+          prompt,
+          taskType: 'translate'
         },
         abortController.signal
       );

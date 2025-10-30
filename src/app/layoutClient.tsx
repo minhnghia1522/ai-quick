@@ -10,6 +10,7 @@ import { getUserLocale, loadLocaleMessages, setClientLocale } from '../service/c
 import { AppHeader } from '../components/AppHeader';
 import AppSidebar from '../components/AppSidebar';
 import { SidebarProvider, SidebarInset } from '../components/ui/sidebar';
+import { useCostAnalyticsInit } from '../hooks/useCostAnalyticsInit';
 
 const NextIntlClientProvider = dynamic(() => import('next-intl').then((mod) => mod.NextIntlClientProvider), {
   ssr: false
@@ -19,6 +20,9 @@ export default function LayoutClient({ children }: PropsWithChildren) {
   const [messages, setMessages] = useState<AbstractIntlMessages>({});
   const [locale, setLocale] = useState('en'); // Default locale initially
   const [loading, setLoading] = useState(true);
+
+  // Initialize cost analytics system
+  useCostAnalyticsInit();
 
   // Initialize the client locale system
   useEffect(() => {

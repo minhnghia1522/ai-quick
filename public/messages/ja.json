@@ -284,5 +284,76 @@
     "en": "English",
     "vi": "Vietnamese",
     "ja": "Japanese"
+  },
+  "UsageAnalytics": {
+    "dialog": {
+      "title": "使用状況分析",
+      "description": "AI使用統計とコストを時系列で表示"
+    },
+    "timeRange": {
+      "today": "今日",
+      "last7days": "過去7日間",
+      "last30days": "過去30日間",
+      "last90days": "過去90日間"
+    },
+    "filters": {
+      "timeRangeLabel": "期間",
+      "modelsLabel": "モデル",
+      "allModels": "すべてのモデル",
+      "modelsCount": "{count}個のモデル",
+      "selectModels": "モデルを選択",
+      "allModelsOption": "すべてのモデル",
+      "noModels": "利用可能なモデルがありません",
+      "clearFilters": "フィルターをクリア",
+      "showingData": "{total}個中{selected}個のモデルのデータを表示"
+    },
+    "cards": {
+      "totalCost": "合計コスト",
+      "totalTasks": "合計タスク",
+      "totalTokens": "合計トークン",
+      "avgCostPerTask": "平均コスト/タスク",
+      "aiInteractions": "AI対話",
+      "efficiency": "効率",
+      "model": "{count, plural, =1 {モデル} other {モデル}}",
+      "tokenBreakdown": "{input}入力 • {output}出力"
+    },
+    "breakdown": {
+      "title": "使用状況の内訳",
+      "tokens": "トークン",
+      "input": "入力",
+      "output": "出力",
+      "byModel": {
+        "title": "モデル別",
+        "description": "AIモデル別のコストと使用状況の内訳",
+        "noData": "選択した期間の使用データがありません。",
+        "noDataFiltered": "{timeRange}期間の選択したモデルの使用データがありません。",
+        "taskCount": "{count, plural, =1 {1タスク} other {{count}タスク}}"
+      },
+      "byTaskType": {
+        "title": "タスクタイプ別",
+        "description": "機能タイプ別の使用状況の内訳",
+        "noData": "選択した期間のタスクデータがありません。",
+        "adjustFilters": "モデルフィルターまたは期間を調整してみてください。",
+        "taskCompleted": "{count, plural, =1 {1タスク完了} other {{count}タスク完了}}",
+        "avgCost": "平均",
+        "perTask": "タスクあたり"
+      }
+    },
+    "buttons": {
+      "exportData": "データをエクスポート",
+      "close": "閉じる",
+      "tryAgain": "再試行"
+    },
+    "export": {
+      "formatLabel": "エクスポート形式",
+      "jsonFormat": "JSON（完全なデータ）",
+      "csvFormat": "CSV（レコードのみ）"
+    },
+    "errors": {
+      "title": "分析データの読み込みエラー",
+      "unexpected": "使用状況分析の読み込み中に予期しないエラーが発生しました。",
+      "loadFailed": "分析データの読み込みに失敗しました",
+      "exportFailed": "使用データのエクスポートに失敗しました。もう一度お試しください。"
+    }
   }
 }

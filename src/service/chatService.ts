@@ -5,6 +5,7 @@ import { ModelAI, openAIModels, STORAGE_KEY_MODEL } from '@/src/types/model';
 import { FileStore } from '@/src/lib/database/fileDataDB';
 import { systemRagPrompt } from '@/src/prompt/chatSystemPrompt';
 import { getProviderByModelName } from '@/src/utils/getProvider';
+import { costTrackingInterceptor } from './costTrackingInterceptor';
 
 const findRelevantContent = async (chatId: string, userQuery: string) => {
   const userQueryEmbedded = await getEmbedding({ values: [userQuery] });
@@ -63,6 +64,10 @@ export const chatPdfService = (messages: ModelMessage[], abortController: AbortS
 
     onError(error) {
       throw error;
+    },
+    onFinish: async (event) => {
+      // Track usage for cost analytics when stream finishes
+      await costTrackingInterceptor.trackUsage(event, 'chat');
     }
   });
 

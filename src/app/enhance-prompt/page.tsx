@@ -51,7 +51,7 @@ const Page = () => {
     setIsLoading(true);
     const prompt = createEnhancePrompt(sourceText);
     try {
-      const stream = await modelCallWithStreaming({ prompt }, abortController.signal);
+      const stream = await modelCallWithStreaming({ prompt, taskType: 'enhance-prompt' }, abortController.signal);
       for await (const textPart of stream.textStream) {
         setEnhancedText((prevData) => prevData + textPart);
       }
@@ -90,7 +90,7 @@ const Page = () => {
     setIsLoading(true);
     const { system, prompt } = createPromptTranslateEnhancePrompt(LANGUAGES.en, enhancedText);
     try {
-      const stream = await modelCallWithStreaming({ prompt, system }, abortController.signal);
+      const stream = await modelCallWithStreaming({ prompt, system, taskType: 'translate' }, abortController.signal);
       for await (const textPart of stream.textStream) {
         setTranslatedText((prevData) => prevData + textPart);
       }

@@ -285,5 +285,76 @@
     "en": "English",
     "vi": "Vietnamese",
     "ja": "Japanese"
+  },
+  "UsageAnalytics": {
+    "dialog": {
+      "title": "Phân Tích Sử Dụng",
+      "description": "Xem thống kê sử dụng AI và chi phí theo thời gian"
+    },
+    "timeRange": {
+      "today": "Hôm nay",
+      "last7days": "7 ngày qua",
+      "last30days": "30 ngày qua",
+      "last90days": "90 ngày qua"
+    },
+    "filters": {
+      "timeRangeLabel": "Khoảng thời gian",
+      "modelsLabel": "Mô hình",
+      "allModels": "Tất cả mô hình",
+      "modelsCount": "{count} mô hình",
+      "selectModels": "Chọn mô hình",
+      "allModelsOption": "Tất cả mô hình",
+      "noModels": "Không có mô hình nào",
+      "clearFilters": "Xóa bộ lọc",
+      "showingData": "Hiển thị dữ liệu cho {selected} trong số {total} mô hình"
+    },
+    "cards": {
+      "totalCost": "Tổng chi phí",
+      "totalTasks": "Tổng tác vụ",
+      "totalTokens": "Tổng Token",
+      "avgCostPerTask": "Chi phí TB/Tác vụ",
+      "aiInteractions": "Tương tác AI",
+      "efficiency": "Hiệu quả",
+      "model": "{count, plural, =1 {mô hình} other {mô hình}}",
+      "tokenBreakdown": "{input} đầu vào • {output} đầu ra"
+    },
+    "breakdown": {
+      "title": "Phân tích chi tiết",
+      "tokens": "token",
+      "input": "Đầu vào",
+      "output": "Đầu ra",
+      "byModel": {
+        "title": "Theo mô hình",
+        "description": "Phân tích chi phí và sử dụng theo mô hình AI",
+        "noData": "Không có dữ liệu sử dụng cho khoảng thời gian đã chọn.",
+        "noDataFiltered": "Không có dữ liệu sử dụng cho các mô hình đã chọn trong khoảng thời gian {timeRange}.",
+        "taskCount": "{count, plural, =1 {1 tác vụ} other {{count} tác vụ}}"
+      },
+      "byTaskType": {
+        "title": "Theo loại tác vụ",
+        "description": "Phân tích sử dụng theo loại tính năng",
+        "noData": "Không có dữ liệu tác vụ cho khoảng thời gian đã chọn.",
+        "adjustFilters": "Thử điều chỉnh bộ lọc mô hình hoặc khoảng thời gian.",
+        "taskCompleted": "{count, plural, =1 {1 tác vụ hoàn thành} other {{count} tác vụ hoàn thành}}",
+        "avgCost": "Trung bình",
+        "perTask": "mỗi tác vụ"
+      }
+    },
+    "buttons": {
+      "exportData": "Xuất dữ liệu",
+      "close": "Đóng",
+      "tryAgain": "Thử lại"
+    },
+    "export": {
+      "formatLabel": "Định dạng xuất",
+      "jsonFormat": "JSON (Dữ liệu đầy đủ)",
+      "csvFormat": "CSV (Chỉ bản ghi)"
+    },
+    "errors": {
+      "title": "Lỗi khi tải dữ liệu phân tích",
+      "unexpected": "Đã xảy ra lỗi không mong muốn khi tải phân tích sử dụng của bạn.",
+      "loadFailed": "Không thể tải dữ liệu phân tích",
+      "exportFailed": "Không thể xuất dữ liệu sử dụng. Vui lòng thử lại."
+    }
   }
 }
