@@ -318,6 +318,20 @@
       "model": "{count, plural, =1 {mô hình} other {mô hình}}",
       "tokenBreakdown": "{input} đầu vào • {output} đầu ra"
     },
+    "charts": {
+      "title": "Xu hướng sử dụng",
+      "tabs": {
+        "tokens": "Token",
+        "cost": "Chi phí",
+        "tasks": "Tác vụ"
+      },
+      "labels": {
+        "tokens": "Tổng Token",
+        "cost": "Chi phí ($)",
+        "tasks": "Số lượng tác vụ"
+      },
+      "noData": "Không có dữ liệu cho khoảng thời gian đã chọn"
+    },
     "breakdown": {
       "title": "Phân tích chi tiết",
       "tokens": "token",

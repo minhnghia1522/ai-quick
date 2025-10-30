@@ -317,6 +317,20 @@
       "model": "{count, plural, =1 {モデル} other {モデル}}",
       "tokenBreakdown": "{input}入力 • {output}出力"
     },
+    "charts": {
+      "title": "使用状況の推移",
+      "tabs": {
+        "tokens": "トークン",
+        "cost": "コスト",
+        "tasks": "タスク"
+      },
+      "labels": {
+        "tokens": "合計トークン",
+        "cost": "コスト ($)",
+        "tasks": "タスク数"
+      },
+      "noData": "選択した期間のデータがありません"
+    },
     "breakdown": {
       "title": "使用状況の内訳",
       "tokens": "トークン",

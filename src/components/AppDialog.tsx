@@ -18,6 +18,11 @@ interface Props {
   onOpenChange(open: boolean): void;
   submitCallback?(): void;
   closeCallback?(): void;
+  contentClassName?: string;
+  hideSubmitButton?: boolean;
+  headerClassName?: string;
+  bodyClassName?: string;
+  footerClassName?: string;
 }
 const AppDialog = ({
   open,
@@ -28,18 +33,23 @@ const AppDialog = ({
   btnCloseName,
   onOpenChange,
   closeCallback,
-  submitCallback
+  submitCallback,
+  contentClassName,
+  hideSubmitButton = false,
+  headerClassName,
+  bodyClassName,
+  footerClassName
 }: Props) => {
   const t = useTranslations();
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
+      <DialogContent className={contentClassName}>
+        <DialogHeader className={headerClassName}>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
-        <div>{bodyContent}</div>
-        <DialogFooter>
+        <div className={bodyClassName}>{bodyContent}</div>
+        <DialogFooter className={footerClassName}>
           <div className='flex justify-between w-full'>
             <Button
               onClick={() => {
@@ -48,9 +58,11 @@ const AppDialog = ({
             >
               {btnCloseName ?? t('Dialog.close')}
             </Button>
-            <Button type='submit' onClick={submitCallback}>
-              {btnSubmitName ?? t('Dialog.saveChanges')}
-            </Button>
+            {!hideSubmitButton && (
+              <Button type='submit' onClick={submitCallback}>
+                {btnSubmitName ?? t('Dialog.saveChanges')}
+              </Button>
+            )}
           </div>
         </DialogFooter>
       </DialogContent>

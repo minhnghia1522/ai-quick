@@ -325,6 +325,20 @@
       "model": "{count, plural, =1 {model} other {models}}",
       "tokenBreakdown": "{input} in • {output} out"
     },
+    "charts": {
+      "title": "Usage Trends",
+      "tabs": {
+        "tokens": "Tokens",
+        "cost": "Cost",
+        "tasks": "Tasks"
+      },
+      "labels": {
+        "tokens": "Total Tokens",
+        "cost": "Cost ($)",
+        "tasks": "Number of Tasks"
+      },
+      "noData": "No data available for the selected period"
+    },
     "breakdown": {
       "title": "Usage Breakdown",
       "tokens": "tokens",

@@ -232,6 +232,73 @@ export class UsageCostService {
     public async clearOldRecords(daysToKeep: number = 365): Promise<void> {
         await usageCostStore.clearOldRecords(daysToKeep);
     }
+
+    /**
+     * Get time series data for charting (daily or hourly aggregation)
+     */
+    public async getTimeSeriesData(
+        filter?: Partial<UsageFilter>,
+        granularity: 'hourly' | 'daily' = 'daily'
+    ): Promise<Array<{
+        period: string;
+        tokens: number;
+        cost: number;
+        tasks: number;
+        timestamp: Date;
+    }>> {
+        const records = filter
+            ? await usageCostStore.getFilteredUsageRecords(filter)
+            : await usageCostStore.getAllUsageRecords();
+
+        // Create a map to aggregate data by period
+        const periodMap = new Map<string, {
+            tokens: number;
+            cost: number;
+            tasks: number;
+            timestamp: Date;
+        }>();
+
+        records.forEach(record => {
+            const date = new Date(record.timestamp);
+            let periodKey: string;
+            let periodDate: Date;
+
+            if (granularity === 'hourly') {
+                // Format: YYYY-MM-DD HH:00
+                periodKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:00`;
+                periodDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), 0, 0);
+            } else {
+                // Format: YYYY-MM-DD
+                periodKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+                periodDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0);
+            }
+
+            if (!periodMap.has(periodKey)) {
+                periodMap.set(periodKey, {
+                    tokens: 0,
+                    cost: 0,
+                    tasks: 0,
+                    timestamp: periodDate
+                });
+            }
+
+            const periodData = periodMap.get(periodKey)!;
+            periodData.tokens += record.inputTokens + record.outputTokens;
+            periodData.cost += record.totalCost;
+            periodData.tasks += 1;
+        });
+
+        // Convert map to array and sort by timestamp
+        const result = Array.from(periodMap.entries())
+            .map(([period, data]) => ({
+                period,
+                ...data,
+                cost: Number(data.cost.toFixed(6))
+            }))
+            .sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
+
+        return result;
+    }
 }
 
 // Export singleton instance
