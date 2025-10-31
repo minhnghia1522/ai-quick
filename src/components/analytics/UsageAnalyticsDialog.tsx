@@ -80,7 +80,7 @@ const UsageAnalyticsDialog: React.FC<UsageAnalyticsDialogProps> = ({ open, onOpe
     }
 
     return (
-      <div className='space-y-6'>
+      <div className='space-y-5'>
         {/* Summary Cards */}
         <SummaryCards analytics={analytics} timeRange={filters.timeRange} getTimeRangeLabel={getTimeRangeLabel} />
 
@@ -154,7 +154,7 @@ const UsageAnalyticsDialog: React.FC<UsageAnalyticsDialogProps> = ({ open, onOpe
       btnCloseName={t('buttons.close')}
       onOpenChange={onOpenChange}
       closeCallback={() => onOpenChange(false)}
-      contentClassName='w-full max-w-[95vw] lg:max-w-[1400px] h-[90vh] !flex !flex-col p-0 !gap-0'
+      contentClassName='w-full max-w-[95vw] lg:max-w-[1190px] h-[90vh] !flex !flex-col p-0 !gap-0'
       headerClassName='px-6 pt-6 pb-4 flex-shrink-0'
       bodyClassName='flex-1 min-h-0 flex flex-col lg:flex-row gap-4 px-6 pb-4'
       footerClassName='px-6 pb-3 flex-shrink-0'
