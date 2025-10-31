@@ -10,7 +10,9 @@ interface UsageCostBadgeProps {
 }
 
 export function UsageCostBadge({ className, onClick }: UsageCostBadgeProps) {
-  const { totalCost, refreshTotalCost, isLoading } = useAppStore();
+  const totalCost = useAppStore((state) => state.totalCost);
+  const isLoading = useAppStore((state) => state.isLoading);
+  const refreshTotalCost = useAppStore((state) => state.refreshTotalCost);
   const [mounted, setMounted] = useState(false);
 
   // Handle hydration mismatch by only rendering after mount

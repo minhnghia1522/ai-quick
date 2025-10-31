@@ -1,5 +1,6 @@
 import { usageCostService } from './usageCostService';
 import { ModelAI, STORAGE_KEY_MODEL } from '@/src/types/model';
+import { useAppStore } from '@/src/store';
 
 export type TaskType = 'chat' | 'translate' | 'enhance-prompt' | 'generate-data';
 
@@ -108,6 +109,10 @@ export class CostTrackingInterceptor {
                     model.model,
                     taskType
                 );
+
+                // Refresh the total cost in the store to update UI
+                const refreshTotalCost = useAppStore.getState().refreshTotalCost;
+                await refreshTotalCost();
             }
         } catch (error) {
             console.warn('Failed to track usage:', error);
