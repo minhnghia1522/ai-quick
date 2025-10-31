@@ -96,14 +96,15 @@ export class CostTrackingInterceptor {
     /**
      * Track token usage and record to database
      * Works with both generateText and streamText (via onFinish event)
+     * @returns The total cost of this operation, or 0 if tracking failed
      */
-    public async trackUsage(result: unknown, taskType: TaskType): Promise<void> {
+    public async trackUsage(result: unknown, taskType: TaskType): Promise<number> {
         try {
             const model = this.getCurrentModel();
             const tokenUsage = this.extractTokenUsage(result);
 
             if (tokenUsage && (tokenUsage.inputTokens > 0 || tokenUsage.outputTokens > 0)) {
-                await usageCostService.recordUsage(
+                const usageRecord = await usageCostService.recordUsage(
                     tokenUsage.inputTokens,
                     tokenUsage.outputTokens,
                     model.model,
@@ -113,9 +114,13 @@ export class CostTrackingInterceptor {
                 // Refresh the total cost in the store to update UI
                 const refreshTotalCost = useAppStore.getState().refreshTotalCost;
                 await refreshTotalCost();
+
+                return usageRecord.totalCost;
             }
+            return 0;
         } catch (error) {
             console.warn('Failed to track usage:', error);
+            return 0;
         }
     }
 }

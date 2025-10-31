@@ -36,7 +36,10 @@ const HistoryItem: React.FC<HistoryItemProps> = ({ item, onCopy, onDelete, onReu
         <span>
           {getLanguageName(item.inputLanguage, t)} → {getLanguageName(item.outputLanguage, t)}
         </span>
-        <span className='text-slate-900'>{new Date(item.timestamp).toLocaleTimeString()}</span>
+        <div className='flex items-center gap-2'>
+          {item.cost !== undefined && <span className='text-slate-900 font-medium'>${item.cost.toFixed(6)}</span>}
+          <span className='text-slate-900 font-medium'>{new Date(item.timestamp).toLocaleTimeString()}</span>
+        </div>
       </div>
       <p className='text-sm text-gray-700 line-clamp-3 mb-1 min-w-0 break-words whitespace-pre-wrap leading-relaxed'>
         {item.sourceText}

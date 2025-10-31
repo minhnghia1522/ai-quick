@@ -15,6 +15,7 @@ export interface ITranslationHistory {
   inputLanguage: string;
   outputLanguage: string;
   timestamp: number;
+  cost?: number;
 }
 
 const HISTORY_KEY = 'translationHistory';

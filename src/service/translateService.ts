@@ -42,7 +42,12 @@ export const modelCallWithText = async ({
 };
 
 export const modelCallWithStreaming = async (
-  { system, prompt, taskType = 'translate' }: { prompt: string; system?: string; taskType?: TaskType },
+  { system, prompt, taskType = 'translate', onCostTracked }: {
+    prompt: string;
+    system?: string;
+    taskType?: TaskType;
+    onCostTracked?: (cost: number) => void;
+  },
   abortController: AbortSignal
 ) => {
   const modelSelected = localStorage.getItem(STORAGE_KEY_MODEL);
@@ -75,7 +80,12 @@ export const modelCallWithStreaming = async (
     },
     onFinish: async (event) => {
       // Track usage for cost analytics when stream finishes
-      await costTrackingInterceptor.trackUsage(event, taskType);
+      const cost = await costTrackingInterceptor.trackUsage(event, taskType);
+
+      // Call the callback if provided to notify about the tracked cost
+      if (onCostTracked) {
+        onCostTracked(cost);
+      }
     }
   });
 
