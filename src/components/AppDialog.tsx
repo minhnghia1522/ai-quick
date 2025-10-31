@@ -24,6 +24,7 @@ interface Props {
   bodyClassName?: string;
   footerClassName?: string;
   disableAutoFocus?: boolean;
+  footerContent?: React.ReactNode;
 }
 const AppDialog = ({
   open,
@@ -40,7 +41,8 @@ const AppDialog = ({
   headerClassName,
   bodyClassName,
   footerClassName,
-  disableAutoFocus = true
+  disableAutoFocus = true,
+  footerContent
 }: Props) => {
   const t = useTranslations();
   return (
@@ -55,20 +57,24 @@ const AppDialog = ({
         </DialogHeader>
         <div className={bodyClassName}>{bodyContent}</div>
         <DialogFooter className={footerClassName}>
-          <div className='flex justify-between w-full'>
-            <Button
-              onClick={() => {
-                closeCallback?.();
-              }}
-            >
-              {btnCloseName ?? t('Dialog.close')}
-            </Button>
-            {!hideSubmitButton && (
-              <Button type='submit' onClick={submitCallback}>
-                {btnSubmitName ?? t('Dialog.saveChanges')}
+          {footerContent ? (
+            footerContent
+          ) : (
+            <div className='flex justify-between w-full'>
+              <Button
+                onClick={() => {
+                  closeCallback?.();
+                }}
+              >
+                {btnCloseName ?? t('Dialog.close')}
               </Button>
-            )}
-          </div>
+              {!hideSubmitButton && (
+                <Button type='submit' onClick={submitCallback}>
+                  {btnSubmitName ?? t('Dialog.saveChanges')}
+                </Button>
+              )}
+            </div>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>

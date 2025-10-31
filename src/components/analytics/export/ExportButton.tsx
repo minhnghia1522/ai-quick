@@ -24,12 +24,12 @@ export const ExportButton: React.FC<ExportButtonProps> = ({ onExport, disabled =
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant='outline' disabled={disabled} className='w-full sm:w-auto'>
+        <Button variant='outline' disabled={disabled} className='w-auto whitespace-nowrap'>
           {t('buttons.exportData')}
           <ChevronDownIcon className='ml-2 h-4 w-4' />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align='start'>
+      <DropdownMenuContent align='end'>
         <DropdownMenuLabel>{t('export.formatLabel')}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem onSelect={() => onExport('json')}>{t('export.jsonFormat')}</DropdownMenuItem>

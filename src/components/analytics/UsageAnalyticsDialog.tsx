@@ -10,10 +10,12 @@ import { ModelBreakdown } from './breakdown/ModelBreakdown';
 import { TaskTypeBreakdown } from './breakdown/TaskTypeBreakdown';
 import { LoadingState } from './states/LoadingState';
 import { ErrorState } from './states/ErrorState';
+import { ExportButton } from './export/ExportButton';
 import { exportAsJson, exportAsCsv } from './export/exportUtils';
 import { useAnalyticsData } from './hooks/useAnalyticsData';
 import { usageCostService } from '@/src/service/usageCostService';
 import { ChartMetric, TimeRange, TimeRangeOption } from './types/analytics.types';
+import { Button } from '../ui/button';
 
 interface UsageAnalyticsDialogProps {
   open: boolean;
@@ -120,9 +122,9 @@ const UsageAnalyticsDialog: React.FC<UsageAnalyticsDialogProps> = ({ open, onOpe
   };
 
   const bodyContent = (
-    <>
-      {/* Left Sidebar - Filters */}
-      <div className='w-full lg:w-64 flex-shrink-0 overflow-y-auto overflow-x-hidden [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full dark:[&::-webkit-scrollbar-thumb]:bg-gray-600'>
+    <div className='flex flex-col lg:flex-row gap-4 h-full'>
+      {/* Filters - Collapsible on mobile, Sidebar on desktop */}
+      <div className='w-full lg:w-64 flex-shrink-0 lg:overflow-y-auto lg:overflow-x-hidden lg:[&::-webkit-scrollbar]:w-2 lg:[&::-webkit-scrollbar-track]:bg-transparent lg:[&::-webkit-scrollbar-thumb]:bg-gray-300 lg:[&::-webkit-scrollbar-thumb]:rounded-full dark:lg:[&::-webkit-scrollbar-thumb]:bg-gray-600'>
         <FilterSidebar
           timeRange={filters.timeRange}
           onTimeRangeChange={handleTimeRangeChange}
@@ -132,17 +134,21 @@ const UsageAnalyticsDialog: React.FC<UsageAnalyticsDialogProps> = ({ open, onOpe
           onSelectAllModels={handleSelectAllModels}
           onClearFilters={clearAllFilters}
           hasActiveFilters={hasActiveFilters}
-          onExport={handleExportData}
-          isExporting={isExporting}
-          isLoading={isLoading}
         />
       </div>
 
       {/* Main Content Area */}
-      <div className='flex-1 min-h-0 overflow-y-auto overflow-x-hidden pr-2 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full dark:[&::-webkit-scrollbar-thumb]:bg-gray-600'>
+      <div className='flex-1 min-h-0 overflow-y-auto overflow-x-hidden [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full dark:[&::-webkit-scrollbar-thumb]:bg-gray-600'>
         {renderContent()}
       </div>
-    </>
+    </div>
+  );
+
+  const footerContent = (
+    <div className='flex justify-between items-center w-full'>
+      <Button onClick={() => onOpenChange(false)}>{t('buttons.close')}</Button>
+      <ExportButton onExport={handleExportData} disabled={isLoading || isExporting} />
+    </div>
   );
 
   return (
@@ -151,14 +157,12 @@ const UsageAnalyticsDialog: React.FC<UsageAnalyticsDialogProps> = ({ open, onOpe
       title={t('dialog.title')}
       description={t('dialog.description')}
       bodyContent={bodyContent}
-      btnCloseName={t('buttons.close')}
+      footerContent={footerContent}
       onOpenChange={onOpenChange}
-      closeCallback={() => onOpenChange(false)}
       contentClassName='w-full max-w-[95vw] lg:max-w-[1190px] h-[90vh] !flex !flex-col p-0 !gap-0'
       headerClassName='px-6 pt-6 pb-4 flex-shrink-0'
-      bodyClassName='flex-1 min-h-0 flex flex-col lg:flex-row gap-4 px-6 pb-4'
+      bodyClassName='flex-1 min-h-0 px-6 pb-4 overflow-hidden'
       footerClassName='px-6 pb-3 flex-shrink-0'
-      hideSubmitButton={true}
     />
   );
 };
