@@ -148,7 +148,10 @@ const TranslationHistory = (props: TranslationHistoryProps, ref: Ref<ITranslatio
           <p className='text-sm text-gray-600 mt-2'>{t('translationsMade')}</p>
         </div>
       </SheetTrigger>
-      <SheetContent className='w-full sm:max-w-md md:max-w-xl flex flex-col p-2'>
+      <SheetContent
+        className='w-full sm:max-w-md md:max-w-xl flex flex-col p-2'
+        onOpenAutoFocus={(e) => e.preventDefault()}
+      >
         <SheetHeader  className='p-1'>
           <SheetTitle>{t('historyTitle')}</SheetTitle>
         </SheetHeader>

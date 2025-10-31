@@ -71,11 +71,7 @@ const APIKeyInputDialog = forwardRef<AppDialogRefHandle>((_, ref) => {
             <PasswordField value={apiKey} onChange={setApiKey} placeholder={t('Dialog.openaiApiKey')} />
             <p className='text-xs text-muted-foreground'>
               {t('Dialog.getApiKeyFrom')}{' '}
-              <Link
-                href='https://platform.openai.com/api-keys'
-                target='_blank'
-                className='text-blue-600 underline'
-              >
+              <Link href='https://platform.openai.com/api-keys' target='_blank' className='text-blue-600 underline'>
                 OpenAI Dashboard
               </Link>
               .
@@ -87,18 +83,10 @@ const APIKeyInputDialog = forwardRef<AppDialogRefHandle>((_, ref) => {
               <h3 className='text-lg font-semibold'>{t('Dialog.geminiApiKey')}</h3>
             </div>
             <p className='text-sm text-muted-foreground'>{t('Dialog.geminiApiKeyDesc')}</p>
-            <PasswordField
-              value={geminiApiKey}
-              onChange={setGeminiApiKey}
-              placeholder={t('Dialog.geminiApiKey')}
-            />
+            <PasswordField value={geminiApiKey} onChange={setGeminiApiKey} placeholder={t('Dialog.geminiApiKey')} />
             <p className='text-xs text-muted-foreground'>
               {t('Dialog.getApiKeyFrom')}{' '}
-              <Link
-                href='https://aistudio.google.com/app/apikey'
-                target='_blank'
-                className='text-blue-600 underline'
-              >
+              <Link href='https://aistudio.google.com/app/apikey' target='_blank' className='text-blue-600 underline'>
                 Google AI Studio
               </Link>
               .

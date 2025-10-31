@@ -23,6 +23,7 @@ interface Props {
   headerClassName?: string;
   bodyClassName?: string;
   footerClassName?: string;
+  disableAutoFocus?: boolean;
 }
 const AppDialog = ({
   open,
@@ -38,12 +39,16 @@ const AppDialog = ({
   hideSubmitButton = false,
   headerClassName,
   bodyClassName,
-  footerClassName
+  footerClassName,
+  disableAutoFocus = true
 }: Props) => {
   const t = useTranslations();
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className={contentClassName}>
+      <DialogContent
+        className={contentClassName}
+        onOpenAutoFocus={disableAutoFocus ? (e) => e.preventDefault() : undefined}
+      >
         <DialogHeader className={headerClassName}>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
