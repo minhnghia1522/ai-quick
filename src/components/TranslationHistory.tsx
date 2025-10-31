@@ -108,9 +108,9 @@ const TranslationHistory = (props: TranslationHistoryProps, ref: Ref<ITranslatio
     setTranslationHistory((prevHistory) => {
       const newHistory = prevHistory.filter((item) => item.id !== id);
       localStorage.setItem(HISTORY_KEY, JSON.stringify(newHistory));
-      toast.success(t('historyItemDeleted'));
       return newHistory;
     });
+    toast.success(t('historyItemDeleted'));
   };
 
   const handleCopyItem = (text: string) => {
