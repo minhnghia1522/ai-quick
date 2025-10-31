@@ -37,7 +37,9 @@ export function UsageCostBadge({ className, onClick }: UsageCostBadgeProps) {
   return (
     <Badge
       variant='outline'
-      className={`cursor-pointer hover:bg-accent hover:text-accent-foreground transition-colors md:h-[34px] ${className || ''}`}
+      className={`cursor-pointer hover:bg-accent hover:text-accent-foreground transition-colors h-[34px] ${
+        className || ''
+      }`}
       onClick={onClick}
       title='Click to view detailed usage analytics'
     >
