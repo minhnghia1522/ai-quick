@@ -99,9 +99,10 @@
   "Dialog": {
     "settings": "Cài đặt",
     "openaiApiKey": "OpenAI API Key",
-    "openaiApiKeyDesc": "API Key của bạn được lưu trữ cục bộ và không bao giờ gửi lên máy chủ",
+    "openaiApiKeyDesc": "Để sử dụng các mô hình OpenAI",
     "geminiApiKey": "Google Gemini API Key",
-    "geminiApiKeyDesc": "API key Gemini để sử dụng mô hình Google Gemini. Trường này không bắt buộc.",
+    "geminiApiKeyDesc": "Để sử dụng các mô hình Google Gemini",
+    "apiKeyStorageNotice": "API Key của bạn được lưu trữ cục bộ và không bao giờ được gửi đến máy chủ của chúng tôi",
     "saveChanges": "Lưu thay đổi",
     "close": "Đóng",
     "getApiKeyFrom": "Bạn có thể lấy khóa API của mình từ"

@@ -98,9 +98,10 @@
   "Dialog": {
     "settings": "設定",
     "openaiApiKey": "OpenAI APIキー",
-    "openaiApiKeyDesc": "あなたのOpenAI APIキーはローカルに保存され、サーバーに送信されることはありません",
+    "openaiApiKeyDesc": "OpenAIモデルを使用するため",
     "geminiApiKey": "Google Gemini APIキー",
-    "geminiApiKeyDesc": "Google Geminiモデルを使用するためのGemini APIキー（任意）",
+    "geminiApiKeyDesc": "Google Geminiモデルを使用するため",
+    "apiKeyStorageNotice": "APIキーはローカルに保存され、当社のサーバーに送信されることはありません",
     "saveChanges": "変更を保存",
     "close": "閉じる",
     "getApiKeyFrom": "APIキーは次の場所から取得できます"

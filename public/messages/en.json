@@ -105,9 +105,10 @@
   "Dialog": {
     "settings": "Settings",
     "openaiApiKey": "OpenAI API Key",
-    "openaiApiKeyDesc": "Your OpenAI API Key is stored locally and never sent to our servers",
+    "openaiApiKeyDesc": "For using OpenAI models",
     "geminiApiKey": "Google Gemini API Key",
-    "geminiApiKeyDesc": "Gemini API key for using Google Gemini models. This key is optional.",
+    "geminiApiKeyDesc": "For using Google Gemini models",
+    "apiKeyStorageNotice": "Your API Key is stored locally and never sent to our servers",
     "saveChanges": "Save changes",
     "close": "Close",
     "getApiKeyFrom": "You can get your API key from"

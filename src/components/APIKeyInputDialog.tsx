@@ -59,6 +59,9 @@ const APIKeyInputDialog = forwardRef<AppDialogRefHandle>((_, ref) => {
       closeCallback={closeCallback}
       bodyContent={
         <div className='grid gap-6'>
+          <p className='text-xs text-muted-foreground italic text-center p-2 bg-muted/50 rounded'>
+            {t('Dialog.apiKeyStorageNotice')}
+          </p>
           <div className='grid gap-3 p-4 border rounded-lg'>
             <div className='flex items-center gap-2'>
               <KeyRound className='w-5 h-5' />
