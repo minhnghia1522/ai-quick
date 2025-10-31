@@ -31,6 +31,7 @@ const Page = () => {
   const skipHistorySaveRef = useRef(false);
   const lastRequestedSourceRef = useRef<string>('');
   const sourceTextareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const currentTranslationCostRef = useRef<number>(0);
 
   const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -93,9 +94,21 @@ const Page = () => {
 
     setIsLoading(true);
     lastRequestedSourceRef.current = trimmedSourceText;
+    currentTranslationCostRef.current = 0; // Reset cost for new translation
     const prompt = createPromptTranslateLanguage(inputLanguage, outputLanguage, trimmedSourceText);
     try {
-      const stream = await modelCallWithStreaming(prompt, abortController.signal);
+      const stream = await modelCallWithStreaming(
+        {
+          system: prompt.system,
+          prompt: prompt.prompt,
+          taskType: 'translate',
+          onCostTracked: (cost) => {
+            // Store the cost when tracking completes
+            currentTranslationCostRef.current = cost;
+          }
+        },
+        abortController.signal
+      );
 
       for await (const textPart of stream.textStream) {
         setTranslatedText((prevData) => prevData + textPart);
@@ -137,7 +150,8 @@ const Page = () => {
         translatedText,
         inputLanguage,
         outputLanguage,
-        timestamp: Date.now()
+        timestamp: Date.now(),
+        cost: currentTranslationCostRef.current
       };
       translationHistoryRef.current?.add(newEntry);
     }

@@ -15,6 +15,7 @@ export interface ITranslationHistory {
   inputLanguage: string;
   outputLanguage: string;
   timestamp: number;
+  cost?: number;
 }
 
 const HISTORY_KEY = 'translationHistory';
@@ -108,9 +109,9 @@ const TranslationHistory = (props: TranslationHistoryProps, ref: Ref<ITranslatio
     setTranslationHistory((prevHistory) => {
       const newHistory = prevHistory.filter((item) => item.id !== id);
       localStorage.setItem(HISTORY_KEY, JSON.stringify(newHistory));
-      toast.success(t('historyItemDeleted'));
       return newHistory;
     });
+    toast.success(t('historyItemDeleted'));
   };
 
   const handleCopyItem = (text: string) => {
@@ -147,7 +148,10 @@ const TranslationHistory = (props: TranslationHistoryProps, ref: Ref<ITranslatio
           <p className='text-sm text-gray-600 mt-2'>{t('translationsMade')}</p>
         </div>
       </SheetTrigger>
-      <SheetContent className='w-full sm:max-w-md md:max-w-xl flex flex-col p-2'>
+      <SheetContent
+        className='w-full sm:max-w-md md:max-w-xl flex flex-col p-2'
+        onOpenAutoFocus={(e) => e.preventDefault()}
+      >
         <SheetHeader  className='p-1'>
           <SheetTitle>{t('historyTitle')}</SheetTitle>
         </SheetHeader>

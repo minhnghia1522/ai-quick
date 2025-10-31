@@ -18,6 +18,13 @@ interface Props {
   onOpenChange(open: boolean): void;
   submitCallback?(): void;
   closeCallback?(): void;
+  contentClassName?: string;
+  hideSubmitButton?: boolean;
+  headerClassName?: string;
+  bodyClassName?: string;
+  footerClassName?: string;
+  disableAutoFocus?: boolean;
+  footerContent?: React.ReactNode;
 }
 const AppDialog = ({
   open,
@@ -28,30 +35,46 @@ const AppDialog = ({
   btnCloseName,
   onOpenChange,
   closeCallback,
-  submitCallback
+  submitCallback,
+  contentClassName,
+  hideSubmitButton = false,
+  headerClassName,
+  bodyClassName,
+  footerClassName,
+  disableAutoFocus = true,
+  footerContent
 }: Props) => {
   const t = useTranslations();
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
+      <DialogContent
+        className={contentClassName}
+        onOpenAutoFocus={disableAutoFocus ? (e) => e.preventDefault() : undefined}
+      >
+        <DialogHeader className={headerClassName}>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
-        <div>{bodyContent}</div>
-        <DialogFooter>
-          <div className='flex justify-between w-full'>
-            <Button
-              onClick={() => {
-                closeCallback?.();
-              }}
-            >
-              {btnCloseName ?? t('Dialog.close')}
-            </Button>
-            <Button type='submit' onClick={submitCallback}>
-              {btnSubmitName ?? t('Dialog.saveChanges')}
-            </Button>
-          </div>
+        <div className={bodyClassName}>{bodyContent}</div>
+        <DialogFooter className={footerClassName}>
+          {footerContent ? (
+            footerContent
+          ) : (
+            <div className='flex justify-between w-full'>
+              <Button
+                onClick={() => {
+                  closeCallback?.();
+                }}
+              >
+                {btnCloseName ?? t('Dialog.close')}
+              </Button>
+              {!hideSubmitButton && (
+                <Button type='submit' onClick={submitCallback}>
+                  {btnSubmitName ?? t('Dialog.saveChanges')}
+                </Button>
+              )}
+            </div>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>

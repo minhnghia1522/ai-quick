@@ -46,7 +46,7 @@ const Page = () => {
     setIsLoading(true);
     const prompt = createGenerateDataPrompt(sourceText);
     try {
-      const stream = await modelCallWithStreaming({ prompt }, abortController.signal);
+      const stream = await modelCallWithStreaming({ prompt, taskType: 'generate-data' }, abortController.signal);
       for await (const textPart of stream.textStream) {
         setEnhancedText((prevData) => prevData + textPart);
       }

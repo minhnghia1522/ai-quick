@@ -105,9 +105,10 @@
   "Dialog": {
     "settings": "Settings",
     "openaiApiKey": "OpenAI API Key",
-    "openaiApiKeyDesc": "Your OpenAI API Key is stored locally and never sent to our servers",
+    "openaiApiKeyDesc": "For using OpenAI models",
     "geminiApiKey": "Google Gemini API Key",
-    "geminiApiKeyDesc": "Gemini API key for using Google Gemini models. This key is optional.",
+    "geminiApiKeyDesc": "For using Google Gemini models",
+    "apiKeyStorageNotice": "Your API Key is stored locally and never sent to our servers",
     "saveChanges": "Save changes",
     "close": "Close",
     "getApiKeyFrom": "You can get your API key from"
@@ -292,5 +293,90 @@
     "en": "English",
     "vi": "Vietnamese",
     "ja": "Japanese"
+  },
+  "UsageAnalytics": {
+    "dialog": {
+      "title": "Usage Analytics",
+      "description": "View your AI usage statistics and costs over time"
+    },
+    "timeRange": {
+      "today": "Today",
+      "last7days": "Last 7 days",
+      "last30days": "Last 30 days",
+      "last90days": "Last 90 days"
+    },
+    "filters": {
+      "timeRangeLabel": "Time Range",
+      "modelsLabel": "Models",
+      "allModels": "All models",
+      "modelsCount": "{count} models",
+      "selectModels": "Select Models",
+      "allModelsOption": "All Models",
+      "noModels": "No models available",
+      "clearFilters": "Clear Filters",
+      "showingData": "Showing data for {selected} of {total} models"
+    },
+    "cards": {
+      "totalCost": "Total Cost",
+      "totalTasks": "Total Tasks",
+      "totalTokens": "Total Tokens",
+      "avgCostPerTask": "Avg Cost/Task",
+      "aiInteractions": "AI interactions",
+      "efficiency": "Efficiency",
+      "model": "{count, plural, =1 {model} other {models}}",
+      "tokenBreakdown": "{input} in • {output} out"
+    },
+    "charts": {
+      "title": "Usage Trends",
+      "tabs": {
+        "tokens": "Tokens",
+        "cost": "Cost",
+        "tasks": "Tasks"
+      },
+      "labels": {
+        "tokens": "Total Tokens",
+        "cost": "Cost ($)",
+        "tasks": "Number of Tasks"
+      },
+      "noData": "No data available for the selected period"
+    },
+    "breakdown": {
+      "title": "Usage Breakdown",
+      "tokens": "tokens",
+      "input": "Input",
+      "output": "Output",
+      "byModel": {
+        "title": "By Model",
+        "description": "Cost and usage breakdown by AI model",
+        "noData": "No usage data available for the selected period.",
+        "noDataFiltered": "No usage data available for the selected models in the {timeRange} period.",
+        "taskCount": "{count, plural, =1 {1 task} other {{count} tasks}}"
+      },
+      "byTaskType": {
+        "title": "By Task Type",
+        "description": "Usage breakdown by feature type",
+        "noData": "No task data available for the selected period.",
+        "adjustFilters": "Try adjusting your model filters or time range.",
+        "taskCompleted": "{count, plural, =1 {1 task completed} other {{count} tasks completed}}",
+        "avgCost": "Avg",
+        "perTask": "per task"
+      }
+    },
+    "buttons": {
+      "exportData": "Export Data",
+      "close": "Close",
+      "tryAgain": "Try Again"
+    },
+    "export": {
+      "formatLabel": "Export Format",
+      "jsonFormat": "JSON (Complete Data)",
+      "csvFormat": "CSV (Records Only)"
+    },
+    "errors": {
+      "title": "Error loading analytics data",
+      "unexpected": "An unexpected error occurred while loading your usage analytics.",
+      "loadFailed": "Failed to load analytics data",
+      "exportFailed": "Failed to export usage data. Please try again."
+    }
   }
 }
