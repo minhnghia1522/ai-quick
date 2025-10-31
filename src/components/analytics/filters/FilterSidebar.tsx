@@ -39,7 +39,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
   const t = useTranslations('UsageAnalytics');
 
   return (
-    <div className='w-full lg:w-64 flex-shrink-0 space-y-4 sm:p-0 lg:p-4 bg-muted/30 rounded-lg'>
+    <div className='space-y-4 p-4 bg-muted/30 rounded-lg'>
       <h3 className='text-sm font-semibold mb-4'>{t('filters.timeRangeLabel')}</h3>
 
       {/* Time Range Filter */}

@@ -80,7 +80,7 @@ const UsageAnalyticsDialog: React.FC<UsageAnalyticsDialogProps> = ({ open, onOpe
     }
 
     return (
-      <div className='flex-1 space-y-6 overflow-y-auto'>
+      <div className='space-y-6'>
         {/* Summary Cards */}
         <SummaryCards analytics={analytics} timeRange={filters.timeRange} getTimeRangeLabel={getTimeRangeLabel} />
 
@@ -120,27 +120,29 @@ const UsageAnalyticsDialog: React.FC<UsageAnalyticsDialogProps> = ({ open, onOpe
   };
 
   const bodyContent = (
-    <div className='flex-1 flex flex-col lg:flex-row overflow-hidden gap-4'>
+    <>
       {/* Left Sidebar - Filters */}
-      <FilterSidebar
-        timeRange={filters.timeRange}
-        onTimeRangeChange={handleTimeRangeChange}
-        availableModels={modelFilter.availableModels}
-        selectedModels={modelFilter.selectedModels}
-        onModelToggle={handleModelSelectionChange}
-        onSelectAllModels={handleSelectAllModels}
-        onClearFilters={clearAllFilters}
-        hasActiveFilters={hasActiveFilters}
-        onExport={handleExportData}
-        isExporting={isExporting}
-        isLoading={isLoading}
-      />
+      <div className='w-full lg:w-64 flex-shrink-0 overflow-y-auto overflow-x-hidden [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full dark:[&::-webkit-scrollbar-thumb]:bg-gray-600'>
+        <FilterSidebar
+          timeRange={filters.timeRange}
+          onTimeRangeChange={handleTimeRangeChange}
+          availableModels={modelFilter.availableModels}
+          selectedModels={modelFilter.selectedModels}
+          onModelToggle={handleModelSelectionChange}
+          onSelectAllModels={handleSelectAllModels}
+          onClearFilters={clearAllFilters}
+          hasActiveFilters={hasActiveFilters}
+          onExport={handleExportData}
+          isExporting={isExporting}
+          isLoading={isLoading}
+        />
+      </div>
 
       {/* Main Content Area */}
-      <div className='flex-1 flex flex-col overflow-hidden'>
-        <div className='flex-1 overflow-y-auto pr-2 -mr-2'>{renderContent()}</div>
+      <div className='flex-1 min-h-0 overflow-y-auto overflow-x-hidden pr-2 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full dark:[&::-webkit-scrollbar-thumb]:bg-gray-600'>
+        {renderContent()}
       </div>
-    </div>
+    </>
   );
 
   return (
@@ -152,10 +154,10 @@ const UsageAnalyticsDialog: React.FC<UsageAnalyticsDialogProps> = ({ open, onOpe
       btnCloseName={t('buttons.close')}
       onOpenChange={onOpenChange}
       closeCallback={() => onOpenChange(false)}
-      contentClassName='w-full max-w-[95vw] lg:max-w-[1400px] h-[90vh] flex flex-col p-0'
-      headerClassName='px-6 pt-6 pb-4'
-      bodyClassName='flex-1 overflow-hidden px-6'
-      footerClassName='px-6 pb-3'
+      contentClassName='w-full max-w-[95vw] lg:max-w-[1400px] h-[90vh] !flex !flex-col p-0 !gap-0'
+      headerClassName='px-6 pt-6 pb-4 flex-shrink-0'
+      bodyClassName='flex-1 min-h-0 flex flex-col lg:flex-row gap-4 px-6 pb-4'
+      footerClassName='px-6 pb-3 flex-shrink-0'
       hideSubmitButton={true}
     />
   );
