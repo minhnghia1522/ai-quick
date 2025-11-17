@@ -92,4 +92,4 @@ export const LANGUAGES = {
   natural: 'Natural languages'
 };
 
-export const MODEL_DEFAULT = openAIModels[1];
+export const MODEL_DEFAULT = openAIModels[0];

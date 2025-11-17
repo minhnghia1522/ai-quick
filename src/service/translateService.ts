@@ -1,4 +1,4 @@
-import { ModelAI, STORAGE_KEY_MODEL } from '@/src/types/model';
+import { ModelAI, STORAGE_KEY_MODEL, MODEL_DEFAULT } from '@/src/types/model';
 import { generateText, streamText } from 'ai';
 import { getProviderByModelName } from '@/src/utils/getProvider';
 import { costTrackingInterceptor, TaskType } from './costTrackingInterceptor';
@@ -12,14 +12,7 @@ export const modelCallWithText = async ({
 }) => {
   const modelSelected = localStorage.getItem(STORAGE_KEY_MODEL);
 
-  let model = {
-    id: 1,
-    model: 'gpt-4.1',
-    name: 'gpt-4.1',
-    description: 'Flagship GPT model for complex tasks',
-    priceInput: 2.0,
-    priceOutput: 8.0
-  } as ModelAI;
+  let model: ModelAI = MODEL_DEFAULT;
 
   if (modelSelected) {
     model = JSON.parse(modelSelected);
@@ -51,14 +44,7 @@ export const modelCallWithStreaming = async (
   abortController: AbortSignal
 ) => {
   const modelSelected = localStorage.getItem(STORAGE_KEY_MODEL);
-  let model = {
-    id: 1,
-    model: 'gpt-4.1',
-    name: 'gpt-4.1',
-    description: 'Flagship GPT model for complex tasks',
-    priceInput: 2.0,
-    priceOutput: 8.0
-  } as ModelAI;
+  let model: ModelAI = MODEL_DEFAULT;
 
   if (modelSelected) {
     model = JSON.parse(modelSelected);
