@@ -15,25 +15,37 @@ export interface ModelAI {
 
 export const openAIModels: Array<ModelAI> = [
   {
-    id: 4,
+    id: 0,
+    model: 'gpt-5.1-2025-11-13',
+    name: 'GPT-5.1',
+    description: 'The best model for coding and agentic tasks with configurable reasoning effort.',
+    temperature: 1,
+    priceInput: 1.25,
+    priceOutput: 10.0,
+    reasoningEffort: 'low'
+  },
+  {
+    id: 1,
     model: 'gpt-5-2025-08-07',
     name: 'GPT-5',
     description: 'The best model for coding and agentic tasks across domains',
     temperature: 1,
     priceInput: 1.25,
-    priceOutput: 10.0
+    priceOutput: 10.0,
+    reasoningEffort: 'low'
   },
   {
-    id: 5,
+    id: 2,
     model: 'gpt-5-mini-2025-08-07',
     name: 'GPT-5 mini',
     description: 'A faster, more cost-efficient version of GPT-5 for well-defined tasks',
     temperature: 1,
     priceInput: 0.25,
-    priceOutput: 2.0
+    priceOutput: 2.0,
+    reasoningEffort: 'low'
   },
   {
-    id: 0,
+    id: 3,
     model: 'gpt-4.1',
     name: 'GPT-4.1',
     description: 'Flagship GPT model for complex tasks',
@@ -41,28 +53,12 @@ export const openAIModels: Array<ModelAI> = [
     priceOutput: 8.0
   },
   {
-    id: 1,
+    id: 4,
     model: 'gpt-4.1-mini',
     name: 'GPT-4.1 mini',
     description: 'Affordable model balancing speed and intelligence',
     priceInput: 0.4,
     priceOutput: 1.6
-  },
-  {
-    id: 2,
-    model: 'gpt-4.1-nano',
-    name: 'GPT-4.1 nano',
-    description: 'Fastest, most cost-effective model for low-latency tasks',
-    priceInput: 0.1,
-    priceOutput: 0.4
-  },
-  {
-    id: 3,
-    model: 'o4-mini',
-    name: 'o4-mini',
-    description: 'Our faster, cost-efficient reasoning model delivering strong performance on math, coding and vision',
-    priceInput: 1.1,
-    priceOutput: 4.4
   }
 ];
 
