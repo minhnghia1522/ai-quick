@@ -1,0 +1,21 @@
+{
+  "name": "AI QUICK - AI Code & Language Translator",
+  "short_name": "AI QUICK",
+  "description": "Powerful AI-powered code and language translation tool with PDF chat capabilities",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/images/translator-og-image.png",
+      "sizes": "1200x630",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "utilities", "developer tools"],
+  "lang": "en-US",
+  "dir": "ltr"
+}

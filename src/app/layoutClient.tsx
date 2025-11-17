@@ -5,14 +5,33 @@ import { AbstractIntlMessages } from 'next-intl';
 import { ThemeProvider } from 'next-themes';
 import dynamic from 'next/dynamic';
 import { PropsWithChildren, Suspense, useEffect, useState } from 'react';
-import { Toaster } from 'sonner';
 import { getUserLocale, loadLocaleMessages, setClientLocale } from '../service/clientLocale';
-import { AppHeader } from '../components/AppHeader';
-import AppSidebar from '../components/AppSidebar';
-import { SidebarProvider, SidebarInset } from '../components/ui/sidebar';
 import { useCostAnalyticsInit } from '../hooks/useCostAnalyticsInit';
 
+// Dynamic imports for better code splitting
 const NextIntlClientProvider = dynamic(() => import('next-intl').then((mod) => mod.NextIntlClientProvider), {
+  ssr: false
+});
+
+const Toaster = dynamic(() => import('sonner').then((mod) => mod.Toaster), {
+  ssr: false
+});
+
+const AppHeader = dynamic(() => import('../components/AppHeader').then((mod) => mod.AppHeader), {
+  ssr: false,
+  loading: () => <div className="h-14 border-b" />
+});
+
+const AppSidebar = dynamic(() => import('../components/AppSidebar'), {
+  ssr: false,
+  loading: () => <div className="w-64 border-r" />
+});
+
+const SidebarProvider = dynamic(() => import('../components/ui/sidebar').then((mod) => mod.SidebarProvider), {
+  ssr: false
+});
+
+const SidebarInset = dynamic(() => import('../components/ui/sidebar').then((mod) => mod.SidebarInset), {
   ssr: false
 });
 

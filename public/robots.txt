@@ -1,0 +1,9 @@
+# Robots.txt for AI Code Translator
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://aiquick.help/sitemap.xml
+
+# Crawl-delay (optional, adjust as needed)
+Crawl-delay: 1
