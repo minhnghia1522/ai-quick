@@ -1,0 +1,12 @@
+node_modules/
+.git/
+.next/
+out/
+build/
+coverage/
+.env*
+.DS_Store
+*.log
+Dockerfile*
+.dockerignore
+.vercel

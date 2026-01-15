@@ -112,8 +112,8 @@ export class CostTrackingInterceptor {
                 );
 
                 // Refresh the total cost in the store to update UI
-                const refreshTotalCost = useAppStore.getState().refreshTotalCost;
-                await refreshTotalCost();
+                const refreshCosts = useAppStore.getState().refreshCosts;
+                await refreshCosts();
 
                 return usageRecord.totalCost;
             }

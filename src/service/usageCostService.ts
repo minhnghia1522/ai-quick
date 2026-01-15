@@ -299,6 +299,56 @@ export class UsageCostService {
 
         return result;
     }
+
+    /**
+     * Get total cost for the current day (from 00:00:00 local time)
+     */
+    public async getDailyCost(): Promise<number> {
+        const analytics = await this.getAnalytics({ timeRange: 'today' });
+        return analytics.totalCost;
+    }
+
+    /**
+     * Get total cost for the current month (from 1st of month 00:00:00 local time)
+     */
+    public async getMonthlyCost(): Promise<number> {
+        const records = await usageCostStore.getAllUsageRecords();
+        const now = new Date();
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+        const monthlyRecords = records.filter(record => new Date(record.timestamp) >= startOfMonth);
+
+        const totalCost = monthlyRecords.reduce((sum, record) => sum + record.totalCost, 0);
+        return Number(totalCost.toFixed(6));
+    }
+
+    /**
+     * Get both daily and monthly costs efficiently
+     */
+    public async getCurrentPeriodCosts(): Promise<{ daily: number; monthly: number }> {
+        const records = await usageCostStore.getAllUsageRecords();
+        const now = new Date();
+        const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+        let daily = 0;
+        let monthly = 0;
+
+        for (const record of records) {
+            const recordDate = new Date(record.timestamp);
+            if (recordDate >= startOfMonth) {
+                monthly += record.totalCost;
+                if (recordDate >= startOfDay) {
+                    daily += record.totalCost;
+                }
+            }
+        }
+
+        return {
+            daily: Number(daily.toFixed(6)),
+            monthly: Number(monthly.toFixed(6))
+        };
+    }
 }
 
 // Export singleton instance

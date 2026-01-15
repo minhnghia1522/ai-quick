@@ -7,7 +7,7 @@ import { usageCostStore } from '@/src/lib/database/usageCostDB';
  * This hook should be used in the main layout component
  */
 export const useCostAnalyticsInit = () => {
-    const { refreshTotalCost, setLoading } = useAppStore();
+    const { refreshCosts, setLoading } = useAppStore();
 
     useEffect(() => {
         const initializeCostAnalytics = async () => {
@@ -18,7 +18,7 @@ export const useCostAnalyticsInit = () => {
                 await usageCostStore.getAllUsageRecords();
 
                 // Load existing usage data and initialize total cost in the store
-                await refreshTotalCost();
+                await refreshCosts();
 
                 // Perform any necessary data cleanup (remove records older than 1 year)
                 await usageCostStore.clearOldRecords(365);
@@ -29,7 +29,7 @@ export const useCostAnalyticsInit = () => {
 
                 // Even if initialization fails, we should still try to set a default state
                 try {
-                    await refreshTotalCost();
+                    await refreshCosts();
                 } catch (fallbackError) {
                     console.error('Fallback initialization also failed:', fallbackError);
                 }
@@ -39,5 +39,5 @@ export const useCostAnalyticsInit = () => {
         };
 
         initializeCostAnalytics();
-    }, [refreshTotalCost, setLoading]);
+    }, [refreshCosts, setLoading]);
 };
