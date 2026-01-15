@@ -1,50 +1,43 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+SYNC IMPACT REPORT
+Version Change: 0.0.0 -> 1.0.0 (Initial Ratification)
+Modified Principles: N/A (Initial Definition)
+Added Sections: All principles derived from AGENTS.md and project context.
+Templates Requiring Updates: ✅ None (Templates reference constitution generically).
+Follow-up TODOs: None.
+-->
+
+# ai-code-translator Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Conventions & Structure
+Adherence to existing project conventions is mandatory. Analyze surrounding code, file structure, and configuration before modifying. Use the Next.js App Router in `src/app`, shared UI in `src/components`, and strict path aliases (`@/*`). Feature-based folder organization is required.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### II. Modern Tech Stack
+The stack is non-negotiable: Next.js 15/16, React 19, TypeScript, Tailwind CSS, Radix UI, and Zustand. Do not introduce new libraries without verifying they match this established stack. Avoid inline styles; use Tailwind utility classes.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### III. Security First
+Never commit secrets, API keys, or `.env` files. Secrets must be stored in environment variables. All file system operations must be validated. Destructive commands require clear explanation and user confirmation.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### IV. Code Quality & Linting
+Linting (`npm run lint`) is the absolute minimum quality gate and must pass before any PR. TypeScript strict mode is enforced. Naming must follow conventions: PascalCase for components/types, camelCase for hooks/utils.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
-
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
-
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
-
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
-
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+### V. Testing & Verification
+Business logic and API integrations require tests (placed in `src/**/__tests__`). UI flows favor integration-style tests. No PR is mergeable without passing the project's linting and build checks (`npm run build`).
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+### Amendment Process
+This Constitution supersedes other documentation in case of conflict. Amendments require a PR with a "governance:" type commit, updated version number, and Sync Impact Report.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+### Versioning Policy
+Follows Semantic Versioning (MAJOR.MINOR.PATCH).
+- MAJOR: Removal or redefinition of a core principle.
+- MINOR: Addition of new principles or significant guidance.
+- PATCH: Clarifications, typos, or non-material refinements.
+
+### Compliance
+All Pull Requests must verify compliance with these principles. Code reviews explicitly check for "Conventions & Structure" and "Security First" violations.
+
+**Version**: 1.0.0 | **Ratified**: 2026-01-15 | **Last Amended**: 2026-01-15
