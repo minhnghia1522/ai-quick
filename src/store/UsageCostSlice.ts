@@ -4,12 +4,14 @@ import { usageCostService } from '@/src/service/usageCostService';
 export type UsageCostSlice = {
     // State
     totalCost: number;
+    dailyCost: number;
+    monthlyCost: number;
     isLoading: boolean;
     cachedAnalytics: UsageAnalytics | null;
     lastCacheUpdate: Date | null;
 
     // Actions
-    refreshTotalCost: () => Promise<void>;
+    refreshCosts: () => Promise<void>;
     updateUsageData: (inputTokens: number, outputTokens: number, modelName: string, taskType: 'chat' | 'translate' | 'enhance-prompt' | 'generate-data') => Promise<void>;
     getAnalytics: (filter?: Partial<UsageFilter>) => Promise<UsageAnalytics>;
     clearCache: () => void;
@@ -18,6 +20,8 @@ export type UsageCostSlice = {
 
 const initData = {
     totalCost: 0,
+    dailyCost: 0,
+    monthlyCost: 0,
     isLoading: false,
     cachedAnalytics: null,
     lastCacheUpdate: null
@@ -32,12 +36,13 @@ export const createUsageCostSlice = (
 ): UsageCostSlice => ({
     ...initData,
 
-    refreshTotalCost: async () => {
+    refreshCosts: async () => {
         try {
             const totalCost = await usageCostService.getTotalCost();
-            set({ totalCost });
+            const { daily, monthly } = await usageCostService.getCurrentPeriodCosts();
+            set({ totalCost, dailyCost: daily, monthlyCost: monthly });
         } catch (error) {
-            console.error('Failed to refresh total cost:', error);
+            console.error('Failed to refresh costs:', error);
         }
     },
 
@@ -48,12 +53,11 @@ export const createUsageCostSlice = (
             // Record the new usage
             await usageCostService.recordUsage(inputTokens, outputTokens, modelName, taskType);
 
-            // Refresh total cost
-            const totalCost = await usageCostService.getTotalCost();
+            // Refresh all costs
+            await get().refreshCosts();
 
             // Clear cache since we have new data
             set({
-                totalCost,
                 cachedAnalytics: null,
                 lastCacheUpdate: null,
                 isLoading: false

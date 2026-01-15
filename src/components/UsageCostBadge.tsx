@@ -10,23 +10,24 @@ interface UsageCostBadgeProps {
 }
 
 export function UsageCostBadge({ className, onClick }: UsageCostBadgeProps) {
-  const totalCost = useAppStore((state) => state.totalCost);
+  const dailyCost = useAppStore((state) => state.dailyCost);
+  const monthlyCost = useAppStore((state) => state.monthlyCost);
   const isLoading = useAppStore((state) => state.isLoading);
-  const refreshTotalCost = useAppStore((state) => state.refreshTotalCost);
+  const refreshCosts = useAppStore((state) => state.refreshCosts);
   const [mounted, setMounted] = useState(false);
 
   // Handle hydration mismatch by only rendering after mount
   useEffect(() => {
     setMounted(true);
     // Load initial total cost when component mounts
-    refreshTotalCost();
-  }, [refreshTotalCost]);
+    refreshCosts();
+  }, [refreshCosts]);
 
   // Format cost for display
   const formatCost = (cost: number): string => {
-    if (cost === 0) return '$0.0000';
-    if (cost < 0.0001) return '<$0.0001';
-    return `$${cost.toFixed(4)}`;
+    if (cost === 0) return '$0.00';
+    if (cost < 0.001) return '<$0.001';
+    return `$${cost.toFixed(3)}`;
   };
 
   // Don't render anything until mounted to avoid hydration issues
@@ -41,9 +42,9 @@ export function UsageCostBadge({ className, onClick }: UsageCostBadgeProps) {
         className || ''
       }`}
       onClick={onClick}
-      title='Click to view detailed usage analytics'
+      title='Daily Cost | Monthly Cost (Click to view detailed usage analytics)'
     >
-      {isLoading ? '...' : formatCost(totalCost)}
+      {isLoading ? '...' : `${formatCost(dailyCost)} | ${formatCost(monthlyCost)}`}
     </Badge>
   );
 }
