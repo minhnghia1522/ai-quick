@@ -14,7 +14,7 @@ export const getProviderByModelName = (modelName: string) => {
     apiKey: geminiKey || ''
   });
 
-  return modelName.toLowerCase().includes('gemini') ? google(modelName) : openai(modelName);
+  return modelName.toLowerCase().includes('gemini') ? google(modelName) : openai.chat(modelName);
 };
 
 export const areAnyApiKeysAvailable = () => {
