@@ -16,60 +16,34 @@ export interface ModelAI {
 export const openAIModels: Array<ModelAI> = [
   {
     id: 0,
-    model: 'gpt-5.1-2025-11-13',
-    name: 'GPT-5.1',
-    description: 'The best model for coding and agentic tasks with configurable reasoning effort.',
+    model: 'gpt-5.4-2026-03-05',
+    name: 'GPT-5.4',
+    description: 'Best intelligence at scale for agentic, coding, and professional workflows',
     temperature: 1,
-    priceInput: 1.25,
-    priceOutput: 10.0,
+    priceInput: 2.5,
+    priceOutput: 15.0,
     reasoningEffort: 'low'
   },
   {
     id: 1,
-    model: 'gpt-5-2025-08-07',
-    name: 'GPT-5',
-    description: 'The best model for coding and agentic tasks across domains',
+    model: 'gpt-5.4-mini-2026-03-17',
+    name: 'GPT-5.4 mini',
+    description: 'Our strongest mini model yet for coding, computer use, and subagents',
     temperature: 1,
-    priceInput: 1.25,
-    priceOutput: 10.0,
+    priceInput: 0.75,
+    priceOutput: 4.5,
     reasoningEffort: 'low'
-  },
-  {
-    id: 2,
-    model: 'gpt-5-mini-2025-08-07',
-    name: 'GPT-5 mini',
-    description: 'A faster, more cost-efficient version of GPT-5 for well-defined tasks',
-    temperature: 1,
-    priceInput: 0.25,
-    priceOutput: 2.0,
-    reasoningEffort: 'low'
-  },
-  {
-    id: 3,
-    model: 'gpt-4.1',
-    name: 'GPT-4.1',
-    description: 'Flagship GPT model for complex tasks',
-    priceInput: 2.0,
-    priceOutput: 8.0
-  },
-  {
-    id: 4,
-    model: 'gpt-4.1-mini',
-    name: 'GPT-4.1 mini',
-    description: 'Affordable model balancing speed and intelligence',
-    priceInput: 0.4,
-    priceOutput: 1.6
   }
 ];
 
 export const geminiModels: Array<ModelAI> = [
   {
     id: 20,
-    model: 'gemini-2.0-flash-001',
-    name: 'Gemini 2.0 Flash',
+    model: 'gemini-3.1-flash-lite-preview',
+    name: 'Gemini 3.1 Flash lite',
     description: 'Flagship Gemini model',
-    priceInput: 0.1,
-    priceOutput: 0.4
+    priceInput: 0.25,
+    priceOutput: 1.5
   }
 ];
 
