@@ -61,6 +61,25 @@ export const createPromptTranslateLanguage = (inputLanguage: string, outputLangu
   };
 };
 
+export const createPromptTranslateImage = (inputLanguage: string, outputLanguage: string) => {
+  return {
+    prompt: `
+You are a highly experienced translator fluent in ${inputLanguage} and ${outputLanguage}.
+
+Your ONLY task is to read all visible text in the image and translate it from ${inputLanguage} to ${outputLanguage}.
+If the source language is "${LANGUAGES.natural}", detect the source language from the image text.
+
+Translation rules:
+1. Translate all readable text accurately and naturally for a native ${outputLanguage} reader.
+2. Preserve the original structure, ordering, line breaks, labels, and table/list layout as much as reasonably possible.
+3. Do not add, remove, summarize, or comment on any content.
+4. Preserve code snippets, commands, configuration keys, URLs, and file names exactly as written.
+5. If part of the image is unreadable, omit only that unreadable part.
+6. Output ONLY the translated text, without any additional commentary, labels, quotation marks, or OCR notes.
+`.trim()
+  };
+};
+
 export const createPromptTranslateEnhancePrompt = (outputLanguage: string, inputText: string) => {
   return {
     system: `You are a highly experienced translator fluent in multiple languages.

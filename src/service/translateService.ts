@@ -1,7 +1,23 @@
 import { ModelAI, STORAGE_KEY_MODEL, MODEL_DEFAULT } from '@/src/types/model';
 import { generateText, streamText } from 'ai';
+import type { ModelMessage } from 'ai';
 import { getProviderByModelName } from '@/src/utils/getProvider';
 import { costTrackingInterceptor, TaskType } from './costTrackingInterceptor';
+
+type ModelCallWithStreamingParams = {
+  system?: string;
+  taskType?: TaskType;
+  onCostTracked?: (cost: number) => void;
+} & (
+  | {
+      prompt: string;
+      messages?: never;
+    }
+  | {
+      prompt?: never;
+      messages: ModelMessage[];
+    }
+);
 
 export const modelCallWithText = async ({
   prompt,
@@ -35,12 +51,7 @@ export const modelCallWithText = async ({
 };
 
 export const modelCallWithStreaming = async (
-  { system, prompt, taskType = 'translate', onCostTracked }: {
-    prompt: string;
-    system?: string;
-    taskType?: TaskType;
-    onCostTracked?: (cost: number) => void;
-  },
+  { system, prompt, messages, taskType = 'translate', onCostTracked }: ModelCallWithStreamingParams,
   abortController: AbortSignal
 ) => {
   const modelSelected = localStorage.getItem(STORAGE_KEY_MODEL);
@@ -50,10 +61,9 @@ export const modelCallWithStreaming = async (
     model = JSON.parse(modelSelected);
   }
 
-  const result = streamText({
+  const commonOptions = {
     model: getProviderByModelName(model.model),
     system,
-    prompt: prompt,
     providerOptions: {
       openai: {
         ...(model.reasoningEffort && { reasoningEffort: model.reasoningEffort })
@@ -61,10 +71,10 @@ export const modelCallWithStreaming = async (
     },
     temperature: model.temperature,
     abortSignal: abortController,
-    onError({ error }) {
+    onError({ error }: { error: unknown }) {
       throw new Error(error as string);
     },
-    onFinish: async (event) => {
+    onFinish: async (event: unknown) => {
       // Track usage for cost analytics when stream finishes
       const cost = await costTrackingInterceptor.trackUsage(event, taskType);
 
@@ -73,7 +83,17 @@ export const modelCallWithStreaming = async (
         onCostTracked(cost);
       }
     }
-  });
+  };
+
+  const result = messages
+    ? streamText({
+        ...commonOptions,
+        messages
+      })
+    : streamText({
+        ...commonOptions,
+        prompt
+      });
 
   return result;
 };

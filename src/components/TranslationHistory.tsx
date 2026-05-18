@@ -16,6 +16,8 @@ export interface ITranslationHistory {
   outputLanguage: string;
   timestamp: number;
   cost?: number;
+  sourceType?: 'text' | 'image';
+  sourceName?: string;
 }
 
 const HISTORY_KEY = 'translationHistory';
@@ -128,6 +130,7 @@ const TranslationHistory = (props: TranslationHistoryProps, ref: Ref<ITranslatio
     const filtered = translationHistory.filter((item) => {
       const matchText =
         item.sourceText.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (item.sourceName ?? '').toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.translatedText.toLowerCase().includes(searchQuery.toLowerCase());
       const matchDate = !searchDate || new Date(item.timestamp).toISOString().slice(0, 10) === searchDate;
       const matchInputLang = !searchInputLang || item.inputLanguage === searchInputLang;

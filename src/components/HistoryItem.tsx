@@ -3,7 +3,7 @@ import { ITranslationHistory } from './TranslationHistory';
 import { useTranslations } from 'next-intl';
 import { LANGUAGES } from '../types/model';
 import { Button } from './ui/button';
-import { Copy, RefreshCw, Trash2 } from 'lucide-react';
+import { Copy, ImageIcon, RefreshCw, Trash2 } from 'lucide-react';
 
 interface HistoryItemProps {
   item: ITranslationHistory;
@@ -41,9 +41,16 @@ const HistoryItem: React.FC<HistoryItemProps> = ({ item, onCopy, onDelete, onReu
           <span className='text-slate-900 font-medium'>{new Date(item.timestamp).toLocaleTimeString()}</span>
         </div>
       </div>
-      <p className='text-sm text-gray-700 line-clamp-3 mb-1 min-w-0 break-words whitespace-pre-wrap leading-relaxed'>
-        {item.sourceText}
-      </p>
+      {item.sourceType === 'image' ? (
+        <div className='mb-1 flex min-w-0 items-center gap-2 text-sm text-gray-700'>
+          <ImageIcon className='h-4 w-4 shrink-0' />
+          <span className='truncate'>{t('imageHistorySource', { name: item.sourceName ?? item.sourceText })}</span>
+        </div>
+      ) : (
+        <p className='text-sm text-gray-700 line-clamp-3 mb-1 min-w-0 break-words whitespace-pre-wrap leading-relaxed'>
+          {item.sourceText}
+        </p>
+      )}
       <p className='text-sm font-semibold text-foreground min-w-0 break-words whitespace-pre-wrap leading-relaxed'>
         {item.translatedText}
       </p>

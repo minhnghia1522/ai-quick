@@ -1,11 +1,11 @@
 'use client';
 import { Button } from '@/src/components/ui/button';
 import { LANGUAGES } from '@/src/types/model';
-import { ArrowRightLeft, Copy, Loader2, X } from 'lucide-react';
+import { ArrowRightLeft, Copy, ImagePlus, Loader2, X } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
-import { createPromptTranslateLanguage } from '@/src/prompt/languageTranslatePrompt';
+import { createPromptTranslateImage, createPromptTranslateLanguage } from '@/src/prompt/languageTranslatePrompt';
 import { modelCallWithStreaming } from '@/src/service/translateService';
 import { areAnyApiKeysAvailable } from '@/src/utils/getProvider';
 import PageView from '@/src/components/PageView';
@@ -14,13 +14,29 @@ import TranslationHistory, {
   ITranslationHistory,
   ITranslationHistoryRefHandle
 } from '@/src/components/TranslationHistory';
+import type { ModelMessage } from 'ai';
 
 const MAX_TEXT_LENGTH = 25000;
+const MAX_IMAGE_SIZE_BYTES = 10 * 1024 * 1024;
 const TEXT_AREA_HEIGHT_DEFAULT = 128;
+const ACCEPTED_IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
+
+const formatFileSize = (size: number) => {
+  if (size < 1024 * 1024) {
+    return `${(size / 1024).toFixed(1)} KB`;
+  }
+
+  return `${(size / 1024 / 1024).toFixed(2)} MB`;
+};
+
+const getImageSourceKey = (file: File) => `image:${file.name}:${file.type}:${file.size}:${file.lastModified}`;
 
 const Page = () => {
   const t = useTranslations();
   const [sourceText, setSourceText] = useState('');
+  const [sourceImage, setSourceImage] = useState<File | null>(null);
+  const [sourceImagePreview, setSourceImagePreview] = useState('');
+  const [reusedImageSourceName, setReusedImageSourceName] = useState('');
   const [translatedText, setTranslatedText] = useState('');
   const [inputLanguage, setInputLanguage] = useState(LANGUAGES.ja);
   const [outputLanguage, setOutputLanguage] = useState(LANGUAGES.vn);
@@ -31,23 +47,100 @@ const Page = () => {
   const skipHistorySaveRef = useRef(false);
   const lastRequestedSourceRef = useRef<string>('');
   const sourceTextareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const imageInputRef = useRef<HTMLInputElement | null>(null);
   const currentTranslationCostRef = useRef<number>(0);
 
   const abortControllerRef = useRef<AbortController | null>(null);
 
+  const clearSourceImage = useCallback(() => {
+    setSourceImage(null);
+    setSourceImagePreview((prev) => {
+      if (prev) {
+        URL.revokeObjectURL(prev);
+      }
+      return '';
+    });
+
+    if (imageInputRef.current) {
+      imageInputRef.current.value = '';
+    }
+  }, []);
+
+  const handleClearSourceText = useCallback(() => {
+    setIsLoading(false);
+    abortControllerRef.current?.abort();
+    setSourceText('');
+    clearSourceImage();
+    setReusedImageSourceName('');
+    setTranslatedText('');
+    setSharedHeight(TEXT_AREA_HEIGHT_DEFAULT);
+  }, [clearSourceImage]);
+
+  const validateImageFile = useCallback(
+    (file: File) => {
+      if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
+        toast.error(t('TranslatePage.invalidImageTypeError'));
+        return false;
+      }
+
+      if (file.size > MAX_IMAGE_SIZE_BYTES) {
+        toast.error(
+          t('TranslatePage.maxImageSizeError', {
+            maxSize: formatFileSize(MAX_IMAGE_SIZE_BYTES),
+            currentSize: formatFileSize(file.size)
+          })
+        );
+        return false;
+      }
+
+      return true;
+    },
+    [t]
+  );
+
+  const handleSelectImage = useCallback(
+    (file: File) => {
+      if (!validateImageFile(file)) return;
+
+      abortControllerRef.current?.abort();
+      setIsLoading(false);
+      setSourceText('');
+      setReusedImageSourceName('');
+      setTranslatedText('');
+      setSharedHeight(TEXT_AREA_HEIGHT_DEFAULT);
+      setSourceImage(file);
+      setSourceImagePreview((prev) => {
+        if (prev) {
+          URL.revokeObjectURL(prev);
+        }
+        return URL.createObjectURL(file);
+      });
+    },
+    [validateImageFile]
+  );
+
+  useEffect(() => {
+    return () => {
+      if (sourceImagePreview) {
+        URL.revokeObjectURL(sourceImagePreview);
+      }
+    };
+  }, [sourceImagePreview]);
+
   const handleTranslate = useCallback(async () => {
     const trimmedSourceText = sourceText.trim();
+    const imageSourceKey = sourceImage ? getImageSourceKey(sourceImage) : '';
 
     if (trimmedSourceText !== sourceText) {
       /* keep UI value untrimmed */
     }
 
-    setTranslatedText('');
-
-    if (!trimmedSourceText) {
+    if (!trimmedSourceText && !sourceImage) {
       setIsLoading(false);
       return;
     }
+
+    setTranslatedText('');
 
     if (!areAnyApiKeysAvailable()) {
       toast.error(t('TranslatePage.apiKeyError'));
@@ -77,7 +170,9 @@ const Page = () => {
     const historyList = translationHistoryRef.current?.getHistory?.() ?? [];
     const matchedHistory = historyList.find(
       (item) =>
+        !sourceImage &&
         item.sourceText === trimmedSourceText &&
+        item.sourceType !== 'image' &&
         item.inputLanguage === inputLanguage &&
         item.outputLanguage === outputLanguage
     );
@@ -93,22 +188,48 @@ const Page = () => {
     abortControllerRef.current = abortController;
 
     setIsLoading(true);
-    lastRequestedSourceRef.current = trimmedSourceText;
+    lastRequestedSourceRef.current = sourceImage ? imageSourceKey : trimmedSourceText;
     currentTranslationCostRef.current = 0; // Reset cost for new translation
-    const prompt = createPromptTranslateLanguage(inputLanguage, outputLanguage, trimmedSourceText);
     try {
-      const stream = await modelCallWithStreaming(
-        {
-          system: prompt.system,
-          prompt: prompt.prompt,
-          taskType: 'translate',
-          onCostTracked: (cost) => {
-            // Store the cost when tracking completes
-            currentTranslationCostRef.current = cost;
-          }
-        },
-        abortController.signal
-      );
+      const stream = sourceImage
+        ? await modelCallWithStreaming(
+            {
+              messages: [
+                {
+                  role: 'user',
+                  content: [
+                    {
+                      type: 'text',
+                      text: createPromptTranslateImage(inputLanguage, outputLanguage).prompt
+                    },
+                    {
+                      type: 'image',
+                      image: await sourceImage.arrayBuffer(),
+                      mediaType: sourceImage.type
+                    }
+                  ]
+                }
+              ] satisfies ModelMessage[],
+              taskType: 'translate',
+              onCostTracked: (cost) => {
+                // Store the cost when tracking completes
+                currentTranslationCostRef.current = cost;
+              }
+            },
+            abortController.signal
+          )
+        : await modelCallWithStreaming(
+            {
+              system: createPromptTranslateLanguage(inputLanguage, outputLanguage, trimmedSourceText).system,
+              prompt: createPromptTranslateLanguage(inputLanguage, outputLanguage, trimmedSourceText).prompt,
+              taskType: 'translate',
+              onCostTracked: (cost) => {
+                // Store the cost when tracking completes
+                currentTranslationCostRef.current = cost;
+              }
+            },
+            abortController.signal
+          );
 
       for await (const textPart of stream.textStream) {
         setTranslatedText((prevData) => prevData + textPart);
@@ -123,7 +244,16 @@ const Page = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [abortControllerRef, inputLanguage, outputLanguage, skipHistorySaveRef, sourceText, t, translationHistoryRef]);
+  }, [
+    abortControllerRef,
+    inputLanguage,
+    outputLanguage,
+    skipHistorySaveRef,
+    sourceImage,
+    sourceText,
+    t,
+    translationHistoryRef
+  ]);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -133,29 +263,42 @@ const Page = () => {
     return () => {
       clearTimeout(handler);
     };
-  }, [sourceText, inputLanguage, outputLanguage, handleTranslate]);
+  }, [sourceText, sourceImage, inputLanguage, outputLanguage, handleTranslate]);
 
   useEffect(() => {
     const trimmedSourceText = sourceText.trim();
+    const sourceKey = sourceImage ? getImageSourceKey(sourceImage) : trimmedSourceText;
 
     if (skipHistorySaveRef.current) {
       skipHistorySaveRef.current = false;
       return;
     }
 
-    if (!isLoading && translatedText && trimmedSourceText && trimmedSourceText === lastRequestedSourceRef.current) {
+    if (!isLoading && translatedText && sourceKey && sourceKey === lastRequestedSourceRef.current) {
       const newEntry: ITranslationHistory = {
         id: new Date().toISOString(),
-        sourceText: trimmedSourceText,
+        sourceText: sourceImage ? t('TranslatePage.imageHistorySource', { name: sourceImage.name }) : trimmedSourceText,
         translatedText,
         inputLanguage,
         outputLanguage,
         timestamp: Date.now(),
-        cost: currentTranslationCostRef.current
+        cost: currentTranslationCostRef.current,
+        sourceType: sourceImage ? 'image' : 'text',
+        sourceName: sourceImage?.name
       };
       translationHistoryRef.current?.add(newEntry);
     }
-  }, [inputLanguage, isLoading, outputLanguage, skipHistorySaveRef, sourceText, translatedText, translationHistoryRef]);
+  }, [
+    inputLanguage,
+    isLoading,
+    outputLanguage,
+    skipHistorySaveRef,
+    sourceImage,
+    sourceText,
+    t,
+    translatedText,
+    translationHistoryRef
+  ]);
 
   const handleInputLanguageChange = (language: string) => () => {
     setInputLanguage((preValue) => {
@@ -175,21 +318,15 @@ const Page = () => {
     });
   };
 
-  const handleClearSourceText = () => {
-    setIsLoading(false);
-    abortControllerRef.current?.abort();
-    setSourceText('');
-    setTranslatedText('');
-    setSharedHeight(TEXT_AREA_HEIGHT_DEFAULT);
-  };
-
   const handleSourceHeightChange = useCallback((newHeight: number) => {
     setSharedHeight(newHeight);
   }, []);
 
   const handleReuseTranslation = (item: ITranslationHistory) => {
     skipHistorySaveRef.current = true;
-    setSourceText(item.sourceText);
+    clearSourceImage();
+    setReusedImageSourceName(item.sourceType === 'image' ? item.sourceName ?? item.sourceText : '');
+    setSourceText(item.sourceType === 'image' ? '' : item.sourceText);
     setTranslatedText(item.translatedText);
     setInputLanguage(item.inputLanguage);
     setOutputLanguage(item.outputLanguage);
@@ -229,6 +366,18 @@ const Page = () => {
             </Button>
           </div>
           <div className='relative w-full flex rounded-md border border-input bg-background px-1 pt-1 pb-8'>
+            <input
+              ref={imageInputRef}
+              type='file'
+              accept={ACCEPTED_IMAGE_TYPES.join(',')}
+              className='hidden'
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  handleSelectImage(file);
+                }
+              }}
+            />
             <TextareaAutosize
               ref={sourceTextareaRef}
               value={sourceText}
@@ -241,10 +390,25 @@ const Page = () => {
                 if (rawValue.trim() === '') {
                   handleClearSourceText();
                 } else {
+                  clearSourceImage();
+                  setReusedImageSourceName('');
                   setSourceText(rawValue);
                 }
               }}
               onPaste={(e) => {
+                const imageItem = Array.from(e.clipboardData?.items ?? []).find((item) =>
+                  item.type.startsWith('image/')
+                );
+
+                if (imageItem) {
+                  const file = imageItem.getAsFile();
+                  if (file) {
+                    e.preventDefault();
+                    handleSelectImage(file);
+                  }
+                  return;
+                }
+
                 const text = e.clipboardData?.getData('text') ?? '';
                 const trimmed = text.trim();
                 if (trimmed !== text) {
@@ -269,15 +433,49 @@ const Page = () => {
               forcedHeight={sharedHeight}
               onHeightChange={handleSourceHeightChange}
             />
-            <span>
-              {sourceText !== '' ? (
-                <Button variant='ghost' size='icon' onClick={handleClearSourceText}>
-                  <X />
-                </Button>
-              ) : undefined}
-            </span>
-            <div className='absolute bottom-0 right-3 text-gray-500 bg-white px-1'>
-              {sourceText.length.toLocaleString()}/{MAX_TEXT_LENGTH.toLocaleString()}
+            {sourceImage && sourceImagePreview ? (
+              <div className='pointer-events-none absolute inset-1 bottom-8 z-10 bg-background pr-10'>
+                <div className='h-full w-full overflow-hidden rounded border bg-gray-50'>
+                  <img
+                    src={sourceImagePreview}
+                    alt={sourceImage.name}
+                    className='h-full w-full object-contain'
+                  />
+                </div>
+              </div>
+            ) : reusedImageSourceName ? (
+              <div className='pointer-events-none absolute inset-1 bottom-8 z-10 flex items-center justify-center rounded bg-gray-50 px-12 text-sm text-gray-600'>
+                <span className='truncate'>
+                  {t('TranslatePage.reusedImageHistorySource', { name: reusedImageSourceName })}
+                </span>
+              </div>
+            ) : undefined}
+            {sourceText !== '' || sourceImage || reusedImageSourceName ? (
+              <Button
+                variant='ghost'
+                size='icon'
+                className='absolute right-1 top-1 z-20 bg-background/90 hover:bg-background'
+                onClick={handleClearSourceText}
+              >
+                <X />
+              </Button>
+            ) : undefined}
+            <div className='absolute bottom-0 left-12 right-3 z-20 truncate bg-white px-1 text-right text-gray-500'>
+              {sourceImage
+                ? `${sourceImage.name} (${formatFileSize(sourceImage.size)})`
+                : reusedImageSourceName
+                  ? t('TranslatePage.imageHistorySource', { name: reusedImageSourceName })
+                : `${sourceText.length.toLocaleString()}/${MAX_TEXT_LENGTH.toLocaleString()}`}
+            </div>
+            <div className='absolute bottom-0 left-2 z-20 flex items-center gap-1 bg-white pr-1'>
+              <Button
+                variant='ghost'
+                size='icon'
+                aria-label={t('TranslatePage.uploadImage')}
+                onClick={() => imageInputRef.current?.click()}
+              >
+                <ImagePlus className='h-4 w-4' />
+              </Button>
             </div>
           </div>
         </div>
