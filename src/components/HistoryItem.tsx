@@ -3,11 +3,18 @@ import { ITranslationHistory } from './TranslationHistory';
 import { useTranslations } from 'next-intl';
 import { LANGUAGES } from '../types/model';
 import { Button } from './ui/button';
-import { Copy, ImageIcon, RefreshCw, Trash2 } from 'lucide-react';
+import { ChevronDown, Copy, ImageIcon, RefreshCw, Trash2 } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from './ui/dropdown-menu';
+import { markdownToPlainText } from '../lib/markdown';
 
 interface HistoryItemProps {
   item: ITranslationHistory;
-  onCopy: (text: string) => void;
+  onCopy: (item: ITranslationHistory, format: 'text' | 'markdown') => void;
   onDelete: (id: string) => void;
   onReuse: (item: ITranslationHistory) => void;
 }
@@ -29,6 +36,7 @@ const getLanguageName = (lang: string, t: (key: string) => string) => {
 
 const HistoryItem: React.FC<HistoryItemProps> = ({ item, onCopy, onDelete, onReuse }) => {
   const t = useTranslations('TranslatePage');
+  const plainTranslatedText = markdownToPlainText(item.translatedText);
 
   return (
     <li className='group flex flex-col min-w-0 rounded-lg border bg-card text-card-foreground p-4 sm:p-3 shadow-sm hover:shadow transition-shadow'>
@@ -52,17 +60,36 @@ const HistoryItem: React.FC<HistoryItemProps> = ({ item, onCopy, onDelete, onReu
         </p>
       )}
       <p className='text-sm font-semibold text-foreground min-w-0 break-words whitespace-pre-wrap leading-relaxed'>
-        {item.translatedText}
+        {plainTranslatedText}
       </p>
       <div className='flex items-center justify-end gap-1 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity'>
-        <Button
-          variant='ghost'
-          size='icon'
-          aria-label={t('copyTranslation')}
-          onClick={() => onCopy(item.translatedText)}
-        >
-          <Copy className='h-4 w-4' />
-        </Button>
+        <div className='flex items-center'>
+          <Button
+            variant='ghost'
+            size='icon'
+            className='rounded-r-none'
+            aria-label={t('copyTranslation')}
+            onClick={() => onCopy(item, 'text')}
+          >
+            <Copy className='h-4 w-4' />
+          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant='ghost'
+                size='icon'
+                className='h-9 w-7 rounded-l-none border-l border-border'
+                aria-label={t('copyOptions')}
+              >
+                <ChevronDown className='h-4 w-4' />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align='end'>
+              <DropdownMenuItem onClick={() => onCopy(item, 'text')}>{t('copyAsText')}</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onCopy(item, 'markdown')}>{t('copyAsMarkdown')}</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
         <Button variant='ghost' size='icon' aria-label={t('reuseTranslation')} onClick={() => onReuse(item)}>
           <RefreshCw className='h-4 w-4' />
         </Button>

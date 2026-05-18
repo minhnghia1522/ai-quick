@@ -1,8 +1,8 @@
 'use client';
 import { Button } from '@/src/components/ui/button';
 import { LANGUAGES } from '@/src/types/model';
-import { ArrowRightLeft, Copy, ImagePlus, Loader2, X } from 'lucide-react';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { ArrowRightLeft, ChevronDown, Copy, ImagePlus, Loader2, X } from 'lucide-react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 import { createPromptTranslateImage, createPromptTranslateLanguage } from '@/src/prompt/languageTranslatePrompt';
@@ -10,16 +10,28 @@ import { modelCallWithStreaming } from '@/src/service/translateService';
 import { areAnyApiKeysAvailable } from '@/src/utils/getProvider';
 import PageView from '@/src/components/PageView';
 import TextareaAutosize from '@/src/components/input/TextareaAutosize';
+import MarkdownPreview from '@/src/components/MarkdownPreview';
 import TranslationHistory, {
   ITranslationHistory,
   ITranslationHistoryRefHandle
 } from '@/src/components/TranslationHistory';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '@/src/components/ui/dropdown-menu';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/src/components/ui/tabs';
+import { markdownToPlainText } from '@/src/lib/markdown';
 import type { ModelMessage } from 'ai';
 
 const MAX_TEXT_LENGTH = 25000;
 const MAX_IMAGE_SIZE_BYTES = 10 * 1024 * 1024;
 const TEXT_AREA_HEIGHT_DEFAULT = 128;
+const IMAGE_PANEL_HEIGHT = 320;
+const PANEL_CHROME_HEIGHT = 38;
 const ACCEPTED_IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
+type TranslationViewMode = 'text' | 'markdown';
 
 const formatFileSize = (size: number) => {
   if (size < 1024 * 1024) {
@@ -41,6 +53,7 @@ const Page = () => {
   const [inputLanguage, setInputLanguage] = useState(LANGUAGES.ja);
   const [outputLanguage, setOutputLanguage] = useState(LANGUAGES.vn);
   const [sharedHeight, setSharedHeight] = useState<number>(TEXT_AREA_HEIGHT_DEFAULT);
+  const [translationViewMode, setTranslationViewMode] = useState<TranslationViewMode>('text');
   const [isLoading, setIsLoading] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const translationHistoryRef = useRef<ITranslationHistoryRefHandle | null>(null);
@@ -49,6 +62,8 @@ const Page = () => {
   const sourceTextareaRef = useRef<HTMLTextAreaElement | null>(null);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const currentTranslationCostRef = useRef<number>(0);
+  const plainTranslatedText = useMemo(() => markdownToPlainText(translatedText), [translatedText]);
+  const panelHeight = sharedHeight + PANEL_CHROME_HEIGHT;
 
   const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -107,7 +122,7 @@ const Page = () => {
       setSourceText('');
       setReusedImageSourceName('');
       setTranslatedText('');
-      setSharedHeight(TEXT_AREA_HEIGHT_DEFAULT);
+      setSharedHeight(IMAGE_PANEL_HEIGHT);
       setSourceImage(file);
       setSourceImagePreview((prev) => {
         if (prev) {
@@ -322,6 +337,18 @@ const Page = () => {
     setSharedHeight(newHeight);
   }, []);
 
+  const copyTranslation = useCallback(
+    (format: TranslationViewMode = translationViewMode) => {
+      const text = format === 'markdown' ? translatedText : plainTranslatedText;
+
+      if (!text) return;
+
+      navigator.clipboard.writeText(text);
+      toast.success(t(format === 'markdown' ? 'TranslatePage.copiedMarkdown' : 'TranslatePage.copiedText'));
+    },
+    [plainTranslatedText, t, translatedText, translationViewMode]
+  );
+
   const handleReuseTranslation = (item: ITranslationHistory) => {
     skipHistorySaveRef.current = true;
     clearSourceImage();
@@ -336,8 +363,8 @@ const Page = () => {
 
   const renderBody = () => (
     <>
-      <div className='flex flex-col md:flex-row justify-center w-full max-w-full gap-3 md:px-0 lg:px-6 xl:px-16'>
-        <div className='flex flex-col gap-1 w-full md:w-1/2'>
+      <div className='flex w-full max-w-full min-w-0 flex-col justify-center gap-3 md:flex-row md:items-start md:px-0 lg:px-6 xl:px-16'>
+        <div className='flex w-full min-w-0 flex-col gap-1 md:basis-0 md:flex-1'>
           <div className='flex flex-nowrap gap-1 overflow-x-auto'>
             <Button
               variant={inputLanguage === LANGUAGES.ja ? 'default' : 'link'}
@@ -365,7 +392,10 @@ const Page = () => {
               {t('TranslatePage.detectLanguage')}
             </Button>
           </div>
-          <div className='relative w-full flex rounded-md border border-input bg-background px-1 pt-1 pb-8'>
+          <div
+            className='relative flex w-full rounded-md border border-input bg-background px-1 pt-1 pb-8'
+            style={{ height: panelHeight }}
+          >
             <input
               ref={imageInputRef}
               type='file'
@@ -479,12 +509,12 @@ const Page = () => {
             </div>
           </div>
         </div>
-        <div className='flex w-[10x]'>
+        <div className='flex shrink-0 justify-center md:w-10 md:pt-10'>
           <Button variant='ghost' size='icon' disabled>
             {isLoading ? <Loader2 className='animate-spin' /> : <ArrowRightLeft />}
           </Button>
         </div>
-        <div className='flex flex-col gap-1 w-full md:w-1/2'>
+        <div className='flex w-full min-w-0 flex-col gap-1 md:basis-0 md:flex-1'>
           <div className='flex flex-nowrap gap-1 overflow-x-auto'>
             <Button
               variant={outputLanguage === LANGUAGES.vn ? 'default' : 'link'}
@@ -505,29 +535,76 @@ const Page = () => {
               {t('TranslatePage.japanese')}
             </Button>
           </div>
-          <div className=''>
-            <div className='w-full flex rounded-md border border-input bg-gray-50 px-1 pt-1 pb-8 '>
-              <TextareaAutosize
-                className='w-full border-none outline-none disabled:cursor-auto disabled:bg-gray-50 disabled:opacity-100'
-                value={translatedText}
-                disabled={true}
-                forcedHeight={sharedHeight}
-                onHeightChange={handleSourceHeightChange}
-              />
-              <span>
-                {translatedText !== '' ? (
-                  <Button
-                    variant='ghost'
-                    size='icon'
-                    onClick={() => {
-                      navigator.clipboard.writeText(translatedText);
-                      toast.success(t('TranslatePage.copied'));
-                    }}
+          <div className='min-w-0'>
+            <div
+              className='relative w-full min-w-0 overflow-hidden rounded-md border border-input bg-gray-50 px-1 pt-1 pb-8'
+              style={{ height: panelHeight }}
+            >
+              <Tabs
+                value={translationViewMode}
+                onValueChange={(value) => setTranslationViewMode(value as TranslationViewMode)}
+                className='w-full min-w-0'
+              >
+                <TabsContent value='text' className='m-0'>
+                  <div
+                    className='w-full overflow-auto whitespace-pre-wrap break-words rounded bg-gray-50 px-2 pb-2 text-sm leading-relaxed text-foreground'
+                    style={{ height: sharedHeight }}
                   >
-                    <Copy />
-                  </Button>
-                ) : undefined}
-              </span>
+                    {plainTranslatedText}
+                  </div>
+                </TabsContent>
+                <TabsContent value='markdown' className='m-0'>
+                  <div
+                    className='w-full min-w-0 overflow-auto rounded bg-gray-50 px-2 pb-2'
+                    style={{ height: sharedHeight }}
+                  >
+                    <MarkdownPreview content={translatedText} />
+                  </div>
+                </TabsContent>
+                <div className='absolute bottom-1 right-2 z-20 flex max-w-[calc(100%-1rem)] items-center gap-1 bg-gray-50 pl-1'>
+                  <TabsList className='h-7 shadow-sm'>
+                    <TabsTrigger value='text' className='h-6 px-2 text-xs'>
+                      {t('TranslatePage.textView')}
+                    </TabsTrigger>
+                    <TabsTrigger value='markdown' className='h-6 px-2 text-xs'>
+                      {t('TranslatePage.markdownView')}
+                    </TabsTrigger>
+                  </TabsList>
+                  {translatedText !== '' ? (
+                    <div className='flex shrink-0 items-center'>
+                      <Button
+                        variant='ghost'
+                        size='icon'
+                        className='h-8 w-8 rounded-r-none'
+                        aria-label={t('TranslatePage.copyTranslation')}
+                        onClick={() => copyTranslation()}
+                      >
+                        <Copy className='h-4 w-4' />
+                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant='ghost'
+                            size='icon'
+                            className='h-8 w-8 rounded-l-none border-l border-border'
+                            aria-label={t('TranslatePage.copyOptions')}
+                          >
+                            <ChevronDown className='h-4 w-4' />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align='end'>
+                          <DropdownMenuItem onClick={() => copyTranslation('text')}>
+                            {t('TranslatePage.copyAsText')}
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => copyTranslation('markdown')}>
+                            {t('TranslatePage.copyAsMarkdown')}
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  ) : undefined}
+                </div>
+              </Tabs>
             </div>
           </div>
         </div>

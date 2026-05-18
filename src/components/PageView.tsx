@@ -16,7 +16,7 @@ const PageView = ({ title, body }: Props) => {
         <Label className='text-4xl'>{title?.titleName}</Label>
         <p className='mt-2 text-muted-foreground text-center '>{title?.description}</p>
       </div>
-      <div>{body}</div>
+      <div className='min-w-0'>{body}</div>
     </div>
   );
 };

@@ -24,6 +24,7 @@ export const createPromptTranslateLanguage = (inputLanguage: string, outputLangu
     Instructions:
     1. Translate the provided software technical document from ${inputLanguage} to ${outputLanguage}.
     2. Maintain the original formatting, structure, headings, numbering, and line breaks as much as possible.
+    Additional formatting rule: When the source uses or implies structured content, output valid Markdown to preserve headings, lists, tables, code blocks, links, and emphasis. Do not add Markdown decoration when the source is plain prose.
     3. Preserve English technical terms where they are standard in the IT industry, translating them only when absolutely necessary for clarity.
     4. For terms enclosed in 「」:
       - Keep the original text inside 「」.
@@ -53,6 +54,7 @@ export const createPromptTranslateLanguage = (inputLanguage: string, outputLangu
     4. Absolutely do not translate, change, or edit any file names. A file name is any contiguous string that may contain letters, numbers, underscores, hyphens, parentheses, periods, and a typical file extension such as .xlsm, .txt, .docx, .xlsx, .pdf, etc. For example: セットアップ定義書.xlsm, data_2023-05-01.xlsx, (報告書)2024.txt must be kept exactly as the original, even when they appear within a sentence. If you are unsure whether something is a file name, do not modify it.
     5. Preserve code snippets, commands, configuration keys, and anything inside code blocks exactly as they are.
     6. Output ONLY the translated text, without any additional commentary, labels, or quotation marks.
+    7. When the source uses or implies structured content, output valid Markdown to preserve headings, lists, tables, code blocks, links, and emphasis. Do not add Markdown decoration when the source is plain prose.
 `.trim();
 
   return {
@@ -72,6 +74,7 @@ If the source language is "${LANGUAGES.natural}", detect the source language fro
 Translation rules:
 1. Translate all readable text accurately and naturally for a native ${outputLanguage} reader.
 2. Preserve the original structure, ordering, line breaks, labels, and table/list layout as much as reasonably possible.
+Additional formatting rule: Use valid Markdown for structured content such as headings, lists, tables, code blocks, links, and emphasis when it helps preserve the image layout. Do not add Markdown decoration when the readable text is plain prose.
 3. Do not add, remove, summarize, or comment on any content.
 4. Preserve code snippets, commands, configuration keys, URLs, and file names exactly as written.
 5. If part of the image is unreadable, omit only that unreadable part.

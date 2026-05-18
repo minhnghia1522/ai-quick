@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
 import HistoryItem from './HistoryItem';
 import TranslationHistoryFilter from './TranslationHistoryFilter';
+import { markdownToPlainText } from '../lib/markdown';
 
 export interface ITranslationHistory {
   id: string;
@@ -116,9 +117,11 @@ const TranslationHistory = (props: TranslationHistoryProps, ref: Ref<ITranslatio
     toast.success(t('historyItemDeleted'));
   };
 
-  const handleCopyItem = (text: string) => {
+  const handleCopyItem = (item: ITranslationHistory, format: 'text' | 'markdown') => {
+    const text = format === 'markdown' ? item.translatedText : markdownToPlainText(item.translatedText);
+
     navigator.clipboard.writeText(text);
-    toast.success(t('copied'));
+    toast.success(t(format === 'markdown' ? 'copiedMarkdown' : 'copiedText'));
   };
 
   useImperativeHandle(ref, () => ({
