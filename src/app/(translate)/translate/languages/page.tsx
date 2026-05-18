@@ -29,8 +29,8 @@ const MAX_TEXT_LENGTH = 25000;
 const MAX_IMAGE_SIZE_BYTES = 10 * 1024 * 1024;
 const TEXT_AREA_HEIGHT_DEFAULT = 128;
 const IMAGE_PANEL_HEIGHT = 320;
-const PANEL_CHROME_HEIGHT = 38;
 const ACCEPTED_IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
+type SourceMode = 'text' | 'image';
 type TranslationViewMode = 'text' | 'markdown';
 
 const formatFileSize = (size: number) => {
@@ -46,6 +46,7 @@ const getImageSourceKey = (file: File) => `image:${file.name}:${file.type}:${fil
 const Page = () => {
   const t = useTranslations();
   const [sourceText, setSourceText] = useState('');
+  const [sourceMode, setSourceMode] = useState<SourceMode>('text');
   const [sourceImage, setSourceImage] = useState<File | null>(null);
   const [sourceImagePreview, setSourceImagePreview] = useState('');
   const [reusedImageSourceName, setReusedImageSourceName] = useState('');
@@ -63,7 +64,6 @@ const Page = () => {
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const currentTranslationCostRef = useRef<number>(0);
   const plainTranslatedText = useMemo(() => markdownToPlainText(translatedText), [translatedText]);
-  const panelHeight = sharedHeight + PANEL_CHROME_HEIGHT;
 
   const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -84,6 +84,7 @@ const Page = () => {
   const handleClearSourceText = useCallback(() => {
     setIsLoading(false);
     abortControllerRef.current?.abort();
+    setSourceMode('text');
     setSourceText('');
     clearSourceImage();
     setReusedImageSourceName('');
@@ -119,6 +120,7 @@ const Page = () => {
 
       abortControllerRef.current?.abort();
       setIsLoading(false);
+      setSourceMode('image');
       setSourceText('');
       setReusedImageSourceName('');
       setTranslatedText('');
@@ -338,7 +340,7 @@ const Page = () => {
   }, []);
 
   const copyTranslation = useCallback(
-    (format: TranslationViewMode = translationViewMode) => {
+    (format: TranslationViewMode = 'text') => {
       const text = format === 'markdown' ? translatedText : plainTranslatedText;
 
       if (!text) return;
@@ -346,14 +348,23 @@ const Page = () => {
       navigator.clipboard.writeText(text);
       toast.success(t(format === 'markdown' ? 'TranslatePage.copiedMarkdown' : 'TranslatePage.copiedText'));
     },
-    [plainTranslatedText, t, translatedText, translationViewMode]
+    [plainTranslatedText, t, translatedText]
   );
 
   const handleReuseTranslation = (item: ITranslationHistory) => {
     skipHistorySaveRef.current = true;
     clearSourceImage();
-    setReusedImageSourceName(item.sourceType === 'image' ? item.sourceName ?? item.sourceText : '');
-    setSourceText(item.sourceType === 'image' ? '' : item.sourceText);
+    if (item.sourceType === 'image') {
+      setSourceMode('image');
+      setReusedImageSourceName(item.sourceName ?? item.sourceText);
+      setSourceText('');
+      setSharedHeight(IMAGE_PANEL_HEIGHT);
+    } else {
+      setSourceMode('text');
+      setReusedImageSourceName('');
+      setSharedHeight(TEXT_AREA_HEIGHT_DEFAULT);
+      setSourceText(item.sourceText);
+    }
     setTranslatedText(item.translatedText);
     setInputLanguage(item.inputLanguage);
     setOutputLanguage(item.outputLanguage);
@@ -363,8 +374,8 @@ const Page = () => {
 
   const renderBody = () => (
     <>
-      <div className='flex w-full max-w-full min-w-0 flex-col justify-center gap-3 md:flex-row md:items-start md:px-0 lg:px-6 xl:px-16'>
-        <div className='flex w-full min-w-0 flex-col gap-1 md:basis-0 md:flex-1'>
+      <div className='flex flex-col md:flex-row justify-center w-full max-w-full gap-3 md:px-0 lg:px-6 xl:px-16'>
+        <div className='flex flex-col gap-1 w-full md:w-1/2'>
           <div className='flex flex-nowrap gap-1 overflow-x-auto'>
             <Button
               variant={inputLanguage === LANGUAGES.ja ? 'default' : 'link'}
@@ -392,10 +403,7 @@ const Page = () => {
               {t('TranslatePage.detectLanguage')}
             </Button>
           </div>
-          <div
-            className='relative flex w-full rounded-md border border-input bg-background px-1 pt-1 pb-8'
-            style={{ height: panelHeight }}
-          >
+          <div className='relative w-full flex rounded-md border border-input bg-background px-1 pt-1 pb-8'>
             <input
               ref={imageInputRef}
               type='file'
@@ -420,8 +428,12 @@ const Page = () => {
                 if (rawValue.trim() === '') {
                   handleClearSourceText();
                 } else {
+                  setSourceMode('text');
                   clearSourceImage();
                   setReusedImageSourceName('');
+                  if (sourceMode === 'image') {
+                    setSharedHeight(TEXT_AREA_HEIGHT_DEFAULT);
+                  }
                   setSourceText(rawValue);
                 }
               }}
@@ -445,6 +457,12 @@ const Page = () => {
                   e.preventDefault();
                   const el = sourceTextareaRef.current;
                   if (el) {
+                    setSourceMode('text');
+                    clearSourceImage();
+                    setReusedImageSourceName('');
+                    if (sourceMode === 'image') {
+                      setSharedHeight(TEXT_AREA_HEIGHT_DEFAULT);
+                    }
                     const { selectionStart, selectionEnd } = el;
                     setSourceText((prev) => {
                       const before = prev.slice(0, selectionStart);
@@ -480,7 +498,7 @@ const Page = () => {
                 </span>
               </div>
             ) : undefined}
-            {sourceText !== '' || sourceImage || reusedImageSourceName ? (
+            {sourceMode === 'image' && (sourceImage || reusedImageSourceName) ? (
               <Button
                 variant='ghost'
                 size='icon'
@@ -490,7 +508,14 @@ const Page = () => {
                 <X />
               </Button>
             ) : undefined}
-            <div className='absolute bottom-0 left-12 right-3 z-20 truncate bg-white px-1 text-right text-gray-500'>
+            {sourceMode === 'text' && sourceText !== '' ? (
+              <span>
+                <Button variant='ghost' size='icon' onClick={handleClearSourceText}>
+                  <X />
+                </Button>
+              </span>
+            ) : undefined}
+            <div className='absolute bottom-0 right-3 z-20 max-w-[calc(100%-3.5rem)] truncate bg-white px-1 text-right text-gray-500'>
               {sourceImage
                 ? `${sourceImage.name} (${formatFileSize(sourceImage.size)})`
                 : reusedImageSourceName
@@ -509,12 +534,12 @@ const Page = () => {
             </div>
           </div>
         </div>
-        <div className='flex shrink-0 justify-center md:w-10 md:pt-10'>
+        <div className='flex w-[10x]'>
           <Button variant='ghost' size='icon' disabled>
             {isLoading ? <Loader2 className='animate-spin' /> : <ArrowRightLeft />}
           </Button>
         </div>
-        <div className='flex w-full min-w-0 flex-col gap-1 md:basis-0 md:flex-1'>
+        <div className='flex flex-col gap-1 w-full md:w-1/2'>
           <div className='flex flex-nowrap gap-1 overflow-x-auto'>
             <Button
               variant={outputLanguage === LANGUAGES.vn ? 'default' : 'link'}
@@ -535,23 +560,21 @@ const Page = () => {
               {t('TranslatePage.japanese')}
             </Button>
           </div>
-          <div className='min-w-0'>
-            <div
-              className='relative w-full min-w-0 overflow-hidden rounded-md border border-input bg-gray-50 px-1 pt-1 pb-8'
-              style={{ height: panelHeight }}
-            >
+          <div className=''>
+            <div className='relative w-full flex rounded-md border border-input bg-gray-50 px-1 pt-1 pb-8'>
               <Tabs
                 value={translationViewMode}
                 onValueChange={(value) => setTranslationViewMode(value as TranslationViewMode)}
                 className='w-full min-w-0'
               >
                 <TabsContent value='text' className='m-0'>
-                  <div
-                    className='w-full overflow-auto whitespace-pre-wrap break-words rounded bg-gray-50 px-2 pb-2 text-sm leading-relaxed text-foreground'
-                    style={{ height: sharedHeight }}
-                  >
-                    {plainTranslatedText}
-                  </div>
+                  <TextareaAutosize
+                    className='w-full border-none outline-none disabled:cursor-auto disabled:bg-gray-50 disabled:opacity-100'
+                    value={plainTranslatedText}
+                    disabled={true}
+                    forcedHeight={sharedHeight}
+                    onHeightChange={handleSourceHeightChange}
+                  />
                 </TabsContent>
                 <TabsContent value='markdown' className='m-0'>
                   <div
@@ -577,7 +600,7 @@ const Page = () => {
                         size='icon'
                         className='h-8 w-8 rounded-r-none'
                         aria-label={t('TranslatePage.copyTranslation')}
-                        onClick={() => copyTranslation()}
+                        onClick={() => copyTranslation('text')}
                       >
                         <Copy className='h-4 w-4' />
                       </Button>
