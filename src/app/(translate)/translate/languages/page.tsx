@@ -30,6 +30,8 @@ import {
 } from './_components/translationHelpers';
 import type { SourceMode, TranslationViewMode } from './_components/translationHelpers';
 
+const IMAGE_OUTPUT_VIEWPORT_BOTTOM_RESERVE = 56;
+
 const Page = () => {
   const t = useTranslations();
   const [sourceText, setSourceText] = useState('');
@@ -54,6 +56,7 @@ const Page = () => {
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const currentTranslationCostRef = useRef<number>(0);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const outputAutoExpandedRef = useRef(false);
   const plainTranslatedText = useMemo(() => markdownToPlainText(translatedText), [translatedText]);
 
   const clearSourceImage = useCallback(() => {
@@ -80,6 +83,7 @@ const Page = () => {
     setTranslatedText('');
     setSourceHeight(TEXT_AREA_HEIGHT_DEFAULT);
     setOutputHeight(TEXT_AREA_HEIGHT_DEFAULT);
+    outputAutoExpandedRef.current = false;
   }, [clearSourceImage]);
 
   const validateImageFile = useCallback(
@@ -117,6 +121,7 @@ const Page = () => {
       setTranslationViewMode('markdown');
       setSourceHeight(IMAGE_PANEL_HEIGHT);
       setOutputHeight(IMAGE_PANEL_HEIGHT);
+      outputAutoExpandedRef.current = false;
       setSourceImage(file);
       setSourceImagePreview((prev) => {
         if (prev) {
@@ -158,15 +163,47 @@ const Page = () => {
   useEffect(() => {
     if (sourceMode !== 'image' || translationViewMode !== 'markdown') return;
 
-    const frameId = requestAnimationFrame(() => {
-      const markdownOutput = markdownOutputRef.current;
-      if (!markdownOutput) return;
+    let frameId = 0;
+    const adjustOutputHeight = () => {
+      if (frameId) {
+        cancelAnimationFrame(frameId);
+      }
 
-      setOutputHeight(Math.max(IMAGE_PANEL_HEIGHT, markdownOutput.scrollHeight));
-    });
+      frameId = requestAnimationFrame(() => {
+        const markdownOutput = markdownOutputRef.current;
+        if (!markdownOutput) return;
 
-    return () => cancelAnimationFrame(frameId);
+        const { top } = markdownOutput.getBoundingClientRect();
+        const maxOutputHeight = Math.max(
+          IMAGE_PANEL_HEIGHT,
+          Math.floor(window.innerHeight - top - IMAGE_OUTPUT_VIEWPORT_BOTTOM_RESERVE)
+        );
+        const desiredOutputHeight = Math.max(IMAGE_PANEL_HEIGHT, markdownOutput.scrollHeight);
+        const nextOutputHeight = Math.min(desiredOutputHeight, maxOutputHeight);
+
+        setOutputHeight(nextOutputHeight);
+
+        if (desiredOutputHeight > nextOutputHeight && translatedText && !outputAutoExpandedRef.current) {
+          outputAutoExpandedRef.current = true;
+          setIsOutputExpandedOpen(true);
+        }
+      });
+    };
+
+    adjustOutputHeight();
+    window.addEventListener('resize', adjustOutputHeight);
+
+    return () => {
+      cancelAnimationFrame(frameId);
+      window.removeEventListener('resize', adjustOutputHeight);
+    };
   }, [sourceMode, translatedText, translationViewMode]);
+
+  useEffect(() => {
+    if (sourceMode !== 'image') {
+      outputAutoExpandedRef.current = false;
+    }
+  }, [sourceMode]);
 
   const handleTranslate = useCallback(async () => {
     const trimmedSourceText = sourceText.trim();
@@ -180,6 +217,7 @@ const Page = () => {
     setTranslatedText('');
     if (sourceImage) {
       setOutputHeight(IMAGE_PANEL_HEIGHT);
+      outputAutoExpandedRef.current = false;
     }
 
     if (!areAnyApiKeysAvailable()) {
@@ -232,16 +270,20 @@ const Page = () => {
     currentTranslationCostRef.current = 0;
 
     try {
+      const promptConfig = sourceImage
+        ? createPromptTranslateImage(inputLanguage, outputLanguage)
+        : createPromptTranslateLanguage(inputLanguage, outputLanguage, trimmedSourceText);
       const stream = sourceImage
         ? await modelCallWithStreaming(
             {
+              system: promptConfig.system,
               messages: [
                 {
                   role: 'user',
                   content: [
                     {
                       type: 'text',
-                      text: createPromptTranslateImage(inputLanguage, outputLanguage).prompt
+                      text: promptConfig.prompt
                     },
                     {
                       type: 'image',
@@ -260,8 +302,8 @@ const Page = () => {
           )
         : await modelCallWithStreaming(
             {
-              system: createPromptTranslateLanguage(inputLanguage, outputLanguage, trimmedSourceText).system,
-              prompt: createPromptTranslateLanguage(inputLanguage, outputLanguage, trimmedSourceText).prompt,
+              system: promptConfig.system,
+              prompt: promptConfig.prompt,
               taskType: 'translate',
               onCostTracked: (cost) => {
                 currentTranslationCostRef.current = cost;
@@ -391,6 +433,7 @@ const Page = () => {
         setTranslationViewMode('markdown');
         setSourceHeight(IMAGE_PANEL_HEIGHT);
         setOutputHeight(IMAGE_PANEL_HEIGHT);
+        outputAutoExpandedRef.current = false;
       } else {
         setSourceMode('text');
         setReusedImageSourceName('');

@@ -174,6 +174,17 @@ const MarkdownTableRow = ({ children }: { children: React.ReactNode }) => {
   return <tr>{indexedChildren}</tr>;
 };
 
+const renderTableCellContent = (children: React.ReactNode) =>
+  React.Children.toArray(children).flatMap((child, childIndex) => {
+    if (typeof child !== 'string') return child;
+
+    const parts = child.split(/<br\s*\/?>/i);
+
+    return parts.flatMap((part, partIndex) =>
+      partIndex === 0 ? part : [<br key={`br-${childIndex}-${partIndex}`} />, part]
+    );
+  });
+
 const MarkdownTableHeaderCell = ({ children, columnIndex, className, ...props }: MarkdownTableCellProps) => {
   const context = React.useContext(MarkdownTableContext);
   const isResizable = context && typeof columnIndex === 'number' && columnIndex < context.widths.length - 1;
@@ -183,7 +194,7 @@ const MarkdownTableHeaderCell = ({ children, columnIndex, className, ...props }:
       className={cn('relative break-words border-b px-3 py-2 pr-5 text-xs font-semibold uppercase', className)}
       {...props}
     >
-      {children}
+      {renderTableCellContent(children)}
       {isResizable ? (
         <button
           type='button'
@@ -199,7 +210,7 @@ const MarkdownTableHeaderCell = ({ children, columnIndex, className, ...props }:
 
 const MarkdownTableCell = ({ children, columnIndex: _columnIndex, className, ...props }: MarkdownTableCellProps) => (
   <td className={cn('break-words border-t px-3 py-2 align-top', className)} {...props}>
-    {children}
+    {renderTableCellContent(children)}
   </td>
 );
 
