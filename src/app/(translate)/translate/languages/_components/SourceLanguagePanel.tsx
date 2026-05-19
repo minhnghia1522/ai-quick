@@ -1,9 +1,11 @@
 import TextareaAutosize from '@/src/components/input/TextareaAutosize';
 import { Button } from '@/src/components/ui/button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/src/components/ui/tooltip';
 import { LANGUAGES } from '@/src/types/model';
-import { ImagePlus, X } from 'lucide-react';
+import { ImagePlus, Maximize2, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import type { ClipboardEvent, RefObject } from 'react';
+import { useState, type ClipboardEvent, type RefObject } from 'react';
+import ImagePreviewDialog from './ImagePreviewDialog';
 import LanguageToggleGroup from './LanguageToggleGroup';
 import { ACCEPTED_IMAGE_TYPES, MAX_TEXT_LENGTH, formatFileSize } from './translationHelpers';
 import type { SourceMode } from './translationHelpers';
@@ -58,6 +60,7 @@ const SourceLanguagePanel = ({
   onSourceHeightChange
 }: SourceLanguagePanelProps) => {
   const t = useTranslations();
+  const [isImagePreviewOpen, setIsImagePreviewOpen] = useState(false);
 
   const sourceLanguageOptions = [
     { value: LANGUAGES.ja, label: t('TranslatePage.japanese') },
@@ -149,21 +152,51 @@ const SourceLanguagePanel = ({
           </div>
         ) : undefined}
         {sourceMode === 'image' && (sourceImage || reusedImageSourceName) ? (
-          <Button
-            variant='ghost'
-            size='icon'
-            className='absolute right-1 top-1 z-20 bg-background/90 hover:bg-background'
-            onClick={onClearSource}
-          >
-            <X />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant='ghost'
+                size='icon'
+                className='absolute right-1 top-1 z-20 bg-background/90 hover:bg-background'
+                aria-label={t('TranslatePage.clearSource')}
+                onClick={onClearSource}
+              >
+                <X />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side='left'>{t('TranslatePage.clearSource')}</TooltipContent>
+          </Tooltip>
+        ) : undefined}
+        {sourceImage && sourceImagePreview ? (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant='ghost'
+                size='icon'
+                className='absolute right-1 top-11 z-20 bg-background/90 hover:bg-background'
+                aria-label={t('TranslatePage.previewImage')}
+                onClick={() => setIsImagePreviewOpen(true)}
+              >
+                <Maximize2 className='h-4 w-4' />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side='left'>{t('TranslatePage.previewImage')}</TooltipContent>
+          </Tooltip>
         ) : undefined}
         {sourceMode === 'text' && sourceText !== '' ? (
-          <span>
-            <Button variant='ghost' size='icon' onClick={onClearSource}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant='ghost'
+                size='icon'
+                aria-label={t('TranslatePage.clearSource')}
+                onClick={onClearSource}
+              >
               <X />
-            </Button>
-          </span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side='left'>{t('TranslatePage.clearSource')}</TooltipContent>
+          </Tooltip>
         ) : undefined}
         <div className={sourceMetaClassName}>
           {sourceImage
@@ -183,6 +216,12 @@ const SourceLanguagePanel = ({
           </Button>
         </div>
       </div>
+      <ImagePreviewDialog
+        open={isImagePreviewOpen}
+        image={sourceImage}
+        imagePreview={sourceImagePreview}
+        onOpenChange={setIsImagePreviewOpen}
+      />
     </div>
   );
 };
