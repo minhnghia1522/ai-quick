@@ -1,49 +1,34 @@
 'use client';
-import { Button } from '@/src/components/ui/button';
-import { LANGUAGES } from '@/src/types/model';
-import { ArrowRightLeft, ChevronDown, Copy, FileText, ImagePlus, Loader2, Maximize2, Type, X } from 'lucide-react';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { toast } from 'sonner';
-import { useTranslations } from 'next-intl';
-import { createPromptTranslateImage, createPromptTranslateLanguage } from '@/src/prompt/languageTranslatePrompt';
-import { modelCallWithStreaming } from '@/src/service/translateService';
-import { areAnyApiKeysAvailable } from '@/src/utils/getProvider';
+
 import PageView from '@/src/components/PageView';
-import TextareaAutosize from '@/src/components/input/TextareaAutosize';
-import MarkdownPreview from '@/src/components/MarkdownPreview';
 import TranslationHistory, {
   ITranslationHistory,
   ITranslationHistoryRefHandle
 } from '@/src/components/TranslationHistory';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from '@/src/components/ui/dropdown-menu';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/src/components/ui/dialog';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/src/components/ui/tabs';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/src/components/ui/tooltip';
+import { Button } from '@/src/components/ui/button';
 import { markdownToPlainText } from '@/src/lib/markdown';
+import { createPromptTranslateImage, createPromptTranslateLanguage } from '@/src/prompt/languageTranslatePrompt';
+import { modelCallWithStreaming } from '@/src/service/translateService';
+import { LANGUAGES } from '@/src/types/model';
+import { areAnyApiKeysAvailable } from '@/src/utils/getProvider';
 import type { ModelMessage } from 'ai';
-
-const MAX_TEXT_LENGTH = 25000;
-const MAX_IMAGE_SIZE_BYTES = 10 * 1024 * 1024;
-const TEXT_AREA_HEIGHT_DEFAULT = 128;
-const IMAGE_PANEL_HEIGHT = 320;
-const ACCEPTED_IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
-type SourceMode = 'text' | 'image';
-type TranslationViewMode = 'text' | 'markdown';
-
-const formatFileSize = (size: number) => {
-  if (size < 1024 * 1024) {
-    return `${(size / 1024).toFixed(1)} KB`;
-  }
-
-  return `${(size / 1024 / 1024).toFixed(2)} MB`;
-};
-
-const getImageSourceKey = (file: File) => `image:${file.name}:${file.type}:${file.size}:${file.lastModified}`;
+import { ArrowRightLeft, Loader2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { toast } from 'sonner';
+import ExpandedOutputDialog from './_components/ExpandedOutputDialog';
+import SourceLanguagePanel from './_components/SourceLanguagePanel';
+import TranslationOutputPanel from './_components/TranslationOutputPanel';
+import {
+  ACCEPTED_IMAGE_TYPES,
+  IMAGE_PANEL_HEIGHT,
+  MAX_IMAGE_SIZE_BYTES,
+  MAX_TEXT_LENGTH,
+  TEXT_AREA_HEIGHT_DEFAULT,
+  formatFileSize,
+  getImageSourceKey
+} from './_components/translationHelpers';
+import type { SourceMode, TranslationViewMode } from './_components/translationHelpers';
 
 const Page = () => {
   const t = useTranslations();
@@ -68,9 +53,8 @@ const Page = () => {
   const markdownOutputRef = useRef<HTMLDivElement | null>(null);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const currentTranslationCostRef = useRef<number>(0);
-  const plainTranslatedText = useMemo(() => markdownToPlainText(translatedText), [translatedText]);
-
   const abortControllerRef = useRef<AbortController | null>(null);
+  const plainTranslatedText = useMemo(() => markdownToPlainText(translatedText), [translatedText]);
 
   const clearSourceImage = useCallback(() => {
     setSourceImage(null);
@@ -144,6 +128,25 @@ const Page = () => {
     [validateImageFile]
   );
 
+  const handleSourceTextInput = useCallback(
+    (value: string) => {
+      if (value.trim() === '') {
+        handleClearSourceText();
+        return;
+      }
+
+      setSourceMode('text');
+      clearSourceImage();
+      setReusedImageSourceName('');
+      if (sourceMode === 'image') {
+        setSourceHeight(TEXT_AREA_HEIGHT_DEFAULT);
+        setOutputHeight(TEXT_AREA_HEIGHT_DEFAULT);
+      }
+      setSourceText(value);
+    },
+    [clearSourceImage, handleClearSourceText, sourceMode]
+  );
+
   useEffect(() => {
     return () => {
       if (sourceImagePreview) {
@@ -168,10 +171,6 @@ const Page = () => {
   const handleTranslate = useCallback(async () => {
     const trimmedSourceText = sourceText.trim();
     const imageSourceKey = sourceImage ? getImageSourceKey(sourceImage) : '';
-
-    if (trimmedSourceText !== sourceText) {
-      /* keep UI value untrimmed */
-    }
 
     if (!trimmedSourceText && !sourceImage) {
       setIsLoading(false);
@@ -230,7 +229,8 @@ const Page = () => {
 
     setIsLoading(true);
     lastRequestedSourceRef.current = sourceImage ? imageSourceKey : trimmedSourceText;
-    currentTranslationCostRef.current = 0; // Reset cost for new translation
+    currentTranslationCostRef.current = 0;
+
     try {
       const stream = sourceImage
         ? await modelCallWithStreaming(
@@ -253,7 +253,6 @@ const Page = () => {
               ] satisfies ModelMessage[],
               taskType: 'translate',
               onCostTracked: (cost) => {
-                // Store the cost when tracking completes
                 currentTranslationCostRef.current = cost;
               }
             },
@@ -265,7 +264,6 @@ const Page = () => {
               prompt: createPromptTranslateLanguage(inputLanguage, outputLanguage, trimmedSourceText).prompt,
               taskType: 'translate',
               onCostTracked: (cost) => {
-                // Store the cost when tracking completes
                 currentTranslationCostRef.current = cost;
               }
             },
@@ -285,16 +283,7 @@ const Page = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [
-    abortControllerRef,
-    inputLanguage,
-    outputLanguage,
-    skipHistorySaveRef,
-    sourceImage,
-    sourceText,
-    t,
-    translationHistoryRef
-  ]);
+  }, [inputLanguage, outputLanguage, sourceImage, sourceText, t]);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -329,35 +318,31 @@ const Page = () => {
       };
       translationHistoryRef.current?.add(newEntry);
     }
-  }, [
-    inputLanguage,
-    isLoading,
-    outputLanguage,
-    skipHistorySaveRef,
-    sourceImage,
-    sourceText,
-    t,
-    translatedText,
-    translationHistoryRef
-  ]);
+  }, [inputLanguage, isLoading, outputLanguage, sourceImage, sourceText, t, translatedText]);
 
-  const handleInputLanguageChange = (language: string) => () => {
-    setInputLanguage((preValue) => {
-      if (language == outputLanguage) {
-        setOutputLanguage(preValue);
-      }
-      return language;
-    });
-  };
+  const handleInputLanguageChange = useCallback(
+    (language: string) => {
+      setInputLanguage((preValue) => {
+        if (language === outputLanguage) {
+          setOutputLanguage(preValue);
+        }
+        return language;
+      });
+    },
+    [outputLanguage]
+  );
 
-  const handleOutLanguageChange = (language: string) => () => {
-    setOutputLanguage((preValue) => {
-      if (inputLanguage == language) {
-        setInputLanguage(preValue);
-      }
-      return language;
-    });
-  };
+  const handleOutputLanguageChange = useCallback(
+    (language: string) => {
+      setOutputLanguage((preValue) => {
+        if (inputLanguage === language) {
+          setInputLanguage(preValue);
+        }
+        return language;
+      });
+    },
+    [inputLanguage]
+  );
 
   const handleSourceHeightChange = useCallback(
     (newHeight: number) => {
@@ -379,6 +364,10 @@ const Page = () => {
     [sourceMode]
   );
 
+  const handleTranslationViewModeChange = useCallback((mode: TranslationViewMode) => {
+    setTranslationViewMode(mode);
+  }, []);
+
   const copyTranslation = useCallback(
     (format: TranslationViewMode = 'text') => {
       const text = format === 'markdown' ? translatedText : plainTranslatedText;
@@ -391,408 +380,80 @@ const Page = () => {
     [plainTranslatedText, t, translatedText]
   );
 
-  const handleReuseTranslation = (item: ITranslationHistory) => {
-    skipHistorySaveRef.current = true;
-    clearSourceImage();
-    if (item.sourceType === 'image') {
-      setSourceMode('image');
-      setReusedImageSourceName(item.sourceName ?? item.sourceText);
-      setSourceText('');
-      setTranslationViewMode('markdown');
-      setSourceHeight(IMAGE_PANEL_HEIGHT);
-      setOutputHeight(IMAGE_PANEL_HEIGHT);
-    } else {
-      setSourceMode('text');
-      setReusedImageSourceName('');
-      setSourceHeight(TEXT_AREA_HEIGHT_DEFAULT);
-      setOutputHeight(TEXT_AREA_HEIGHT_DEFAULT);
-      setSourceText(item.sourceText);
-    }
-    setTranslatedText(item.translatedText);
-    setInputLanguage(item.inputLanguage);
-    setOutputLanguage(item.outputLanguage);
-    setIsHistoryOpen(false);
-    toast.info(t('TranslatePage.translationReused'));
-  };
+  const handleReuseTranslation = useCallback(
+    (item: ITranslationHistory) => {
+      skipHistorySaveRef.current = true;
+      clearSourceImage();
+      if (item.sourceType === 'image') {
+        setSourceMode('image');
+        setReusedImageSourceName(item.sourceName ?? item.sourceText);
+        setSourceText('');
+        setTranslationViewMode('markdown');
+        setSourceHeight(IMAGE_PANEL_HEIGHT);
+        setOutputHeight(IMAGE_PANEL_HEIGHT);
+      } else {
+        setSourceMode('text');
+        setReusedImageSourceName('');
+        setSourceHeight(TEXT_AREA_HEIGHT_DEFAULT);
+        setOutputHeight(TEXT_AREA_HEIGHT_DEFAULT);
+        setSourceText(item.sourceText);
+      }
+      setTranslatedText(item.translatedText);
+      setInputLanguage(item.inputLanguage);
+      setOutputLanguage(item.outputLanguage);
+      setIsHistoryOpen(false);
+      toast.info(t('TranslatePage.translationReused'));
+    },
+    [clearSourceImage, t]
+  );
 
   const renderBody = () => (
     <>
       <div className='flex flex-col md:flex-row justify-center w-full max-w-full gap-3 md:px-0 lg:px-6 xl:px-16'>
-        <div className='flex flex-col gap-1 w-full md:w-1/2'>
-          <div className='flex flex-nowrap gap-1 overflow-x-auto'>
-            <Button
-              variant={inputLanguage === LANGUAGES.ja ? 'default' : 'link'}
-              onClick={handleInputLanguageChange(LANGUAGES.ja)}
-            >
-              {t('TranslatePage.japanese')}
-            </Button>
-            <Button
-              variant={inputLanguage === LANGUAGES.en ? 'default' : 'link'}
-              onClick={handleInputLanguageChange(LANGUAGES.en)}
-              className={`hidden block xs:block md:hidden lg:block xl:block`}
-            >
-              {t('TranslatePage.english')}
-            </Button>
-            <Button
-              variant={inputLanguage === LANGUAGES.vn ? 'default' : 'link'}
-              onClick={handleInputLanguageChange(LANGUAGES.vn)}
-            >
-              {t('TranslatePage.vietnamese')}
-            </Button>
-            <Button
-              variant={inputLanguage === LANGUAGES.natural ? 'default' : 'link'}
-              onClick={handleInputLanguageChange(LANGUAGES.natural)}
-            >
-              {t('TranslatePage.detectLanguage')}
-            </Button>
-          </div>
-          <div className='relative w-full flex rounded-md border border-input bg-background px-1 pt-1 pb-8'>
-            <input
-              ref={imageInputRef}
-              type='file'
-              accept={ACCEPTED_IMAGE_TYPES.join(',')}
-              className='hidden'
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) {
-                  handleSelectImage(file);
-                }
-              }}
-            />
-            <TextareaAutosize
-              ref={sourceTextareaRef}
-              value={sourceText}
-              className='w-full border-none outline-none bg-transparent
-          focus:outline-none focus:ring-0 focus:ring-offset-0 focus:shadow-none
-          focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0'
-              placeholder={t('TranslatePage.sourcePlaceholder')}
-              onChange={(e) => {
-                const rawValue = e.target.value;
-                if (rawValue.trim() === '') {
-                  handleClearSourceText();
-                } else {
-                  setSourceMode('text');
-                  clearSourceImage();
-                  setReusedImageSourceName('');
-                  if (sourceMode === 'image') {
-                    setSourceHeight(TEXT_AREA_HEIGHT_DEFAULT);
-                    setOutputHeight(TEXT_AREA_HEIGHT_DEFAULT);
-                  }
-                  setSourceText(rawValue);
-                }
-              }}
-              onPaste={(e) => {
-                const imageItem = Array.from(e.clipboardData?.items ?? []).find((item) =>
-                  item.type.startsWith('image/')
-                );
-
-                if (imageItem) {
-                  const file = imageItem.getAsFile();
-                  if (file) {
-                    e.preventDefault();
-                    handleSelectImage(file);
-                  }
-                  return;
-                }
-
-                const text = e.clipboardData?.getData('text') ?? '';
-                const trimmed = text.trim();
-                if (trimmed !== text) {
-                  e.preventDefault();
-                  const el = sourceTextareaRef.current;
-                  if (el) {
-                    setSourceMode('text');
-                    clearSourceImage();
-                    setReusedImageSourceName('');
-                    if (sourceMode === 'image') {
-                      setSourceHeight(TEXT_AREA_HEIGHT_DEFAULT);
-                      setOutputHeight(TEXT_AREA_HEIGHT_DEFAULT);
-                    }
-                    const { selectionStart, selectionEnd } = el;
-                    setSourceText((prev) => {
-                      const before = prev.slice(0, selectionStart);
-                      const after = prev.slice(selectionEnd);
-                      return before + trimmed + after;
-                    });
-                    requestAnimationFrame(() => {
-                      const pos = selectionStart + trimmed.length;
-                      try {
-                        el.setSelectionRange(pos, pos);
-                      } catch {}
-                    });
-                  }
-                }
-              }}
-              forcedHeight={sourceHeight}
-              onHeightChange={handleSourceHeightChange}
-            />
-            {sourceImage && sourceImagePreview ? (
-              <div className='pointer-events-none absolute inset-1 bottom-8 z-10 bg-background pr-10'>
-                <div className='h-full w-full overflow-hidden rounded border bg-gray-50'>
-                  <img
-                    src={sourceImagePreview}
-                    alt={sourceImage.name}
-                    className='h-full w-full object-contain'
-                  />
-                </div>
-              </div>
-            ) : reusedImageSourceName ? (
-              <div className='pointer-events-none absolute inset-1 bottom-8 z-10 flex items-center justify-center rounded bg-gray-50 px-12 text-sm text-gray-600'>
-                <span className='truncate'>
-                  {t('TranslatePage.reusedImageHistorySource', { name: reusedImageSourceName })}
-                </span>
-              </div>
-            ) : undefined}
-            {sourceMode === 'image' && (sourceImage || reusedImageSourceName) ? (
-              <Button
-                variant='ghost'
-                size='icon'
-                className='absolute right-1 top-1 z-20 bg-background/90 hover:bg-background'
-                onClick={handleClearSourceText}
-              >
-                <X />
-              </Button>
-            ) : undefined}
-            {sourceMode === 'text' && sourceText !== '' ? (
-              <span>
-                <Button variant='ghost' size='icon' onClick={handleClearSourceText}>
-                  <X />
-                </Button>
-              </span>
-            ) : undefined}
-            <div className='absolute bottom-0 right-3 z-20 max-w-[calc(100%-3.5rem)] truncate bg-white px-1 text-right text-gray-500'>
-              {sourceImage
-                ? `${sourceImage.name} (${formatFileSize(sourceImage.size)})`
-                : reusedImageSourceName
-                  ? t('TranslatePage.imageHistorySource', { name: reusedImageSourceName })
-                : `${sourceText.length.toLocaleString()}/${MAX_TEXT_LENGTH.toLocaleString()}`}
-            </div>
-            <div className='absolute bottom-0 left-2 z-20 flex items-center gap-1 bg-white pr-1'>
-              <Button
-                variant='ghost'
-                size='icon'
-                aria-label={t('TranslatePage.uploadImage')}
-                onClick={() => imageInputRef.current?.click()}
-              >
-                <ImagePlus className='h-4 w-4' />
-              </Button>
-            </div>
-          </div>
-        </div>
+        <SourceLanguagePanel
+          sourceText={sourceText}
+          sourceMode={sourceMode}
+          sourceImage={sourceImage}
+          sourceImagePreview={sourceImagePreview}
+          reusedImageSourceName={reusedImageSourceName}
+          inputLanguage={inputLanguage}
+          sourceHeight={sourceHeight}
+          imageInputRef={imageInputRef}
+          sourceTextareaRef={sourceTextareaRef}
+          onInputLanguageChange={handleInputLanguageChange}
+          onSourceTextInput={handleSourceTextInput}
+          onClearSource={handleClearSourceText}
+          onSelectImage={handleSelectImage}
+          onSourceHeightChange={handleSourceHeightChange}
+        />
         <div className='flex w-[10x]'>
           <Button variant='ghost' size='icon' disabled>
             {isLoading ? <Loader2 className='animate-spin' /> : <ArrowRightLeft />}
           </Button>
         </div>
-        <div className='flex flex-col gap-1 w-full md:w-1/2'>
-          <div className='flex flex-nowrap gap-1 overflow-x-auto'>
-            <Button
-              variant={outputLanguage === LANGUAGES.vn ? 'default' : 'link'}
-              onClick={handleOutLanguageChange(LANGUAGES.vn)}
-            >
-              {t('TranslatePage.vietnamese')}
-            </Button>
-            <Button
-              variant={outputLanguage === LANGUAGES.en ? 'default' : 'link'}
-              onClick={handleOutLanguageChange(LANGUAGES.en)}
-            >
-              {t('TranslatePage.english')}
-            </Button>
-            <Button
-              variant={outputLanguage === LANGUAGES.ja ? 'default' : 'link'}
-              onClick={handleOutLanguageChange(LANGUAGES.ja)}
-            >
-              {t('TranslatePage.japanese')}
-            </Button>
-          </div>
-          <div className=''>
-            <div className='relative w-full flex rounded-md border border-input bg-gray-50 px-1 pt-1 pr-11 pb-8'>
-              <Tabs
-                value={translationViewMode}
-                onValueChange={(value) => setTranslationViewMode(value as TranslationViewMode)}
-                className='w-full min-w-0'
-              >
-                <TabsContent value='text' className='m-0'>
-                  <TextareaAutosize
-                    className='w-full border-none outline-none disabled:cursor-auto disabled:bg-gray-50 disabled:opacity-100'
-                    value={plainTranslatedText}
-                    disabled={true}
-                    forcedHeight={outputHeight}
-                    onHeightChange={handleOutputHeightChange}
-                  />
-                </TabsContent>
-                <TabsContent value='markdown' className='m-0'>
-                  <div
-                    ref={markdownOutputRef}
-                    className='w-full min-w-0 overflow-auto rounded bg-gray-50 px-2 pb-2'
-                    style={{ height: outputHeight }}
-                  >
-                    <MarkdownPreview content={translatedText} />
-                  </div>
-                </TabsContent>
-                <div className='absolute inset-y-1 right-1 z-20 flex w-9 flex-col items-center justify-start gap-1 border-l border-border bg-gray-50 pl-1'>
-                  <TabsList className='h-auto w-7 flex-col p-0.5 shadow-sm'>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <TabsTrigger
-                          value='text'
-                          aria-label={t('TranslatePage.textView')}
-                          className={`h-7 w-7 px-0 py-0 ${
-                            translationViewMode === 'text'
-                              ? 'bg-blue-100 text-blue-700 shadow-sm hover:bg-blue-100'
-                              : 'text-gray-500 hover:bg-gray-100'
-                          }`}
-                        >
-                          <Type className='h-4 w-4' />
-                        </TabsTrigger>
-                      </TooltipTrigger>
-                      <TooltipContent side='left'>{t('TranslatePage.textView')}</TooltipContent>
-                    </Tooltip>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <TabsTrigger
-                          value='markdown'
-                          aria-label={t('TranslatePage.markdownView')}
-                          className={`h-7 w-7 px-0 py-0 ${
-                            translationViewMode === 'markdown'
-                              ? 'bg-blue-100 text-blue-700 shadow-sm hover:bg-blue-100'
-                              : 'text-gray-500 hover:bg-gray-100'
-                          }`}
-                        >
-                          <FileText className='h-4 w-4' />
-                        </TabsTrigger>
-                      </TooltipTrigger>
-                      <TooltipContent side='left'>{t('TranslatePage.markdownView')}</TooltipContent>
-                    </Tooltip>
-                  </TabsList>
-                  {translatedText !== '' ? (
-                    <div className='flex shrink-0 flex-col items-center gap-1'>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant='ghost'
-                            size='icon'
-                            className='h-7 w-7'
-                            aria-label={t('TranslatePage.expandOutput')}
-                            onClick={() => setIsOutputExpandedOpen(true)}
-                          >
-                            <Maximize2 className='h-4 w-4' />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent side='left'>{t('TranslatePage.expandOutput')}</TooltipContent>
-                      </Tooltip>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant='ghost'
-                            size='icon'
-                            className='h-7 w-7'
-                            aria-label={t('TranslatePage.copyTranslation')}
-                            onClick={() => copyTranslation('text')}
-                          >
-                            <Copy className='h-4 w-4' />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent side='left'>{t('TranslatePage.copyTranslation')}</TooltipContent>
-                      </Tooltip>
-                      <DropdownMenu>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <DropdownMenuTrigger asChild>
-                              <Button
-                                variant='ghost'
-                                size='icon'
-                                className='h-7 w-7'
-                                aria-label={t('TranslatePage.copyOptions')}
-                              >
-                                <ChevronDown className='h-4 w-4' />
-                              </Button>
-                            </DropdownMenuTrigger>
-                          </TooltipTrigger>
-                          <TooltipContent side='left'>{t('TranslatePage.copyOptions')}</TooltipContent>
-                        </Tooltip>
-                        <DropdownMenuContent align='end'>
-                          <DropdownMenuItem onClick={() => copyTranslation('text')}>
-                            {t('TranslatePage.copyAsText')}
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => copyTranslation('markdown')}>
-                            {t('TranslatePage.copyAsMarkdown')}
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-                  ) : undefined}
-                </div>
-              </Tabs>
-            </div>
-          </div>
-        </div>
+        <TranslationOutputPanel
+          outputLanguage={outputLanguage}
+          translatedText={translatedText}
+          plainTranslatedText={plainTranslatedText}
+          outputHeight={outputHeight}
+          translationViewMode={translationViewMode}
+          markdownOutputRef={markdownOutputRef}
+          onOutputLanguageChange={handleOutputLanguageChange}
+          onOutputHeightChange={handleOutputHeightChange}
+          onTranslationViewModeChange={handleTranslationViewModeChange}
+          onExpandOutput={() => setIsOutputExpandedOpen(true)}
+          onCopyTranslation={copyTranslation}
+        />
       </div>
-      <Dialog open={isOutputExpandedOpen} onOpenChange={setIsOutputExpandedOpen}>
-        <DialogContent className='grid h-[85vh] w-[calc(100vw-2rem)] max-w-[1200px] grid-rows-[auto_minmax(0,1fr)] gap-3 p-4 sm:max-w-[1200px]'>
-          <DialogHeader className='pr-8'>
-            <DialogTitle>{t('TranslatePage.expandedOutputTitle')}</DialogTitle>
-            <DialogDescription>{t('TranslatePage.expandedOutputDescription')}</DialogDescription>
-          </DialogHeader>
-          <Tabs
-            value={translationViewMode}
-            onValueChange={(value) => setTranslationViewMode(value as TranslationViewMode)}
-            className='grid min-h-0 grid-rows-[auto_minmax(0,1fr)] gap-3'
-          >
-            <div className='flex flex-wrap items-center justify-between gap-2'>
-              <TabsList className='shadow-sm'>
-                <TabsTrigger value='text' aria-label={t('TranslatePage.textView')}>
-                  <Type className='mr-2 h-4 w-4' />
-                  {t('TranslatePage.textView')}
-                </TabsTrigger>
-                <TabsTrigger value='markdown' aria-label={t('TranslatePage.markdownView')}>
-                  <FileText className='mr-2 h-4 w-4' />
-                  {t('TranslatePage.markdownView')}
-                </TabsTrigger>
-              </TabsList>
-              <div className='flex items-center gap-1'>
-                <Button
-                  variant='outline'
-                  size='sm'
-                  aria-label={t('TranslatePage.copyTranslation')}
-                  onClick={() => copyTranslation('text')}
-                >
-                  <Copy className='mr-2 h-4 w-4' />
-                  {t('TranslatePage.copyAsText')}
-                </Button>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant='outline'
-                      size='icon'
-                      className='h-9 w-9'
-                      aria-label={t('TranslatePage.copyOptions')}
-                    >
-                      <ChevronDown className='h-4 w-4' />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align='end'>
-                    <DropdownMenuItem onClick={() => copyTranslation('text')}>
-                      {t('TranslatePage.copyAsText')}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => copyTranslation('markdown')}>
-                      {t('TranslatePage.copyAsMarkdown')}
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            </div>
-            <TabsContent value='text' className='m-0 min-h-0'>
-              <pre className='h-full overflow-auto whitespace-pre-wrap break-words rounded-md border bg-gray-50 p-4 font-sans text-sm leading-6'>{plainTranslatedText}</pre>
-            </TabsContent>
-            <TabsContent value='markdown' className='m-0 min-h-0'>
-              <div className='h-full overflow-auto rounded-md border bg-gray-50 p-4'>
-                <MarkdownPreview content={translatedText} />
-              </div>
-            </TabsContent>
-          </Tabs>
-        </DialogContent>
-      </Dialog>
+      <ExpandedOutputDialog
+        open={isOutputExpandedOpen}
+        translatedText={translatedText}
+        plainTranslatedText={plainTranslatedText}
+        translationViewMode={translationViewMode}
+        onOpenChange={setIsOutputExpandedOpen}
+        onTranslationViewModeChange={handleTranslationViewModeChange}
+        onCopyTranslation={copyTranslation}
+      />
       <div className='w-full flex justify-center'>
         <TranslationHistory
           ref={translationHistoryRef}
