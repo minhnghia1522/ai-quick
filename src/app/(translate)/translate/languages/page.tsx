@@ -1,7 +1,7 @@
 'use client';
 import { Button } from '@/src/components/ui/button';
 import { LANGUAGES } from '@/src/types/model';
-import { ArrowRightLeft, ChevronDown, Copy, ImagePlus, Loader2, X } from 'lucide-react';
+import { ArrowRightLeft, ChevronDown, Copy, FileText, ImagePlus, Loader2, Type, X } from 'lucide-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
@@ -22,6 +22,7 @@ import {
   DropdownMenuTrigger
 } from '@/src/components/ui/dropdown-menu';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/src/components/ui/tabs';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/src/components/ui/tooltip';
 import { markdownToPlainText } from '@/src/lib/markdown';
 import type { ModelMessage } from 'ai';
 
@@ -561,7 +562,7 @@ const Page = () => {
             </Button>
           </div>
           <div className=''>
-            <div className='relative w-full flex rounded-md border border-input bg-gray-50 px-1 pt-1 pb-8'>
+            <div className='relative w-full flex rounded-md border border-input bg-gray-50 px-1 pt-1 pr-11 pb-8'>
               <Tabs
                 value={translationViewMode}
                 onValueChange={(value) => setTranslationViewMode(value as TranslationViewMode)}
@@ -584,37 +585,73 @@ const Page = () => {
                     <MarkdownPreview content={translatedText} />
                   </div>
                 </TabsContent>
-                <div className='absolute bottom-1 right-2 z-20 flex max-w-[calc(100%-1rem)] items-center gap-1 bg-gray-50 pl-1'>
-                  <TabsList className='h-7 shadow-sm'>
-                    <TabsTrigger value='text' className='h-6 px-2 text-xs'>
-                      {t('TranslatePage.textView')}
-                    </TabsTrigger>
-                    <TabsTrigger value='markdown' className='h-6 px-2 text-xs'>
-                      {t('TranslatePage.markdownView')}
-                    </TabsTrigger>
+                <div className='absolute inset-y-1 right-1 z-20 flex w-9 flex-col items-center justify-start gap-1 border-l border-border bg-gray-50 pl-1'>
+                  <TabsList className='h-auto w-7 flex-col p-0.5 shadow-sm'>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <TabsTrigger
+                          value='text'
+                          aria-label={t('TranslatePage.textView')}
+                          className={`h-7 w-7 px-0 py-0 ${
+                            translationViewMode === 'text'
+                              ? 'bg-blue-100 text-blue-700 shadow-sm hover:bg-blue-100'
+                              : 'text-gray-500 hover:bg-gray-100'
+                          }`}
+                        >
+                          <Type className='h-4 w-4' />
+                        </TabsTrigger>
+                      </TooltipTrigger>
+                      <TooltipContent side='left'>{t('TranslatePage.textView')}</TooltipContent>
+                    </Tooltip>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <TabsTrigger
+                          value='markdown'
+                          aria-label={t('TranslatePage.markdownView')}
+                          className={`h-7 w-7 px-0 py-0 ${
+                            translationViewMode === 'markdown'
+                              ? 'bg-blue-100 text-blue-700 shadow-sm hover:bg-blue-100'
+                              : 'text-gray-500 hover:bg-gray-100'
+                          }`}
+                        >
+                          <FileText className='h-4 w-4' />
+                        </TabsTrigger>
+                      </TooltipTrigger>
+                      <TooltipContent side='left'>{t('TranslatePage.markdownView')}</TooltipContent>
+                    </Tooltip>
                   </TabsList>
                   {translatedText !== '' ? (
-                    <div className='flex shrink-0 items-center'>
-                      <Button
-                        variant='ghost'
-                        size='icon'
-                        className='h-8 w-8 rounded-r-none'
-                        aria-label={t('TranslatePage.copyTranslation')}
-                        onClick={() => copyTranslation('text')}
-                      >
-                        <Copy className='h-4 w-4' />
-                      </Button>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
+                    <div className='flex shrink-0 flex-col items-center gap-1'>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
                           <Button
                             variant='ghost'
                             size='icon'
-                            className='h-8 w-8 rounded-l-none border-l border-border'
-                            aria-label={t('TranslatePage.copyOptions')}
+                            className='h-7 w-7'
+                            aria-label={t('TranslatePage.copyTranslation')}
+                            onClick={() => copyTranslation('text')}
                           >
-                            <ChevronDown className='h-4 w-4' />
+                            <Copy className='h-4 w-4' />
                           </Button>
-                        </DropdownMenuTrigger>
+                        </TooltipTrigger>
+                        <TooltipContent side='left'>{t('TranslatePage.copyTranslation')}</TooltipContent>
+                      </Tooltip>
+                      <DropdownMenu>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                variant='ghost'
+                                size='icon'
+                                className='h-7 w-7'
+                                aria-label={t('TranslatePage.copyOptions')}
+                              >
+                                <ChevronDown className='h-4 w-4' />
+                              </Button>
+                            </DropdownMenuTrigger>
+                          </TooltipTrigger>
+                          <TooltipContent side='left'>{t('TranslatePage.copyOptions')}</TooltipContent>
+                        </Tooltip>
                         <DropdownMenuContent align='end'>
                           <DropdownMenuItem onClick={() => copyTranslation('text')}>
                             {t('TranslatePage.copyAsText')}
