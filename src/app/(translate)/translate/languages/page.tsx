@@ -1,7 +1,7 @@
 'use client';
 import { Button } from '@/src/components/ui/button';
 import { LANGUAGES } from '@/src/types/model';
-import { ArrowRightLeft, ChevronDown, Copy, FileText, ImagePlus, Loader2, Type, X } from 'lucide-react';
+import { ArrowRightLeft, ChevronDown, Copy, FileText, ImagePlus, Loader2, Maximize2, Type, X } from 'lucide-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
@@ -21,6 +21,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/src/components/ui/dropdown-menu';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/src/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/src/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/src/components/ui/tooltip';
 import { markdownToPlainText } from '@/src/lib/markdown';
@@ -54,14 +55,17 @@ const Page = () => {
   const [translatedText, setTranslatedText] = useState('');
   const [inputLanguage, setInputLanguage] = useState(LANGUAGES.ja);
   const [outputLanguage, setOutputLanguage] = useState(LANGUAGES.vn);
-  const [sharedHeight, setSharedHeight] = useState<number>(TEXT_AREA_HEIGHT_DEFAULT);
+  const [sourceHeight, setSourceHeight] = useState<number>(TEXT_AREA_HEIGHT_DEFAULT);
+  const [outputHeight, setOutputHeight] = useState<number>(TEXT_AREA_HEIGHT_DEFAULT);
   const [translationViewMode, setTranslationViewMode] = useState<TranslationViewMode>('text');
+  const [isOutputExpandedOpen, setIsOutputExpandedOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const translationHistoryRef = useRef<ITranslationHistoryRefHandle | null>(null);
   const skipHistorySaveRef = useRef(false);
   const lastRequestedSourceRef = useRef<string>('');
   const sourceTextareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const markdownOutputRef = useRef<HTMLDivElement | null>(null);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const currentTranslationCostRef = useRef<number>(0);
   const plainTranslatedText = useMemo(() => markdownToPlainText(translatedText), [translatedText]);
@@ -90,7 +94,8 @@ const Page = () => {
     clearSourceImage();
     setReusedImageSourceName('');
     setTranslatedText('');
-    setSharedHeight(TEXT_AREA_HEIGHT_DEFAULT);
+    setSourceHeight(TEXT_AREA_HEIGHT_DEFAULT);
+    setOutputHeight(TEXT_AREA_HEIGHT_DEFAULT);
   }, [clearSourceImage]);
 
   const validateImageFile = useCallback(
@@ -125,7 +130,9 @@ const Page = () => {
       setSourceText('');
       setReusedImageSourceName('');
       setTranslatedText('');
-      setSharedHeight(IMAGE_PANEL_HEIGHT);
+      setTranslationViewMode('markdown');
+      setSourceHeight(IMAGE_PANEL_HEIGHT);
+      setOutputHeight(IMAGE_PANEL_HEIGHT);
       setSourceImage(file);
       setSourceImagePreview((prev) => {
         if (prev) {
@@ -145,6 +152,19 @@ const Page = () => {
     };
   }, [sourceImagePreview]);
 
+  useEffect(() => {
+    if (sourceMode !== 'image' || translationViewMode !== 'markdown') return;
+
+    const frameId = requestAnimationFrame(() => {
+      const markdownOutput = markdownOutputRef.current;
+      if (!markdownOutput) return;
+
+      setOutputHeight(Math.max(IMAGE_PANEL_HEIGHT, markdownOutput.scrollHeight));
+    });
+
+    return () => cancelAnimationFrame(frameId);
+  }, [sourceMode, translatedText, translationViewMode]);
+
   const handleTranslate = useCallback(async () => {
     const trimmedSourceText = sourceText.trim();
     const imageSourceKey = sourceImage ? getImageSourceKey(sourceImage) : '';
@@ -159,6 +179,9 @@ const Page = () => {
     }
 
     setTranslatedText('');
+    if (sourceImage) {
+      setOutputHeight(IMAGE_PANEL_HEIGHT);
+    }
 
     if (!areAnyApiKeysAvailable()) {
       toast.error(t('TranslatePage.apiKeyError'));
@@ -336,9 +359,25 @@ const Page = () => {
     });
   };
 
-  const handleSourceHeightChange = useCallback((newHeight: number) => {
-    setSharedHeight(newHeight);
-  }, []);
+  const handleSourceHeightChange = useCallback(
+    (newHeight: number) => {
+      setSourceHeight(newHeight);
+      if (sourceMode === 'text') {
+        setOutputHeight(newHeight);
+      }
+    },
+    [sourceMode]
+  );
+
+  const handleOutputHeightChange = useCallback(
+    (newHeight: number) => {
+      setOutputHeight(newHeight);
+      if (sourceMode === 'text') {
+        setSourceHeight(newHeight);
+      }
+    },
+    [sourceMode]
+  );
 
   const copyTranslation = useCallback(
     (format: TranslationViewMode = 'text') => {
@@ -359,11 +398,14 @@ const Page = () => {
       setSourceMode('image');
       setReusedImageSourceName(item.sourceName ?? item.sourceText);
       setSourceText('');
-      setSharedHeight(IMAGE_PANEL_HEIGHT);
+      setTranslationViewMode('markdown');
+      setSourceHeight(IMAGE_PANEL_HEIGHT);
+      setOutputHeight(IMAGE_PANEL_HEIGHT);
     } else {
       setSourceMode('text');
       setReusedImageSourceName('');
-      setSharedHeight(TEXT_AREA_HEIGHT_DEFAULT);
+      setSourceHeight(TEXT_AREA_HEIGHT_DEFAULT);
+      setOutputHeight(TEXT_AREA_HEIGHT_DEFAULT);
       setSourceText(item.sourceText);
     }
     setTranslatedText(item.translatedText);
@@ -433,7 +475,8 @@ const Page = () => {
                   clearSourceImage();
                   setReusedImageSourceName('');
                   if (sourceMode === 'image') {
-                    setSharedHeight(TEXT_AREA_HEIGHT_DEFAULT);
+                    setSourceHeight(TEXT_AREA_HEIGHT_DEFAULT);
+                    setOutputHeight(TEXT_AREA_HEIGHT_DEFAULT);
                   }
                   setSourceText(rawValue);
                 }
@@ -462,7 +505,8 @@ const Page = () => {
                     clearSourceImage();
                     setReusedImageSourceName('');
                     if (sourceMode === 'image') {
-                      setSharedHeight(TEXT_AREA_HEIGHT_DEFAULT);
+                      setSourceHeight(TEXT_AREA_HEIGHT_DEFAULT);
+                      setOutputHeight(TEXT_AREA_HEIGHT_DEFAULT);
                     }
                     const { selectionStart, selectionEnd } = el;
                     setSourceText((prev) => {
@@ -479,7 +523,7 @@ const Page = () => {
                   }
                 }
               }}
-              forcedHeight={sharedHeight}
+              forcedHeight={sourceHeight}
               onHeightChange={handleSourceHeightChange}
             />
             {sourceImage && sourceImagePreview ? (
@@ -573,14 +617,15 @@ const Page = () => {
                     className='w-full border-none outline-none disabled:cursor-auto disabled:bg-gray-50 disabled:opacity-100'
                     value={plainTranslatedText}
                     disabled={true}
-                    forcedHeight={sharedHeight}
-                    onHeightChange={handleSourceHeightChange}
+                    forcedHeight={outputHeight}
+                    onHeightChange={handleOutputHeightChange}
                   />
                 </TabsContent>
                 <TabsContent value='markdown' className='m-0'>
                   <div
+                    ref={markdownOutputRef}
                     className='w-full min-w-0 overflow-auto rounded bg-gray-50 px-2 pb-2'
-                    style={{ height: sharedHeight }}
+                    style={{ height: outputHeight }}
                   >
                     <MarkdownPreview content={translatedText} />
                   </div>
@@ -628,6 +673,20 @@ const Page = () => {
                             variant='ghost'
                             size='icon'
                             className='h-7 w-7'
+                            aria-label={t('TranslatePage.expandOutput')}
+                            onClick={() => setIsOutputExpandedOpen(true)}
+                          >
+                            <Maximize2 className='h-4 w-4' />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side='left'>{t('TranslatePage.expandOutput')}</TooltipContent>
+                      </Tooltip>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant='ghost'
+                            size='icon'
+                            className='h-7 w-7'
                             aria-label={t('TranslatePage.copyTranslation')}
                             onClick={() => copyTranslation('text')}
                           >
@@ -669,6 +728,71 @@ const Page = () => {
           </div>
         </div>
       </div>
+      <Dialog open={isOutputExpandedOpen} onOpenChange={setIsOutputExpandedOpen}>
+        <DialogContent className='grid h-[85vh] w-[calc(100vw-2rem)] max-w-[1200px] grid-rows-[auto_minmax(0,1fr)] gap-3 p-4 sm:max-w-[1200px]'>
+          <DialogHeader className='pr-8'>
+            <DialogTitle>{t('TranslatePage.expandedOutputTitle')}</DialogTitle>
+            <DialogDescription>{t('TranslatePage.expandedOutputDescription')}</DialogDescription>
+          </DialogHeader>
+          <Tabs
+            value={translationViewMode}
+            onValueChange={(value) => setTranslationViewMode(value as TranslationViewMode)}
+            className='grid min-h-0 grid-rows-[auto_minmax(0,1fr)] gap-3'
+          >
+            <div className='flex flex-wrap items-center justify-between gap-2'>
+              <TabsList className='shadow-sm'>
+                <TabsTrigger value='text' aria-label={t('TranslatePage.textView')}>
+                  <Type className='mr-2 h-4 w-4' />
+                  {t('TranslatePage.textView')}
+                </TabsTrigger>
+                <TabsTrigger value='markdown' aria-label={t('TranslatePage.markdownView')}>
+                  <FileText className='mr-2 h-4 w-4' />
+                  {t('TranslatePage.markdownView')}
+                </TabsTrigger>
+              </TabsList>
+              <div className='flex items-center gap-1'>
+                <Button
+                  variant='outline'
+                  size='sm'
+                  aria-label={t('TranslatePage.copyTranslation')}
+                  onClick={() => copyTranslation('text')}
+                >
+                  <Copy className='mr-2 h-4 w-4' />
+                  {t('TranslatePage.copyAsText')}
+                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant='outline'
+                      size='icon'
+                      className='h-9 w-9'
+                      aria-label={t('TranslatePage.copyOptions')}
+                    >
+                      <ChevronDown className='h-4 w-4' />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align='end'>
+                    <DropdownMenuItem onClick={() => copyTranslation('text')}>
+                      {t('TranslatePage.copyAsText')}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => copyTranslation('markdown')}>
+                      {t('TranslatePage.copyAsMarkdown')}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </div>
+            <TabsContent value='text' className='m-0 min-h-0'>
+              <pre className='h-full overflow-auto whitespace-pre-wrap break-words rounded-md border bg-gray-50 p-4 font-sans text-sm leading-6'>{plainTranslatedText}</pre>
+            </TabsContent>
+            <TabsContent value='markdown' className='m-0 min-h-0'>
+              <div className='h-full overflow-auto rounded-md border bg-gray-50 p-4'>
+                <MarkdownPreview content={translatedText} />
+              </div>
+            </TabsContent>
+          </Tabs>
+        </DialogContent>
+      </Dialog>
       <div className='w-full flex justify-center'>
         <TranslationHistory
           ref={translationHistoryRef}
