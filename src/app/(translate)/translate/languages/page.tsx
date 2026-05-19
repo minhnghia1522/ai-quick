@@ -6,6 +6,7 @@ import TranslationHistory, {
   ITranslationHistoryRefHandle
 } from '@/src/components/TranslationHistory';
 import { Button } from '@/src/components/ui/button';
+import { useSidebar } from '@/src/components/ui/sidebar';
 import { markdownToPlainText } from '@/src/lib/markdown';
 import { createPromptTranslateImage, createPromptTranslateLanguage } from '@/src/prompt/languageTranslatePrompt';
 import { modelCallWithStreaming } from '@/src/service/translateService';
@@ -30,7 +31,10 @@ import {
 } from './_components/translationHelpers';
 import type { SourceMode, TranslationViewMode } from './_components/translationHelpers';
 
-const IMAGE_OUTPUT_VIEWPORT_BOTTOM_RESERVE = 56;
+const IMAGE_OUTPUT_HISTORY_FALLBACK_RESERVE = 160;
+const IMAGE_OUTPUT_HISTORY_TOP_GAP = 32;
+const IMAGE_OUTPUT_VIEWPORT_BOTTOM_PADDING = 32;
+const HORIZONTAL_OVERFLOW_THRESHOLD = 8;
 
 const Page = () => {
   const t = useTranslations();
@@ -48,15 +52,18 @@ const Page = () => {
   const [isOutputExpandedOpen, setIsOutputExpandedOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const { open: isSidebarOpen, setOpen: setSidebarOpen, isMobile } = useSidebar();
   const translationHistoryRef = useRef<ITranslationHistoryRefHandle | null>(null);
   const skipHistorySaveRef = useRef(false);
   const lastRequestedSourceRef = useRef<string>('');
   const sourceTextareaRef = useRef<HTMLTextAreaElement | null>(null);
   const markdownOutputRef = useRef<HTMLDivElement | null>(null);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
+  const translationHistoryAnchorRef = useRef<HTMLDivElement | null>(null);
   const currentTranslationCostRef = useRef<number>(0);
   const abortControllerRef = useRef<AbortController | null>(null);
   const outputAutoExpandedRef = useRef(false);
+  const hasAutoClosedSidebarForOutputRef = useRef(false);
   const plainTranslatedText = useMemo(() => markdownToPlainText(translatedText), [translatedText]);
 
   const clearSourceImage = useCallback(() => {
@@ -84,6 +91,7 @@ const Page = () => {
     setSourceHeight(TEXT_AREA_HEIGHT_DEFAULT);
     setOutputHeight(TEXT_AREA_HEIGHT_DEFAULT);
     outputAutoExpandedRef.current = false;
+    hasAutoClosedSidebarForOutputRef.current = false;
   }, [clearSourceImage]);
 
   const validateImageFile = useCallback(
@@ -122,6 +130,7 @@ const Page = () => {
       setSourceHeight(IMAGE_PANEL_HEIGHT);
       setOutputHeight(IMAGE_PANEL_HEIGHT);
       outputAutoExpandedRef.current = false;
+      hasAutoClosedSidebarForOutputRef.current = false;
       setSourceImage(file);
       setSourceImagePreview((prev) => {
         if (prev) {
@@ -174,9 +183,14 @@ const Page = () => {
         if (!markdownOutput) return;
 
         const { top } = markdownOutput.getBoundingClientRect();
+        const historyAnchorHeight =
+          translationHistoryAnchorRef.current?.getBoundingClientRect().height ??
+          IMAGE_OUTPUT_HISTORY_FALLBACK_RESERVE;
+        const footerReserve =
+          historyAnchorHeight + IMAGE_OUTPUT_HISTORY_TOP_GAP + IMAGE_OUTPUT_VIEWPORT_BOTTOM_PADDING;
         const maxOutputHeight = Math.max(
           IMAGE_PANEL_HEIGHT,
-          Math.floor(window.innerHeight - top - IMAGE_OUTPUT_VIEWPORT_BOTTOM_RESERVE)
+          Math.floor(window.innerHeight - top - footerReserve)
         );
         const desiredOutputHeight = Math.max(IMAGE_PANEL_HEIGHT, markdownOutput.scrollHeight);
         const nextOutputHeight = Math.min(desiredOutputHeight, maxOutputHeight);
@@ -205,6 +219,55 @@ const Page = () => {
     }
   }, [sourceMode]);
 
+  useEffect(() => {
+    if (!translatedText || translationViewMode !== 'markdown') {
+      hasAutoClosedSidebarForOutputRef.current = false;
+    }
+  }, [translatedText, translationViewMode]);
+
+  useEffect(() => {
+    if (
+      isMobile ||
+      !isSidebarOpen ||
+      !translatedText ||
+      translationViewMode !== 'markdown' ||
+      hasAutoClosedSidebarForOutputRef.current
+    ) {
+      return;
+    }
+
+    let frameId = 0;
+    let timeoutId = 0;
+
+    const closeSidebarWhenPageOverflows = () => {
+      if (frameId) {
+        cancelAnimationFrame(frameId);
+      }
+
+      frameId = requestAnimationFrame(() => {
+        const documentOverflow = Math.max(
+          document.documentElement.scrollWidth - document.documentElement.clientWidth,
+          document.body.scrollWidth - window.innerWidth
+        );
+
+        if (documentOverflow > HORIZONTAL_OVERFLOW_THRESHOLD) {
+          hasAutoClosedSidebarForOutputRef.current = true;
+          setSidebarOpen(false);
+        }
+      });
+    };
+
+    closeSidebarWhenPageOverflows();
+    timeoutId = window.setTimeout(closeSidebarWhenPageOverflows, 250);
+    window.addEventListener('resize', closeSidebarWhenPageOverflows);
+
+    return () => {
+      cancelAnimationFrame(frameId);
+      window.clearTimeout(timeoutId);
+      window.removeEventListener('resize', closeSidebarWhenPageOverflows);
+    };
+  }, [isMobile, isSidebarOpen, setSidebarOpen, translatedText, translationViewMode]);
+
   const handleTranslate = useCallback(async () => {
     const trimmedSourceText = sourceText.trim();
     const imageSourceKey = sourceImage ? getImageSourceKey(sourceImage) : '';
@@ -215,6 +278,7 @@ const Page = () => {
     }
 
     setTranslatedText('');
+    hasAutoClosedSidebarForOutputRef.current = false;
     if (sourceImage) {
       setOutputHeight(IMAGE_PANEL_HEIGHT);
       outputAutoExpandedRef.current = false;
@@ -257,6 +321,7 @@ const Page = () => {
 
     if (matchedHistory) {
       skipHistorySaveRef.current = true;
+      hasAutoClosedSidebarForOutputRef.current = false;
       setTranslatedText(matchedHistory.translatedText);
       setIsLoading(false);
       return;
@@ -442,6 +507,7 @@ const Page = () => {
         setSourceText(item.sourceText);
       }
       setTranslatedText(item.translatedText);
+      hasAutoClosedSidebarForOutputRef.current = false;
       setInputLanguage(item.inputLanguage);
       setOutputLanguage(item.outputLanguage);
       setIsHistoryOpen(false);
@@ -497,7 +563,7 @@ const Page = () => {
         onTranslationViewModeChange={handleTranslationViewModeChange}
         onCopyTranslation={copyTranslation}
       />
-      <div className='w-full flex justify-center'>
+      <div ref={translationHistoryAnchorRef} className='w-full flex justify-center'>
         <TranslationHistory
           ref={translationHistoryRef}
           open={isHistoryOpen}

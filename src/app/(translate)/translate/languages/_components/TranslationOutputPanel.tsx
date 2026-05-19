@@ -90,7 +90,7 @@ const TranslationOutputPanel = ({
                 className='w-full min-w-0 overflow-auto rounded bg-gray-50 px-2 pb-2'
                 style={{ height: outputHeight }}
               >
-                <MarkdownPreview content={translatedText} />
+                <MarkdownPreview content={translatedText} useParentHorizontalScroll />
               </div>
             </TabsContent>
             <div className={outputToolbarClassName}>

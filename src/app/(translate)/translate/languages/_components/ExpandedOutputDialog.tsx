@@ -17,12 +17,12 @@ interface ExpandedOutputDialogProps {
 }
 
 const dialogContentClassName = [
-  'grid h-[85vh] w-[calc(100vw-1rem)] max-w-[1600px]',
+  'grid h-[85vh] w-[calc(100vw-1rem)] max-w-[1600px] min-w-0 overflow-hidden',
   'grid-rows-[auto_minmax(0,1fr)] gap-3 p-4 sm:w-[95vw] sm:max-w-[1600px]'
 ].join(' ');
 
 const expandedTextClassName = [
-  'h-full overflow-auto whitespace-pre-wrap break-words rounded-md border bg-gray-50 p-4',
+  'h-full max-w-full min-w-0 overflow-auto whitespace-pre-wrap break-words rounded-md border bg-gray-50 p-4',
   'font-sans text-sm leading-6'
 ].join(' ');
 
@@ -47,9 +47,9 @@ const ExpandedOutputDialog = ({
         <Tabs
           value={translationViewMode}
           onValueChange={(value) => onTranslationViewModeChange(value as TranslationViewMode)}
-          className='grid min-h-0 grid-rows-[auto_minmax(0,1fr)] gap-3'
+          className='grid min-h-0 min-w-0 grid-rows-[auto_minmax(0,1fr)] gap-3 overflow-hidden'
         >
-          <div className='flex flex-wrap items-center justify-between gap-2'>
+          <div className='flex min-w-0 flex-wrap items-center justify-between gap-2'>
             <TabsList className='shadow-sm'>
               <TabsTrigger value='text' aria-label={t('TranslatePage.textView')}>
                 <Type className='mr-2 h-4 w-4' />
@@ -81,12 +81,12 @@ const ExpandedOutputDialog = ({
               </Button>
             </div>
           </div>
-          <TabsContent value='text' className='m-0 min-h-0'>
+          <TabsContent value='text' className='m-0 min-h-0 min-w-0 overflow-hidden'>
             <pre className={expandedTextClassName}>{plainTranslatedText}</pre>
           </TabsContent>
-          <TabsContent value='markdown' className='m-0 min-h-0'>
-            <div className='h-full overflow-auto rounded-md border bg-gray-50 p-4'>
-              <MarkdownPreview content={translatedText} />
+          <TabsContent value='markdown' className='m-0 min-h-0 min-w-0 overflow-hidden'>
+            <div className='h-full max-w-full min-w-0 overflow-auto rounded-md border bg-gray-50 p-4'>
+              <MarkdownPreview content={translatedText} useParentHorizontalScroll />
             </div>
           </TabsContent>
         </Tabs>
