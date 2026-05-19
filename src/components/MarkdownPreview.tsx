@@ -189,7 +189,7 @@ const MarkdownTableHeaderCell = ({ children, columnIndex, className, ...props }:
           type='button'
           aria-label='Resize column'
           title='Resize column'
-          className='absolute inset-y-1 right-0 w-2 touch-none cursor-col-resize rounded-sm border-r-2 border-transparent hover:border-blue-400 focus:border-blue-500 focus:outline-none'
+          className='absolute inset-y-0 right-0 z-10 w-3 translate-x-1/2 touch-none cursor-col-resize rounded-sm focus:outline-none before:absolute before:inset-y-1 before:left-1/2 before:w-px before:-translate-x-1/2 before:bg-slate-500 before:transition-colors hover:before:bg-blue-400 focus:before:bg-blue-500'
           onPointerDown={(event) => context.startColumnResize(columnIndex, event)}
         />
       ) : undefined}

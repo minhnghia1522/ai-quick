@@ -17,8 +17,8 @@ interface ExpandedOutputDialogProps {
 }
 
 const dialogContentClassName = [
-  'grid h-[85vh] w-[calc(100vw-2rem)] max-w-[1200px]',
-  'grid-rows-[auto_minmax(0,1fr)] gap-3 p-4 sm:max-w-[1200px]'
+  'grid h-[85vh] w-[calc(100vw-1rem)] max-w-[1600px]',
+  'grid-rows-[auto_minmax(0,1fr)] gap-3 p-4 sm:w-[95vw] sm:max-w-[1600px]'
 ].join(' ');
 
 const expandedTextClassName = [
