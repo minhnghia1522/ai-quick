@@ -12,7 +12,7 @@ export type UsageCostSlice = {
 
     // Actions
     refreshCosts: () => Promise<void>;
-    updateUsageData: (inputTokens: number, outputTokens: number, modelName: string, taskType: 'chat' | 'translate' | 'enhance-prompt' | 'generate-data') => Promise<void>;
+    updateUsageData: (inputTokens: number, outputTokens: number, modelName: string, taskType: 'chat' | 'translate' | 'enhance-prompt' | 'generate-data' | 'language-learning') => Promise<void>;
     getAnalytics: (filter?: Partial<UsageFilter>) => Promise<UsageAnalytics>;
     clearCache: () => void;
     setLoading: (loading: boolean) => void;

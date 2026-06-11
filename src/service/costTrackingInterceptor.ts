@@ -2,7 +2,7 @@ import { usageCostService } from './usageCostService';
 import { ModelAI, STORAGE_KEY_MODEL } from '@/src/types/model';
 import { useAppStore } from '@/src/store';
 
-export type TaskType = 'chat' | 'translate' | 'enhance-prompt' | 'generate-data';
+export type TaskType = 'chat' | 'translate' | 'enhance-prompt' | 'generate-data' | 'language-learning';
 
 /**
  * Cost tracking interceptor for capturing token usage from AI service calls

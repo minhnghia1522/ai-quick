@@ -11,6 +11,7 @@ interface ExpandedOutputDialogProps {
   translatedText: string;
   plainTranslatedText: string;
   translationViewMode: TranslationViewMode;
+  allowJapaneseLearningSelection: boolean;
   onOpenChange: (open: boolean) => void;
   onTranslationViewModeChange: (mode: TranslationViewMode) => void;
   onCopyTranslation: (format?: TranslationViewMode) => void;
@@ -31,6 +32,7 @@ const ExpandedOutputDialog = ({
   translatedText,
   plainTranslatedText,
   translationViewMode,
+  allowJapaneseLearningSelection,
   onOpenChange,
   onTranslationViewModeChange,
   onCopyTranslation
@@ -82,10 +84,18 @@ const ExpandedOutputDialog = ({
             </div>
           </div>
           <TabsContent value='text' className='m-0 min-h-0 min-w-0 overflow-hidden'>
-            <pre className={expandedTextClassName}>{plainTranslatedText}</pre>
+            <pre
+              className={expandedTextClassName}
+              data-japanese-learning-selection-root={allowJapaneseLearningSelection ? 'true' : undefined}
+            >
+              {plainTranslatedText}
+            </pre>
           </TabsContent>
           <TabsContent value='markdown' className='m-0 min-h-0 min-w-0 overflow-hidden'>
-            <div className='h-full max-w-full min-w-0 overflow-auto rounded-md border bg-gray-50 p-4'>
+            <div
+              className='h-full max-w-full min-w-0 overflow-auto rounded-md border bg-gray-50 p-4'
+              data-japanese-learning-selection-root={allowJapaneseLearningSelection ? 'true' : undefined}
+            >
               <MarkdownPreview content={translatedText} useParentHorizontalScroll />
             </div>
           </TabsContent>

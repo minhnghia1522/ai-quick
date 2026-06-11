@@ -7,6 +7,7 @@ import TranslationHistory, {
 } from '@/src/components/TranslationHistory';
 import { Button } from '@/src/components/ui/button';
 import { useSidebar } from '@/src/components/ui/sidebar';
+import { useJapaneseLearningSelection } from '@/src/hooks/useJapaneseLearningSelection';
 import { markdownToPlainText } from '@/src/lib/markdown';
 import { createPromptTranslateImage, createPromptTranslateLanguage } from '@/src/prompt/languageTranslatePrompt';
 import { modelCallWithStreaming } from '@/src/service/translateService';
@@ -18,11 +19,16 @@ import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import ExpandedOutputDialog from './_components/ExpandedOutputDialog';
+import JapaneseLearningActionButton from './_components/JapaneseLearningActionButton';
+import JapaneseLearningDialog from './_components/JapaneseLearningDialog';
+import JapaneseLearningToggle from './_components/JapaneseLearningToggle';
 import SourceLanguagePanel from './_components/SourceLanguagePanel';
 import TranslationOutputPanel from './_components/TranslationOutputPanel';
 import {
   ACCEPTED_IMAGE_TYPES,
   IMAGE_PANEL_HEIGHT,
+  JAPANESE_LEARNING_ENABLED_STORAGE_KEY,
+  JAPANESE_LEARNING_MAX_SELECTION_LENGTH,
   MAX_IMAGE_SIZE_BYTES,
   MAX_TEXT_LENGTH,
   TEXT_AREA_HEIGHT_DEFAULT,
@@ -50,6 +56,9 @@ const Page = () => {
   const [outputHeight, setOutputHeight] = useState<number>(TEXT_AREA_HEIGHT_DEFAULT);
   const [translationViewMode, setTranslationViewMode] = useState<TranslationViewMode>('text');
   const [isOutputExpandedOpen, setIsOutputExpandedOpen] = useState(false);
+  const [isJapaneseLearningEnabled, setIsJapaneseLearningEnabled] = useState(false);
+  const [isJapaneseLearningOpen, setIsJapaneseLearningOpen] = useState(false);
+  const [japaneseLearningText, setJapaneseLearningText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const { open: isSidebarOpen, setOpen: setSidebarOpen, isMobile } = useSidebar();
@@ -57,6 +66,7 @@ const Page = () => {
   const skipHistorySaveRef = useRef(false);
   const lastRequestedSourceRef = useRef<string>('');
   const sourceTextareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const outputTextareaRef = useRef<HTMLTextAreaElement | null>(null);
   const markdownOutputRef = useRef<HTMLDivElement | null>(null);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const translationHistoryAnchorRef = useRef<HTMLDivElement | null>(null);
@@ -65,6 +75,36 @@ const Page = () => {
   const outputAutoExpandedRef = useRef(false);
   const hasAutoClosedSidebarForOutputRef = useRef(false);
   const plainTranslatedText = useMemo(() => markdownToPlainText(translatedText), [translatedText]);
+  const allowOutputJapaneseLearningSelection = [LANGUAGES.ja, LANGUAGES.en].includes(outputLanguage);
+  const japaneseLearningTextareaRefs = useMemo(
+    () => allowOutputJapaneseLearningSelection ? [sourceTextareaRef, outputTextareaRef] : [sourceTextareaRef],
+    [allowOutputJapaneseLearningSelection]
+  );
+  const {
+    text: selectedJapaneseLearningText,
+    position: japaneseLearningPosition,
+    visible: isJapaneseLearningActionVisible,
+    clearSelection: clearJapaneseLearningSelection
+  } = useJapaneseLearningSelection({
+    enabled: isJapaneseLearningEnabled,
+    isBlocked: isJapaneseLearningOpen,
+    maxLength: JAPANESE_LEARNING_MAX_SELECTION_LENGTH,
+    textareaRefs: japaneseLearningTextareaRefs
+  });
+
+  useEffect(() => {
+    setIsJapaneseLearningEnabled(localStorage.getItem(JAPANESE_LEARNING_ENABLED_STORAGE_KEY) === 'true');
+  }, []);
+
+  useEffect(() => {
+    clearJapaneseLearningSelection();
+  }, [allowOutputJapaneseLearningSelection, clearJapaneseLearningSelection]);
+
+  const handleJapaneseLearningToggle = useCallback((enabled: boolean) => {
+    setIsJapaneseLearningEnabled(enabled);
+    localStorage.setItem(JAPANESE_LEARNING_ENABLED_STORAGE_KEY, String(enabled));
+    clearJapaneseLearningSelection();
+  }, [clearJapaneseLearningSelection]);
 
   const clearSourceImage = useCallback(() => {
     setSourceImage(null);
@@ -487,6 +527,31 @@ const Page = () => {
     [plainTranslatedText, t, translatedText]
   );
 
+  const handleOpenJapaneseLearning = useCallback(() => {
+    const selectedText = selectedJapaneseLearningText.trim();
+
+    if (!selectedText) return;
+
+    if (selectedText.length > JAPANESE_LEARNING_MAX_SELECTION_LENGTH) {
+      toast.error(
+        t('TranslatePage.japaneseLearningSelectionTooLong', {
+          maxLength: JAPANESE_LEARNING_MAX_SELECTION_LENGTH,
+          currentLength: selectedText.length
+        })
+      );
+      return;
+    }
+
+    if (!areAnyApiKeysAvailable()) {
+      toast.error(t('TranslatePage.apiKeyError'));
+      return;
+    }
+
+    setJapaneseLearningText(selectedText);
+    setIsJapaneseLearningOpen(true);
+    clearJapaneseLearningSelection();
+  }, [clearJapaneseLearningSelection, selectedJapaneseLearningText, t]);
+
   const handleReuseTranslation = useCallback(
     (item: ITranslationHistory) => {
       skipHistorySaveRef.current = true;
@@ -518,6 +583,10 @@ const Page = () => {
 
   const renderBody = () => (
     <>
+      <JapaneseLearningToggle
+        enabled={isJapaneseLearningEnabled}
+        onEnabledChange={handleJapaneseLearningToggle}
+      />
       <div className='flex flex-col md:flex-row justify-center w-full max-w-full gap-3 md:px-0 lg:px-6 xl:px-16'>
         <SourceLanguagePanel
           sourceText={sourceText}
@@ -546,7 +615,9 @@ const Page = () => {
           plainTranslatedText={plainTranslatedText}
           outputHeight={outputHeight}
           translationViewMode={translationViewMode}
+          outputTextareaRef={outputTextareaRef}
           markdownOutputRef={markdownOutputRef}
+          allowJapaneseLearningSelection={allowOutputJapaneseLearningSelection}
           onOutputLanguageChange={handleOutputLanguageChange}
           onOutputHeightChange={handleOutputHeightChange}
           onTranslationViewModeChange={handleTranslationViewModeChange}
@@ -559,9 +630,21 @@ const Page = () => {
         translatedText={translatedText}
         plainTranslatedText={plainTranslatedText}
         translationViewMode={translationViewMode}
+        allowJapaneseLearningSelection={allowOutputJapaneseLearningSelection}
         onOpenChange={setIsOutputExpandedOpen}
         onTranslationViewModeChange={handleTranslationViewModeChange}
         onCopyTranslation={copyTranslation}
+      />
+      <JapaneseLearningDialog
+        open={isJapaneseLearningOpen}
+        selectedText={japaneseLearningText}
+        onOpenChange={setIsJapaneseLearningOpen}
+      />
+      <JapaneseLearningActionButton
+        visible={isJapaneseLearningActionVisible && Boolean(japaneseLearningPosition)}
+        x={japaneseLearningPosition?.x ?? 0}
+        y={japaneseLearningPosition?.y ?? 0}
+        onClick={handleOpenJapaneseLearning}
       />
       <div ref={translationHistoryAnchorRef} className='w-full flex justify-center'>
         <TranslationHistory

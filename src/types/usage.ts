@@ -7,7 +7,7 @@ export interface UsageRecord {
   inputCost: number;
   outputCost: number;
   totalCost: number;
-  taskType: 'chat' | 'translate' | 'enhance-prompt' | 'generate-data';
+  taskType: 'chat' | 'translate' | 'enhance-prompt' | 'generate-data' | 'language-learning';
 }
 
 export interface UsageAnalytics {
@@ -30,5 +30,5 @@ export interface UsageAnalytics {
 export interface UsageFilter {
   timeRange: 'today' | '7days' | '30days' | '90days';
   models: string[];
-  taskTypes: ('chat' | 'translate' | 'enhance-prompt' | 'generate-data')[];
+  taskTypes: ('chat' | 'translate' | 'enhance-prompt' | 'generate-data' | 'language-learning')[];
 }

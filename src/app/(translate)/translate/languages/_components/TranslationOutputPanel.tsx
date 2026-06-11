@@ -22,7 +22,9 @@ interface TranslationOutputPanelProps {
   plainTranslatedText: string;
   outputHeight: number;
   translationViewMode: TranslationViewMode;
+  outputTextareaRef: RefObject<HTMLTextAreaElement | null>;
   markdownOutputRef: RefObject<HTMLDivElement | null>;
+  allowJapaneseLearningSelection: boolean;
   onOutputLanguageChange: (language: string) => void;
   onOutputHeightChange: (height: number) => void;
   onTranslationViewModeChange: (mode: TranslationViewMode) => void;
@@ -31,8 +33,7 @@ interface TranslationOutputPanelProps {
 }
 
 const outputTextareaClassName = [
-  'w-full border-none outline-none disabled:cursor-auto',
-  'disabled:bg-gray-50 disabled:opacity-100'
+  'w-full border-none bg-gray-50 outline-none'
 ].join(' ');
 
 const outputToolbarClassName = [
@@ -46,7 +47,9 @@ const TranslationOutputPanel = ({
   plainTranslatedText,
   outputHeight,
   translationViewMode,
+  outputTextareaRef,
   markdownOutputRef,
+  allowJapaneseLearningSelection,
   onOutputLanguageChange,
   onOutputHeightChange,
   onTranslationViewModeChange,
@@ -77,9 +80,11 @@ const TranslationOutputPanel = ({
           >
             <TabsContent value='text' className='m-0'>
               <TextareaAutosize
+                ref={outputTextareaRef}
                 className={outputTextareaClassName}
                 value={plainTranslatedText}
-                disabled={true}
+                readOnly
+                aria-readonly='true'
                 forcedHeight={outputHeight}
                 onHeightChange={onOutputHeightChange}
               />
@@ -89,6 +94,7 @@ const TranslationOutputPanel = ({
                 ref={markdownOutputRef}
                 className='w-full min-w-0 overflow-auto rounded bg-gray-50 px-2 pb-2'
                 style={{ height: outputHeight }}
+                data-japanese-learning-selection-root={allowJapaneseLearningSelection ? 'true' : undefined}
               >
                 <MarkdownPreview content={translatedText} useParentHorizontalScroll />
               </div>

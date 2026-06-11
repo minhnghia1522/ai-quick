@@ -77,7 +77,7 @@ export class UsageCostService {
         inputTokens: number,
         outputTokens: number,
         modelName: string,
-        taskType: 'chat' | 'translate' | 'enhance-prompt' | 'generate-data'
+        taskType: 'chat' | 'translate' | 'enhance-prompt' | 'generate-data' | 'language-learning'
     ): Promise<UsageRecord> {
         const model = this.findModelByName(modelName);
         if (!model) {
@@ -194,7 +194,7 @@ export class UsageCostService {
      * Get analytics filtered by task types
      */
     public async getAnalyticsByTaskTypes(
-        taskTypes: ('chat' | 'translate' | 'enhance-prompt' | 'generate-data')[]
+        taskTypes: ('chat' | 'translate' | 'enhance-prompt' | 'generate-data' | 'language-learning')[]
     ): Promise<UsageAnalytics> {
         return this.getAnalytics({ taskTypes });
     }

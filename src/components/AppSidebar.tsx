@@ -1,5 +1,5 @@
 'use client';
-import { Code, Languages, FileText, Sparkles, Database } from 'lucide-react';
+import { Code, Languages, FileText, Sparkles, Database, MessageSquareText } from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
