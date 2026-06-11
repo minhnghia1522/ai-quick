@@ -21,7 +21,6 @@ import { toast } from 'sonner';
 import ExpandedOutputDialog from './_components/ExpandedOutputDialog';
 import JapaneseLearningActionButton from './_components/JapaneseLearningActionButton';
 import JapaneseLearningDialog from './_components/JapaneseLearningDialog';
-import JapaneseLearningToggle from './_components/JapaneseLearningToggle';
 import SourceLanguagePanel from './_components/SourceLanguagePanel';
 import TranslationOutputPanel from './_components/TranslationOutputPanel';
 import {
@@ -583,10 +582,6 @@ const Page = () => {
 
   const renderBody = () => (
     <>
-      <JapaneseLearningToggle
-        enabled={isJapaneseLearningEnabled}
-        onEnabledChange={handleJapaneseLearningToggle}
-      />
       <div className='flex flex-col md:flex-row justify-center w-full max-w-full gap-3 md:px-0 lg:px-6 xl:px-16'>
         <SourceLanguagePanel
           sourceText={sourceText}
@@ -595,10 +590,12 @@ const Page = () => {
           sourceImagePreview={sourceImagePreview}
           reusedImageSourceName={reusedImageSourceName}
           inputLanguage={inputLanguage}
+          isJapaneseLearningEnabled={isJapaneseLearningEnabled}
           sourceHeight={sourceHeight}
           imageInputRef={imageInputRef}
           sourceTextareaRef={sourceTextareaRef}
           onInputLanguageChange={handleInputLanguageChange}
+          onJapaneseLearningEnabledChange={handleJapaneseLearningToggle}
           onSourceTextInput={handleSourceTextInput}
           onClearSource={handleClearSourceText}
           onSelectImage={handleSelectImage}

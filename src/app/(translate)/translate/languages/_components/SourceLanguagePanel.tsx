@@ -6,6 +6,7 @@ import { ImagePlus, Maximize2, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState, type ClipboardEvent, type RefObject } from 'react';
 import ImagePreviewDialog from './ImagePreviewDialog';
+import JapaneseLearningToggle from './JapaneseLearningToggle';
 import LanguageToggleGroup from './LanguageToggleGroup';
 import { ACCEPTED_IMAGE_TYPES, MAX_TEXT_LENGTH, formatFileSize } from './translationHelpers';
 import type { SourceMode } from './translationHelpers';
@@ -17,10 +18,12 @@ interface SourceLanguagePanelProps {
   sourceImagePreview: string;
   reusedImageSourceName: string;
   inputLanguage: string;
+  isJapaneseLearningEnabled: boolean;
   sourceHeight: number;
   imageInputRef: RefObject<HTMLInputElement | null>;
   sourceTextareaRef: RefObject<HTMLTextAreaElement | null>;
   onInputLanguageChange: (language: string) => void;
+  onJapaneseLearningEnabledChange: (enabled: boolean) => void;
   onSourceTextInput: (value: string) => void;
   onClearSource: () => void;
   onSelectImage: (file: File) => void;
@@ -39,8 +42,7 @@ const reusedImageClassName = [
 ].join(' ');
 
 const sourceMetaClassName = [
-  'absolute bottom-0 right-3 z-20 max-w-[calc(100%-3.5rem)] truncate bg-white px-1',
-  'text-right text-gray-500'
+  'min-w-0 truncate px-1 text-right text-gray-500'
 ].join(' ');
 
 const SourceLanguagePanel = ({
@@ -50,10 +52,12 @@ const SourceLanguagePanel = ({
   sourceImagePreview,
   reusedImageSourceName,
   inputLanguage,
+  isJapaneseLearningEnabled,
   sourceHeight,
   imageInputRef,
   sourceTextareaRef,
   onInputLanguageChange,
+  onJapaneseLearningEnabledChange,
   onSourceTextInput,
   onClearSource,
   onSelectImage,
@@ -198,22 +202,28 @@ const SourceLanguagePanel = ({
             <TooltipContent side='left'>{t('TranslatePage.clearSource')}</TooltipContent>
           </Tooltip>
         ) : undefined}
-        <div className={sourceMetaClassName}>
-          {sourceImage
-            ? `${sourceImage.name} (${formatFileSize(sourceImage.size)})`
-            : reusedImageSourceName
-              ? t('TranslatePage.imageHistorySource', { name: reusedImageSourceName })
-              : `${sourceText.length.toLocaleString()}/${MAX_TEXT_LENGTH.toLocaleString()}`}
-        </div>
-        <div className='absolute bottom-0 left-2 z-20 flex items-center gap-1 bg-white pr-1'>
-          <Button
-            variant='ghost'
-            size='icon'
-            aria-label={t('TranslatePage.uploadImage')}
-            onClick={() => imageInputRef.current?.click()}
-          >
-            <ImagePlus className='h-4 w-4' />
-          </Button>
+        <div className='absolute bottom-0 left-2 right-3 z-20 flex items-center justify-between gap-2 bg-white'>
+          <div className=''>
+            <JapaneseLearningToggle
+              enabled={isJapaneseLearningEnabled}
+              onEnabledChange={onJapaneseLearningEnabledChange}
+            />
+            <Button
+              variant='ghost'
+              size='icon'
+              aria-label={t('TranslatePage.uploadImage')}
+              onClick={() => imageInputRef.current?.click()}
+            >
+              <ImagePlus className='h-4 w-4' />
+            </Button>
+          </div>
+          <div className={sourceMetaClassName}>
+            {sourceImage
+              ? `${sourceImage.name} (${formatFileSize(sourceImage.size)})`
+              : reusedImageSourceName
+                ? t('TranslatePage.imageHistorySource', { name: reusedImageSourceName })
+                : `${sourceText.length.toLocaleString()}/${MAX_TEXT_LENGTH.toLocaleString()}`}
+          </div>
         </div>
       </div>
       <ImagePreviewDialog
