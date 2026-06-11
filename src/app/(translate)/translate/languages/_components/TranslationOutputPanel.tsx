@@ -31,9 +31,9 @@ interface TranslationOutputPanelProps {
   onExpandOutput: () => void;
   onCopyTranslation: (format?: TranslationViewMode) => void;
 }
-
 const outputTextareaClassName = [
-  'w-full border-none bg-gray-50 outline-none'
+  'w-full border-none outline-none disabled:cursor-auto',
+  'disabled:bg-gray-50 disabled:opacity-100'
 ].join(' ');
 
 const outputToolbarClassName = [
@@ -83,8 +83,7 @@ const TranslationOutputPanel = ({
                 ref={outputTextareaRef}
                 className={outputTextareaClassName}
                 value={plainTranslatedText}
-                readOnly
-                aria-readonly='true'
+                disabled={true}
                 forcedHeight={outputHeight}
                 onHeightChange={onOutputHeightChange}
               />
