@@ -1,6 +1,7 @@
 export const STORAGE_KEY_MODEL: string = 'modelData';
 export const STORAGE_KEY_OPENAI_API_KEY: string = 'apiKey';
 export const STORAGE_KEY_GEMINI_API_KEY: string = 'geminiApiKey';
+export const STORAGE_KEY_AIQUICK_API_KEY: string = 'aiquickApiKey';
 
 export interface ModelAI {
   id: number;

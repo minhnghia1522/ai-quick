@@ -102,6 +102,8 @@
     "openaiApiKeyDesc": "Để sử dụng các mô hình OpenAI",
     "geminiApiKey": "Google Gemini API Key",
     "geminiApiKeyDesc": "Để sử dụng các mô hình Google Gemini",
+    "aiQuickApiKey": "AIQUICK API Key",
+    "aiQuickApiKeyDesc": "Dùng làm X-API-KEY để fallback OpenAI thông qua AIQUICK",
     "apiKeyStorageNotice": "API Key của bạn được lưu trữ cục bộ và không bao giờ được gửi đến máy chủ của chúng tôi",
     "saveChanges": "Lưu thay đổi",
     "close": "Đóng",

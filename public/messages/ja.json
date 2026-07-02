@@ -101,6 +101,8 @@
     "openaiApiKeyDesc": "OpenAIモデルを使用するため",
     "geminiApiKey": "Google Gemini APIキー",
     "geminiApiKeyDesc": "Google Geminiモデルを使用するため",
+    "aiQuickApiKey": "AIQUICK APIキー",
+    "aiQuickApiKeyDesc": "AIQUICK経由のOpenAIフォールバック用X-API-KEYとして使用します",
     "apiKeyStorageNotice": "APIキーはローカルに保存され、当社のサーバーに送信されることはありません",
     "saveChanges": "変更を保存",
     "close": "閉じる",

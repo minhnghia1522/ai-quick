@@ -7,21 +7,24 @@ import Link from 'next/link';
 import AppDialog, { AppDialogRefHandle } from './AppDialog';
 import { useAppStore } from '../store';
 import PasswordField from './PasswordField';
+import { STORAGE_KEY_AIQUICK_API_KEY, STORAGE_KEY_GEMINI_API_KEY, STORAGE_KEY_OPENAI_API_KEY } from '@/src/types/model';
 
 const APIKeyInputDialog = forwardRef<AppDialogRefHandle>((_, ref) => {
   const t = useTranslations();
-  const { setIsGeminiApiKey, setIsOpenApiKey } = useAppStore();
+  const { setIsAIQuickApiKey, setIsGeminiApiKey, setIsOpenApiKey } = useAppStore();
 
   const [open, setOpen] = useState(false);
   const [apiKey, setApiKey] = useState<string>('');
   const [geminiApiKey, setGeminiApiKey] = useState<string>('');
+  const [aiQuickApiKey, setAIQuickApiKey] = useState<string>('');
 
   useEffect(() => {
     if (!open) {
       return;
     }
-    const apiKeyLocalStorage = localStorage.getItem('apiKey');
-    const geminiApiKeyLocalStorage = localStorage.getItem('geminiApiKey');
+    const apiKeyLocalStorage = localStorage.getItem(STORAGE_KEY_OPENAI_API_KEY);
+    const geminiApiKeyLocalStorage = localStorage.getItem(STORAGE_KEY_GEMINI_API_KEY);
+    const aiQuickApiKeyLocalStorage = localStorage.getItem(STORAGE_KEY_AIQUICK_API_KEY);
 
     if (apiKeyLocalStorage) {
       setApiKey(apiKeyLocalStorage);
@@ -31,13 +34,19 @@ const APIKeyInputDialog = forwardRef<AppDialogRefHandle>((_, ref) => {
       setGeminiApiKey(geminiApiKeyLocalStorage);
       setIsGeminiApiKey(true);
     }
-  }, [open, setIsGeminiApiKey, setIsOpenApiKey]);
+    if (aiQuickApiKeyLocalStorage) {
+      setAIQuickApiKey(aiQuickApiKeyLocalStorage);
+      setIsAIQuickApiKey(true);
+    }
+  }, [open, setIsAIQuickApiKey, setIsGeminiApiKey, setIsOpenApiKey]);
 
   const submitCallback = () => {
-    localStorage.setItem('apiKey', apiKey);
+    localStorage.setItem(STORAGE_KEY_OPENAI_API_KEY, apiKey);
     setIsOpenApiKey(!isEmpty(apiKey));
-    localStorage.setItem('geminiApiKey', geminiApiKey);
+    localStorage.setItem(STORAGE_KEY_GEMINI_API_KEY, geminiApiKey);
     setIsGeminiApiKey(!isEmpty(geminiApiKey));
+    localStorage.setItem(STORAGE_KEY_AIQUICK_API_KEY, aiQuickApiKey);
+    setIsAIQuickApiKey(!isEmpty(aiQuickApiKey));
     setOpen(false);
   };
 
@@ -91,6 +100,14 @@ const APIKeyInputDialog = forwardRef<AppDialogRefHandle>((_, ref) => {
               </Link>
               .
             </p>
+          </div>
+          <div className='grid gap-3 p-4 border rounded-lg'>
+            <div className='flex items-center gap-2'>
+              <KeyRound className='w-5 h-5' />
+              <h3 className='text-lg font-semibold'>{t('Dialog.aiQuickApiKey')}</h3>
+            </div>
+            <p className='text-sm text-muted-foreground'>{t('Dialog.aiQuickApiKeyDesc')}</p>
+            <PasswordField value={aiQuickApiKey} onChange={setAIQuickApiKey} placeholder={t('Dialog.aiQuickApiKey')} />
           </div>
         </div>
       }

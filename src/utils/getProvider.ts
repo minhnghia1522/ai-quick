@@ -1,4 +1,8 @@
-import { STORAGE_KEY_OPENAI_API_KEY, STORAGE_KEY_GEMINI_API_KEY } from '@/src/types/model';
+import {
+  STORAGE_KEY_AIQUICK_API_KEY,
+  STORAGE_KEY_OPENAI_API_KEY,
+  STORAGE_KEY_GEMINI_API_KEY
+} from '@/src/types/model';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { createOpenAI } from '@ai-sdk/openai';
 
@@ -20,6 +24,7 @@ export const getProviderByModelName = (modelName: string) => {
 export const areAnyApiKeysAvailable = () => {
   const openAiKey = localStorage.getItem(STORAGE_KEY_OPENAI_API_KEY);
   const geminiKey = localStorage.getItem(STORAGE_KEY_GEMINI_API_KEY);
+  const aiQuickKey = localStorage.getItem(STORAGE_KEY_AIQUICK_API_KEY);
 
-  return openAiKey || geminiKey;
+  return openAiKey || geminiKey || aiQuickKey;
 };

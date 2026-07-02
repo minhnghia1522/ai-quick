@@ -108,6 +108,8 @@
     "openaiApiKeyDesc": "For using OpenAI models",
     "geminiApiKey": "Google Gemini API Key",
     "geminiApiKeyDesc": "For using Google Gemini models",
+    "aiQuickApiKey": "AIQUICK API Key",
+    "aiQuickApiKeyDesc": "Used as X-API-KEY for OpenAI fallback through AIQUICK",
     "apiKeyStorageNotice": "Your API Key is stored locally and never sent to our servers",
     "saveChanges": "Save changes",
     "close": "Close",
