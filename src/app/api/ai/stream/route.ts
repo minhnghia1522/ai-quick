@@ -51,7 +51,7 @@ export async function POST(request: Request) {
     return createErrorResponse('Invalid API key.', 403);
   }
 
-  const openAIKey = process.env['OPEN-API-KEY'];
+  const openAIKey = process.env['OPEN_API_KEY'];
 
   if (!openAIKey) {
     return createErrorResponse('Server OpenAI key is not configured.', 503);
@@ -65,9 +65,11 @@ export async function POST(request: Request) {
     return createErrorResponse('Invalid request body.', 400);
   }
 
-  if (!body.model || typeof body.model !== 'string') {
-    return createErrorResponse('Missing model.', 400);
-  }
+  // if (!body.model || typeof body.model !== 'string') {
+  //   return createErrorResponse('Missing model.', 400);
+  // }
+
+  body.model = "gpt-5.4-mini-2026-03-17"
 
   if (!body.prompt && !isValidMessages(body.messages)) {
     return createErrorResponse('Missing prompt or messages.', 400);

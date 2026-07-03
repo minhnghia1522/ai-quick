@@ -1,4 +1,10 @@
-import { ModelAI, STORAGE_KEY_AIQUICK_API_KEY, STORAGE_KEY_MODEL, MODEL_DEFAULT } from '@/src/types/model';
+import {
+  ModelAI,
+  STORAGE_KEY_AIQUICK_API_KEY,
+  STORAGE_KEY_MODEL,
+  STORAGE_KEY_OPENAI_API_KEY,
+  MODEL_DEFAULT
+} from '@/src/types/model';
 import { generateText, streamText } from 'ai';
 import type { ModelMessage } from 'ai';
 import { getProviderByModelName } from '@/src/utils/getProvider';
@@ -69,6 +75,14 @@ const shouldFallbackToAIQuick = (error: unknown, model: ModelAI) => {
 
   return Boolean(aiQuickApiKey) && isOpenAIModel(model.model) && isAuthError(error);
 };
+
+const hasLocalOpenAIKey = () => Boolean(localStorage.getItem(STORAGE_KEY_OPENAI_API_KEY)?.trim());
+
+const shouldUseAIQuickEndpointDirectly = (model: ModelAI) => isOpenAIModel(model.model) && !hasLocalOpenAIKey();
+
+const hasMessagesPrompt = (
+  params: ModelCallWithStreamingParams
+): params is ModelCallWithStreamingParams & { messages: ModelMessage[] } => params.messages !== undefined;
 
 const createFallbackTextStream = async function* ({
   params,
@@ -178,6 +192,14 @@ export const modelCallWithStreaming = async (
   const textStream = async function* () {
     let hasLocalOutput = false;
 
+    if (shouldUseAIQuickEndpointDirectly(model)) {
+      for await (const textPart of createFallbackTextStream({ params, model, abortSignal: abortController })) {
+        yield textPart;
+      }
+
+      return;
+    }
+
     const commonOptions = {
       model: getProviderByModelName(model.model),
       system: params.system,
@@ -204,7 +226,7 @@ export const modelCallWithStreaming = async (
 
     try {
       const result =
-        'messages' in params
+        hasMessagesPrompt(params)
           ? streamText({
               ...commonOptions,
               messages: params.messages
