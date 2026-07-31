@@ -1,7 +1,6 @@
 export const STORAGE_KEY_MODEL: string = 'modelData';
 export const STORAGE_KEY_OPENAI_API_KEY: string = 'apiKey';
 export const STORAGE_KEY_GEMINI_API_KEY: string = 'geminiApiKey';
-export const STORAGE_KEY_AIQUICK_API_KEY: string = 'aiquickApiKey';
 
 export interface ModelAI {
   id: number;
@@ -16,23 +15,23 @@ export interface ModelAI {
 
 export const openAIModels: Array<ModelAI> = [
   {
-    id: 0,
-    model: 'gpt-5.4-2026-03-05',
-    name: 'GPT-5.4',
-    description: 'Best intelligence at scale for agentic, coding, and professional workflows',
+    id: 2,
+    model: 'gpt-5.6-luna',
+    name: 'GPT-5.6 Luna',
+    description: 'GPT-5.6 model optimized for cost-sensitive workloads',
     temperature: 1,
-    priceInput: 2.5,
-    priceOutput: 15.0,
-    reasoningEffort: 'low'
+    priceInput: 0.2,
+    priceOutput: 1.2,
+    reasoningEffort: 'high'
   },
   {
-    id: 1,
-    model: 'gpt-5.4-mini-2026-03-17',
-    name: 'GPT-5.4 mini',
-    description: 'Our strongest mini model yet for coding, computer use, and subagents',
+    id: 3,
+    model: 'gpt-5.6-terra',
+    name: 'GPT-5.6 Terra',
+    description: 'GPT-5.6 model that balances intelligence and cost',
     temperature: 1,
-    priceInput: 0.75,
-    priceOutput: 4.5,
+    priceInput: 2,
+    priceOutput: 12,
     reasoningEffort: 'low'
   }
 ];

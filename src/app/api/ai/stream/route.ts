@@ -69,7 +69,8 @@ export async function POST(request: Request) {
   //   return createErrorResponse('Missing model.', 400);
   // }
 
-  body.model = "gpt-5.4-mini-2026-03-17"
+  body.model = 'gpt-5.6-luna';
+  body.reasoningEffort = 'high'
 
   if (!body.prompt && !isValidMessages(body.messages)) {
     return createErrorResponse('Missing prompt or messages.', 400);
