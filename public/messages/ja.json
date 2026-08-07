@@ -80,11 +80,14 @@
   "Sidebar": {
     "brand": "AI QUICK",
     "groupLabel": {
+      "developerToolkit": "Developer Toolkit",
       "aiTranslator": "AI翻訳",
       "other": "その他",
       "chat": "チャット"
     },
     "menu": {
+      "csvToolkit": "CSV Toolkit",
+      "csvCompare": "CSV Compare",
       "languageTranslate": "言語翻訳",
       "codeTranslate": "コード翻訳",
       "enhancePrompt": "プロンプト強化",
@@ -310,6 +313,28 @@
     "tagDataSecurity": "個人データセキュリティ",
     "loadingButton": "初期化中...",
     "startButton": "チャットを開始"
+  },
+  "CsvToolkit": {
+    "title": "CSV Toolkit",
+    "description": "Edit and analyze CSV files locally in your browser.",
+    "privacyNote": "Your CSV stays in this browser and is never uploaded.",
+    "upload": { "title": "Open a CSV file", "hint": "Drag and drop a .csv file here, or choose one from your device.", "selectFile": "Select file" },
+    "toolbar": { "open": "Open CSV", "download": "Download CSV", "addRow": "Add Row", "deleteRows": "Delete Selected Row", "duplicateRows": "Duplicate Selected Row", "search": "Search all columns...", "removeEmptyRows": "Remove Empty Rows", "removeDuplicateRows": "Remove Duplicate Rows", "statistics": "Column Statistics", "summary": "CSV Summary", "compare": "Compare CSV" },
+    "summary": { "title": "CSV Summary", "fileName": "File Name", "totalRows": "Total Rows", "totalColumns": "Total Columns", "delimiter": "Delimiter", "encoding": "Encoding", "headerDetected": "Header Detected", "fileSize": "File Size", "noFile": "Open a CSV file to see its summary." },
+    "statistics": { "title": "Column Statistics", "columnName": "Column Name", "detectedType": "Detected Type", "emptyValues": "Empty Values", "uniqueValues": "Unique Values", "maximumLength": "Maximum Length", "minimumLength": "Minimum Length", "noColumn": "Click a column header to inspect it." },
+    "importOptions": { "title": "Import Options", "encoding": "Encoding", "delimiter": "Delimiter", "delimiterHint": "Use \\t for Tab.", "header": "First row contains headers", "headerHint": "Disable to generate Column 1, Column 2, etc.", "apply": "Apply & Reparse", "pendingHint": "These settings are used when opening or reparsing a CSV file." },
+    "errors": { "unsupportedFile": "Please select a .csv file.", "emptyFile": "The selected file is empty.", "emptyHeader": "The CSV file does not contain a valid header.", "invalidDelimiter": "Please enter a delimiter.", "parsingFailed": "We could not parse this CSV file. Please check its format." },
+    "messages": { "loaded": "Loaded {rows} rows.", "downloaded": "CSV downloaded.", "noRowsSelected": "Select at least one row first.", "rowsRemoved": "Removed {count} rows.", "parsing": "Parsing CSV locally...", "reparsed": "CSV reparsed with the selected options." }
+  },
+  "CsvCompare": {
+    "title": "Compare CSV Files", "description": "Compare two CSV files locally and inspect every changed cell.", "backToEditor": "Back to CSV Editor",
+    "files": { "leftTitle": "CSV A", "rightTitle": "CSV B", "uploadTitle": "Choose a CSV file", "uploadHint": "Drag and drop a .csv file here, or choose one from your device.", "selectFile": "Select file", "replace": "Replace file", "rows": "rows", "columns": "columns" },
+    "importOptions": { "title": "Import Options", "encoding": "Encoding", "delimiter": "Delimiter", "delimiterHint": "Use \\t for Tab.", "header": "First row contains headers", "headerHint": "Disable to generate Column 1, Column 2, etc.", "apply": "Apply & Reparse", "pendingHint": "These settings are used when opening or reparsing both files." },
+    "summary": { "addedRows": "Added Rows", "removedRows": "Removed Rows", "modifiedRows": "Modified Rows", "unchangedRows": "Unchanged Rows", "differentCells": "Different Cells" },
+    "differences": { "title": "Differences", "description": "Rows are matched by position and columns are matched by header name.", "cells": "cells", "noDifferences": "The files are identical", "noDifferencesDescription": "No differences were found with the selected import options." },
+    "grid": { "row": "Row", "column": "Column", "status": "Status", "leftValue": "CSV A Value", "rightValue": "CSV B Value", "horizontalScroll": "両方のテーブルを横にスクロール", "added": "Added", "removed": "Removed", "modified": "Modified", "unchanged": "Unchanged" },
+    "errors": { "unsupportedFile": "Please select a .csv file.", "emptyFile": "The selected file is empty.", "emptyHeader": "The CSV file does not contain a valid header.", "invalidDelimiter": "Please enter a delimiter.", "parsingFailed": "We could not parse this CSV file. Please check its format." },
+    "messages": { "fileLoaded": "Loaded {fileName}.", "reparsed": "Both CSV files were reparsed with the selected options.", "parsing": "Parsing CSV files locally...", "selectBoth": "Select both CSV files to compare them." }
   },
   "LocaleSwitcher": {
     "en": "English",

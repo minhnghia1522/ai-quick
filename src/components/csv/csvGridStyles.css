@@ -1,0 +1,94 @@
+.csv-search-match .ag-cell {
+  background-color: color-mix(in srgb, var(--color-primary) 10%, transparent);
+}
+
+.csv-difference-added {
+  color: #15803d;
+  font-weight: 600;
+}
+
+.csv-difference-removed {
+  color: #b91c1c;
+  font-weight: 600;
+}
+
+.csv-difference-modified {
+  color: #b45309;
+  font-weight: 600;
+}
+
+.csv-difference-cell {
+  font-weight: 600;
+}
+
+.csv-difference-left {
+  background-color: color-mix(in srgb, #f59e0b 18%, transparent);
+}
+
+.csv-difference-right {
+  background-color: color-mix(in srgb, #22c55e 18%, transparent);
+}
+
+.csv-compare-row-added .ag-cell:not(.csv-difference-cell),
+.csv-compare-row-removed .ag-cell:not(.csv-difference-cell),
+.csv-compare-row-modified .ag-cell:not(.csv-difference-cell) {
+  background-color: color-mix(in srgb, var(--color-muted) 45%, transparent);
+}
+
+.csv-compare-split-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+}
+
+.csv-compare-pane .ag-body-horizontal-scroll {
+  display: flex !important;
+  position: relative !important;
+  visibility: visible !important;
+  pointer-events: auto;
+  opacity: 1 !important;
+}
+
+.csv-compare-pane .ag-body-horizontal-scroll-viewport {
+  min-height: 16px;
+  overflow-x: scroll !important;
+  scrollbar-width: auto;
+}
+
+.csv-compare-pane .ag-header-cell,
+.csv-compare-pane .ag-cell {
+  border-right: 1px solid color-mix(in srgb, var(--color-border) 78%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 78%, transparent);
+}
+
+.csv-compare-pane .ag-header-cell:last-child,
+.csv-compare-pane .ag-cell:last-child {
+  border-right: 0;
+}
+
+.csv-compare-pane-title {
+  overflow: hidden;
+  margin-bottom: 8px;
+  color: var(--color-foreground);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.csv-compare-split-divider {
+  align-self: stretch;
+  min-height: 460px;
+  background: var(--color-border);
+}
+
+@media (max-width: 1024px) {
+  .csv-compare-split-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .csv-compare-split-divider {
+    display: none;
+  }
+}

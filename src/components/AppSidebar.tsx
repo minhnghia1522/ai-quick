@@ -1,5 +1,5 @@
 'use client';
-import { Code, Languages, FileText, Sparkles, Database, MessageSquareText } from 'lucide-react';
+import { Code, Languages, FileText, Sparkles, Database, MessageSquareText, GitCompareArrows } from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
@@ -53,6 +53,21 @@ const AppSidebar = () => {
           title: t('Sidebar.menu.generateData'),
           url: '/generate-data',
           icon: Database
+        }
+      ]
+    },
+    {
+      groupLabel: t('Sidebar.groupLabel.developerToolkit'),
+      items: [
+        {
+          title: t('Sidebar.menu.csvToolkit'),
+          url: '/developer-toolkit/csv-toolkit',
+          icon: FileText
+        },
+        {
+          title: t('Sidebar.menu.csvCompare'),
+          url: '/developer-toolkit/csv-compare',
+          icon: GitCompareArrows
         }
       ]
     },
